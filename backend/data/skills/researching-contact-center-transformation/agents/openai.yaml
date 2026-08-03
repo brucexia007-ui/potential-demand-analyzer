@@ -1,0 +1,4 @@
+interface:
+  display_name: "客服中心转型研究"
+  short_description: "研究客服信创、智能化、呼叫平台和全渠道转型事实与当前触发"
+  default_prompt: "使用 $researching-contact-center-transformation 研究目标企业客服中心转型轨道、项目阶段和窗口。"

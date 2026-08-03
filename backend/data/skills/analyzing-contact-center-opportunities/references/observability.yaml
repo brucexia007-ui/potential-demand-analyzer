@@ -1,0 +1,71 @@
+schema_version: contact-center-skill-observability/v1
+
+metrics:
+  execution:
+    - search_queries_executed
+    - external_calls_executed
+    - execution_duration_seconds
+    - llm_token_usage
+    - branch_status_by_skill
+  evidence:
+    - evidence_items_collected
+    - evidence_items_by_source_type
+    - distinct_source_domains
+    - duplicate_evidence_removed
+    - evidence_items_with_event_date
+    - counterevidence_searches_executed
+    - evidence_admission_ratio
+    - strong_source_ratio
+    - unknown_date_ratio
+    - content_farm_extraction_ratio
+    - procurement_event_chain_count
+  coverage:
+    - capability_items_assessed
+    - capability_items_with_evidence
+    - unknown_capability_ratio
+    - required_report_field_coverage
+    - unresolved_entity_or_scope_conflicts
+  opportunity:
+    - opportunity_candidates_by_grade
+    - candidates_with_current_trigger
+    - candidates_with_counterevidence
+    - candidates_with_next_action
+
+quality_gates:
+  hard:
+    - id: entity_resolved
+      rule: 目标主体和证据范围已确认，或报告明确标记阻塞
+    - id: traceable_key_claims
+      rule: G3 及以上候选的需要、触发、窗口和在任厂商结论都有 evidence_id
+    - id: lifecycle_checked
+      rule: 采购项目已检查中标、合同、验收、续约或重招链路
+    - id: no_false_absence
+      rule: 未检索到的信息保持 UNKNOWN
+    - id: counterevidence_checked
+      rule: 每个 G3 及以上候选完成定向反证搜索
+  advisory:
+    - id: unknown_ratio
+      target: unknown_capability_ratio <= 0.30
+    - id: source_diversity
+      target: 关键结论优先由两个独立来源或一手强证据支持
+    - id: event_date_coverage
+      target: 采购与触发证据尽量包含事件日期
+    - id: quick_token_budget
+      target: quick 模式 total_tokens <= 200000
+    - id: evidence_admission
+      target: evidence_admission_ratio >= 0.20
+    - id: strong_source_share
+      target: strong_source_ratio >= 0.50
+    - id: unknown_date_share
+      target: unknown_date_ratio <= 0.20
+    - id: content_farm_leakage
+      target: content_farm_extraction_ratio <= 0.02
+    - id: bounded_recovery
+      target: recovery_rounds <= 1 且必须记录 recovery_action
+
+alerts:
+  all_capabilities_unknown: 基线检索可能失败，检查主体别名和查询策略
+  single_source_dependency: 关键结论依赖单一低权威来源，需要人工复核
+  experience_audit_blocked: 已切换静态证据模式，不得推断实际交互能力
+  execution_budget_exhausted: 输出部分结果并列明未完成分支
+  conflicting_incumbents: 可能存在多系统、多分支或新旧替换，禁止强行合并

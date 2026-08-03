@@ -1,0 +1,4 @@
+interface:
+  display_name: "客服厂商锁定分析"
+  short_description: "评估在任厂商合同、技术、数据、运维锁定、竞争风险与突破口"
+  default_prompt: "使用 $detecting-contact-center-vendor-lock-in 评估客服中心在任厂商锁定和竞争进入策略。"

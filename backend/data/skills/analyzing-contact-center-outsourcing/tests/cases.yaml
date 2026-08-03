@@ -1,0 +1,29 @@
+schema_version: skill-cases/v1
+cases:
+  - id: onsite_people_customer_platform
+    evidence: 外包人员驻场，系统由客户自建并管理
+    expected:
+      personnel_mode: outsourced_onsite
+      operating_mode: self_operated
+      software_bundled: false
+  - id: saas_only
+    evidence: 企业采购云客服 SaaS，没有人员服务
+    expected:
+      deployment_mode: saas
+      personnel_mode: UNKNOWN
+  - id: full_bpo
+    evidence: 供应商提供平台、人员、场地和运营考核
+    expected:
+      personnel_mode: full_bpo
+      operating_mode: managed_service
+      software_bundled: true
+  - id: contract_expiry
+    evidence: BPO 合同六个月后到期
+    expected:
+      trigger_candidate: CONTRACT_EXPIRY
+      current_procurement: false
+  - id: amount_without_unit_price
+    evidence: 只有合同总金额
+    expected:
+      seat_scale: UNKNOWN
+      forbidden_action: infer_seats_from_amount

@@ -1,0 +1,16 @@
+cases:
+  - id: expired-tender
+    analysis_as_of_date: 2026-07-20
+    evidence: "某银行智能客服招标公告，投标截止日为 2025-10-10。"
+    expected_lifecycle: EXPIRED
+    expected_window: CLOSED
+  - id: awarded-and-live
+    analysis_as_of_date: 2026-07-20
+    evidence: "某银行公告显示项目已中标、完成验收并投入运行。"
+    expected_lifecycle: LIVE
+    expected_window: CLOSED
+  - id: renewal-window
+    analysis_as_of_date: 2026-07-20
+    evidence: "客户公开合同显示现有服务将于 2026-09-30 到期，正在征集续约方案。"
+    expected_lifecycle: RENEWAL
+    expected_window: OPEN

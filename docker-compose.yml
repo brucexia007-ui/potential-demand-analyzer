@@ -1,0 +1,251 @@
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: potential-demand-backend
+    env_file:
+      - .env
+    environment:
+      RUN_DB_BOOTSTRAP: "true"
+      DB_POOL_SIZE: "10"
+      DB_MAX_OVERFLOW: "10"
+      DB_POOL_TIMEOUT: "30"
+      SKILL_WORKSPACE_ROOT: "/app/data/workspace_skills"
+    volumes:
+      - research_snapshots:/app/data/snapshots
+      - skill_sources:/app/data/workspace_skills
+    # 开发环境端口，生产环境通过 docker-compose.prod.yml 覆盖关闭
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+  worker:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: potential-demand-worker
+    env_file:
+      - .env
+    environment:
+      RUN_DB_BOOTSTRAP: "false"
+      DB_POOL_SIZE: "3"
+      DB_MAX_OVERFLOW: "2"
+      DB_POOL_TIMEOUT: "30"
+      SKILL_WORKSPACE_ROOT: "/app/data/workspace_skills"
+    volumes:
+      - backups:/backups
+      - research_snapshots:/app/data/snapshots
+      - skill_sources:/app/data/workspace_skills
+    command: celery -A app.worker.celery_app.celery_app worker --loglevel=INFO --concurrency=2
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      backend:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pgrep -f 'celery.*worker' > /dev/null || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  beat:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: potential-demand-beat
+    env_file:
+      - .env
+    environment:
+      RUN_DB_BOOTSTRAP: "false"
+      DB_POOL_SIZE: "2"
+      DB_MAX_OVERFLOW: "0"
+      DB_POOL_TIMEOUT: "30"
+      SKILL_WORKSPACE_ROOT: "/app/data/workspace_skills"
+    volumes:
+      - research_snapshots:/app/data/snapshots
+      - skill_sources:/app/data/workspace_skills
+    command: celery -A app.worker.celery_app.celery_app beat --loglevel=INFO --schedule=/app/data/snapshots/celerybeat-schedule
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      backend:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pgrep -f 'celery.*beat' > /dev/null || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  outbox-relay:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: potential-demand-outbox-relay
+    env_file:
+      - .env
+    environment:
+      RUN_DB_BOOTSTRAP: "false"
+      DB_POOL_SIZE: "2"
+      DB_MAX_OVERFLOW: "0"
+      DB_POOL_TIMEOUT: "30"
+    command: python -m app.worker.outbox_relay_runner
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      backend:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "python -m app.worker.outbox_relay_runner --healthcheck"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  browserless:
+    image: browserless/chrome@sha256:57d19e414d9fe4ae9d2ab12ba768c97f38d51246c5b31af55a009205c136012f
+    container_name: potential-demand-browserless
+    environment:
+      MAX_CONCURRENT_SESSIONS: "5"
+      CONNECTION_TIMEOUT: "30000"
+      MAX_QUEUE_LENGTH: "20"
+      PREBOOT_CHROME: "true"
+      KEEP_ALIVE: "true"
+    # 开发环境端口，生产环境通过 docker-compose.prod.yml 覆盖关闭
+    ports:
+      - "3002:3000"
+    restart: unless-stopped
+
+  crawler:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: potential-demand-crawler
+    env_file:
+      - .env
+    environment:
+      RUN_DB_BOOTSTRAP: "false"
+      DB_POOL_SIZE: "3"
+      DB_MAX_OVERFLOW: "2"
+      DB_POOL_TIMEOUT: "30"
+      SKILL_WORKSPACE_ROOT: "/app/data/workspace_skills"
+    volumes:
+      - research_snapshots:/app/data/snapshots
+      - skill_sources:/app/data/workspace_skills
+    command: celery -A app.worker.celery_app.celery_app worker -Q crawler_queue --loglevel=INFO --concurrency=3
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      browserless:
+        condition: service_started
+      backend:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pgrep -f 'crawler_queue' > /dev/null || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: potential-demand-frontend
+    env_file:
+      - .env
+    # 前端不直接发布宿主机端口，统一由生产覆盖层的 Nginx 暴露唯一入口。
+    depends_on:
+      backend:
+        condition: service_started
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://127.0.0.1:3000"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+
+  nginx:
+    image: nginx:alpine
+    container_name: potential-demand-nginx
+    # 宿主机端口仅由生产覆盖层发布，避免出现多个可访问前端地址。
+    env_file:
+      - .env
+    volumes:
+      - ./deploy/nginx/nginx.conf:/etc/nginx/nginx-http.conf:ro
+      - ./deploy/nginx/nginx-https.conf.template:/etc/nginx/nginx-https.conf.template:ro
+      - ./deploy/nginx/entrypoint.sh:/docker-entrypoint.sh:ro
+      - ./deploy/certs:/etc/nginx/certs:ro
+    entrypoint: ["/bin/sh", "/docker-entrypoint.sh"]
+    depends_on:
+      - frontend
+      - backend
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pgrep nginx > /dev/null || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+
+  redis:
+    image: redis:7-alpine
+    container_name: potential-demand-redis
+    # 开发环境端口，生产环境通过 docker-compose.prod.yml 覆盖关闭
+    ports:
+      - "6380:6379"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  postgres:
+    image: pgvector/pgvector:pg16-bookworm@sha256:1d533553fefe4f12e5d80c7b80622ba0c382abb5758856f52983d8789179f0fb
+    container_name: potential-demand-postgres
+    environment:
+      POSTGRES_DB: demand_analyzer
+      POSTGRES_USER: demand_user
+      POSTGRES_PASSWORD: demand_pass
+    volumes:
+      - ./deploy/postgres:/var/lib/postgresql/data
+    # 开发环境端口，生产环境通过 docker-compose.prod.yml 覆盖关闭
+    ports:
+      - "5436:5432"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U demand_user -d demand_analyzer"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  research_snapshots:
+  skill_sources:
+  backups:

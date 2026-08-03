@@ -1,0 +1,72 @@
+cases:
+  - id: verified-fit
+    customer_requirements:
+      - key: 智能质检
+        evidence_domain: customer-private
+        claim_status: CUSTOMER_CONFIRMED
+    target_industry: 银行
+    target_region: 中国大陆
+    product:
+      status: ACTIVE
+      capabilities: [智能质检, 多渠道接入]
+      supported_industries: [银行]
+      supported_regions: [中国大陆]
+      hard_constraints: []
+    expected_fit_verified: true
+    expected_hard_blocker: false
+
+  - id: product-cannot-create-demand
+    customer_requirements: []
+    product:
+      status: ACTIVE
+      capabilities: [智能质检, 坐席辅助, 多渠道接入]
+      hard_constraints: []
+    expected_fit_verified: false
+    expected_hard_blocker: false
+    expected_missing_information: [缺少已证实的客户需求或能力缺口]
+
+  - id: prohibited-region
+    customer_requirements:
+      - key: 智能质检
+        evidence_domain: external
+        claim_status: SUPPORTED
+    target_region: 欧洲
+    product:
+      status: ACTIVE
+      capabilities: [智能质检]
+      supported_regions: [中国大陆]
+      hard_constraints:
+        - type: prohibited_region
+          values: [欧洲]
+    expected_fit_verified: false
+    expected_hard_blocker: true
+
+  - id: mandatory-qualification-missing
+    customer_requirements:
+      - key: 等保三级交付资质
+        evidence_domain: customer-private
+        claim_status: CUSTOMER_CONFIRMED
+    mandatory_qualifications: [等保三级]
+    active_qualifications: []
+    product:
+      status: ACTIVE
+      capabilities: [私有化部署]
+      hard_constraints: []
+    expected_fit_verified: false
+    expected_hard_blocker: true
+
+  - id: partial-coverage
+    customer_requirements:
+      - key: 智能质检
+        evidence_domain: external
+        claim_status: SUPPORTED
+      - key: 跨境数据驻留
+        evidence_domain: customer-private
+        claim_status: CUSTOMER_CONFIRMED
+    product:
+      status: ACTIVE
+      capabilities: [智能质检]
+      hard_constraints: []
+    expected_fit_verified: false
+    expected_hard_blocker: false
+    expected_unmatched_requirements: [跨境数据驻留]

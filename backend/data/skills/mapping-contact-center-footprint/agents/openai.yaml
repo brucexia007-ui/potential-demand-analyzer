@@ -1,0 +1,4 @@
+interface:
+  display_name: "客服中心能力版图"
+  short_description: "识别企业客服中心能力、部署阶段、成熟度、覆盖范围与在任供应商"
+  default_prompt: "使用 $mapping-contact-center-footprint 建立目标企业客服中心能力、成熟度和供应商基线。"

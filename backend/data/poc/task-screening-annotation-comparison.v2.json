@@ -1,0 +1,1059 @@
+{
+  "schema_version": "task-screening-annotation-comparison/v1",
+  "decision_status": "human_review_required",
+  "shadow_g1_status": "blocked_until_consensus_annotation_completed",
+  "aggregate": {
+    "sample_count": 3,
+    "candidate_count": 246,
+    "exact_label_agreement_count": 212,
+    "exact_label_agreement_rate": 0.8617886178861789,
+    "polarity_agreement_count": 219,
+    "polarity_agreement_rate": 0.8902439024390244,
+    "review_queue_count": 38,
+    "review_priority_counts": {
+      "P1": 14,
+      "P0": 24
+    }
+  },
+  "samples": [
+    {
+      "sample_name": "shanghai",
+      "candidate_count": 59,
+      "metrics": {
+        "exact_label_agreement_count": 52,
+        "exact_label_agreement_rate": 0.8813559322033898,
+        "polarity_agreement_count": 54,
+        "polarity_agreement_rate": 0.9152542372881356,
+        "five_label_cohen_kappa": 0.7024495677233429,
+        "polarity_cohen_kappa": 0.7805059523809524,
+        "positive_set_jaccard": 0.7857142857142857,
+        "group_pair_jaccard": 0.0,
+        "group_pair_union_count": 1,
+        "group_pair_intersection_count": 0,
+        "review_queue_count": 9,
+        "review_priority_counts": {
+          "P1": 6,
+          "P0": 3
+        }
+      },
+      "label_counts": {
+        "codex": {
+          "relevant": 11,
+          "irrelevant": 43,
+          "uncertain": 3,
+          "must_keep": 2
+        },
+        "claude": {
+          "uncertain": 1,
+          "relevant": 10,
+          "irrelevant": 46,
+          "must_keep": 1,
+          "acceptable_alternative": 1
+        }
+      },
+      "confusion_matrix": {
+        "must_keep": {
+          "must_keep": 1,
+          "relevant": 1,
+          "acceptable_alternative": 0,
+          "irrelevant": 0,
+          "uncertain": 0
+        },
+        "relevant": {
+          "must_keep": 0,
+          "relevant": 8,
+          "acceptable_alternative": 1,
+          "irrelevant": 1,
+          "uncertain": 1
+        },
+        "acceptable_alternative": {
+          "must_keep": 0,
+          "relevant": 0,
+          "acceptable_alternative": 0,
+          "irrelevant": 0,
+          "uncertain": 0
+        },
+        "irrelevant": {
+          "must_keep": 0,
+          "relevant": 0,
+          "acceptable_alternative": 0,
+          "irrelevant": 43,
+          "uncertain": 0
+        },
+        "uncertain": {
+          "must_keep": 0,
+          "relevant": 1,
+          "acceptable_alternative": 0,
+          "irrelevant": 2,
+          "uncertain": 0
+        }
+      },
+      "review_queue": [
+        {
+          "candidate_id": "c_0001",
+          "title": "客服电话系统项目直接采购公示",
+          "url": "http://www.qianlima.com/gjxx/236503/index_24_3.html",
+          "codex_label": "relevant",
+          "codex_evidence_group": "evidence_a11e60b3c0",
+          "codex_confidence": "medium",
+          "codex_reason_code": "INDUSTRY_ADJACENT_BIDDING",
+          "claude_label": "uncertain",
+          "claude_evidence_group": "",
+          "claude_confidence": "low",
+          "claude_reason_code": "INSUFFICIENT_CONTEXT",
+          "exact_label_agreement": false,
+          "polarity_agreement": false,
+          "group_membership_agreement": true,
+          "review_priority": "P1",
+          "review_reasons": [
+            "UNCERTAIN_DISAGREEMENT",
+            "LABEL_DISAGREEMENT"
+          ]
+        },
+        {
+          "candidate_id": "c_0019",
+          "title": "中国移动上海公司2014年虚拟呼叫中心平台建设项目-巨人网络通讯",
+          "url": "http://www.1330.cn/zhishi/1812366.html",
+          "codex_label": "uncertain",
+          "codex_evidence_group": "",
+          "codex_confidence": "low",
+          "codex_reason_code": "CORE_SIGNAL_WITHOUT_BIDDING_PROOF",
+          "claude_label": "relevant",
+          "claude_evidence_group": "industry_virtual_callcenter_platform_case",
+          "claude_confidence": "medium",
+          "claude_reason_code": "INDUSTRY_CORE_BIDDING",
+          "exact_label_agreement": false,
+          "polarity_agreement": false,
+          "group_membership_agreement": true,
+          "review_priority": "P1",
+          "review_reasons": [
+            "UNCERTAIN_DISAGREEMENT",
+            "LABEL_DISAGREEMENT"
+          ]
+        },
+        {
+          "candidate_id": "c_0024",
+          "title": "公告]上海银行e电话建设采购项目招标公告投标人联合体政府投资项目_网易订阅",
+          "url": "https://www.163.com/dy/article/I30C7HSM05560ONQ.html",
+          "codex_label": "must_keep",
+          "codex_evidence_group": "",
+          "codex_confidence": "high",
+          "codex_reason_code": "UNIQUE_TARGET_CORE_BIDDING",
+          "claude_label": "relevant",
+          "claude_evidence_group": "target_bank_ephone_tender",
+          "claude_confidence": "high",
+          "claude_reason_code": "TARGET_CORE_BIDDING",
+          "exact_label_agreement": false,
+          "polarity_agreement": true,
+          "group_membership_agreement": true,
+          "review_priority": "P0",
+          "review_reasons": [
+            "MUST_KEEP_REVIEW_REQUIRED",
+            "MUST_KEEP_DISAGREEMENT",
+            "LABEL_DISAGREEMENT"
+          ]
+        },
+        {
+          "candidate_id": "c_0033",
+          "title": "全方位金融服务与消费者反馈平台—上海银行投诉中心",
+          "url": "https://www.hezegd.com/lawnews/zixun/1002678.html",
+          "codex_label": "uncertain",
+          "codex_evidence_group": "",
+          "codex_confidence": "low",
+          "codex_reason_code": "CORE_SIGNAL_WITHOUT_BIDDING_PROOF",
+          "claude_label": "irrelevant",
+          "claude_evidence_group": "",
+          "claude_confidence": "medium",
+          "claude_reason_code": "NON_BIDDING_CONTEXT",
+          "exact_label_agreement": false,
+          "polarity_agreement": false,
+          "group_membership_agreement": true,
+          "review_priority": "P1",
+          "review_reasons": [
+            "UNCERTAIN_DISAGREEMENT",
+            "LABEL_DISAGREEMENT"
+          ]
+        },
+        {
+          "candidate_id": "c_0037",
+          "title": "零售业务部客户服务中心需求策划岗招聘",
+          "url": "https://www.wondercv.com/jobs/5O085eA.html",
+          "codex_label": "uncertain",
+          "codex_evidence_group": "",
+          "codex_confidence": "low",
+          "codex_reason_code": "CORE_SIGNAL_WITHOUT_BIDDING_PROOF",
+          "claude_label": "irrelevant",
+          "claude_evidence_group": "",
+          "claude_confidence": "medium",
+          "claude_reason_code": "NON_BIDDING_CONTEXT",
+          "exact_label_agreement": false,
+          "polarity_agreement": false,
+          "group_membership_agreement": true,
+          "review_priority": "P1",
+          "review_reasons": [
+            "UNCERTAIN_DISAGREEMENT",
+            "LABEL_DISAGREEMENT"
+          ]
+        },
+        {
+          "candidate_id": "c_0044",
+          "title": "上海银行多语言智能客服系统采购项目第二次磋商失败公告",
+          "url": "https://sh.bidcenter.com.cn/diqucontent-386980654-6.html",
+          "codex_label": "must_keep",
+          "codex_evidence_group": "",
+          "codex_confidence": "high",
+          "codex_reason_code": "UNIQUE_TARGET_CORE_BIDDING",
+          "claude_label": "must_keep",
+          "claude_evidence_group": "",
+          "claude_confidence": "high",
+          "claude_reason_code": "TARGET_CORE_BIDDING",
+          "exact_label_agreement": true,
+          "polarity_agreement": true,
+          "group_membership_agreement": true,
+          "review_priority": "P0",
+          "review_reasons": [
+            "MUST_KEEP_REVIEW_REQUIRED"
+          ]
+        },
+        {
+          "candidate_id": "c_0045",
+          "title": "【银联商务2023年度智能视频客服系统升级采购项目】成交结果公告-结果公告-机电设备采购平台",
+          "url": "https://www.chinamae.com/purchases/8d77ef0b1f7cdf616a582d282c4a8180",
+          "codex_label": "relevant",
+          "codex_evidence_group": "evidence_f0c395ce48",
+          "codex_confidence": "medium",
+          "codex_reason_code": "INDUSTRY_CORE_BIDDING",
+          "claude_label": "relevant",
+          "claude_evidence_group": "industry_video_cs_case",
+          "claude_confidence": "medium",
+          "claude_reason_code": "INDUSTRY_CORE_BIDDING",
+          "exact_label_agreement": true,
+          "polarity_agreement": true,
+          "group_membership_agreement": false,
+          "review_priority": "P1",
+          "review_reasons": [
+            "GROUP_MEMBERSHIP_DISAGREEMENT"
+          ]
+        },
+        {
+          "candidate_id": "c_0047",
+          "title": "仓山_智能客服系统开发项目成交结果公示",
+          "url": "https://350104.bidcenter.com.cn/bidinfo-4-a0f73512c37219a9f1030bf649c6e9e548f33e9bf691b7e9.html",
+          "codex_label": "relevant",
+          "codex_evidence_group": "evidence_05512aa6b3",
+          "codex_confidence": "medium",
+          "codex_reason_code": "INDUSTRY_CORE_BIDDING",
+          "claude_label": "irrelevant",
+          "claude_evidence_group": "",
+          "claude_confidence": "medium",
+          "claude_reason_code": "UNRELATED_PROCUREMENT",
+          "exact_label_agreement": false,
+          "polarity_agreement": false,
+          "group_membership_agreement": true,
+          "review_priority": "P0",
+          "review_reasons": [
+            "POSITIVE_NEGATIVE_CONFLICT",
+            "LABEL_DISAGREEMENT"
+          ]
+        },
+        {
+          "candidate_id": "c_0050",
+          "title": "【招标结果】【银联商务2023年度智能视频客服系统升级采购项目】成交结果公告",
+          "url": "https://shanghai.jianyu360.cn/jybx/20231220_2312192479998.html",
+          "codex_label": "relevant",
+          "codex_evidence_group": "evidence_db7e3ae323",
+          "codex_confidence": "medium",
+          "codex_reason_code": "INDUSTRY_CORE_BIDDING",
+          "claude_label": "acceptable_alternative",
+          "claude_evidence_group": "industry_video_cs_case",
+          "claude_confidence": "medium",
+          "claude_reason_code": "DUPLICATE_EVENT_ALTERNATIVE",
+          "exact_label_agreement": false,
+          "polarity_agreement": true,
+          "group_membership_agreement": false,
+          "review_priority": "P1",
+          "review_reasons": [
+            "LABEL_DISAGREEMENT",
+            "GROUP_MEMBERSHIP_DISAGREEMENT"
+          ]
+        }
+      ]
+    },
+    {
+      "sample_name": "postal",
+      "candidate_count": 50,
+      "metrics": {
+        "exact_label_agreement_count": 47,
+        "exact_label_agreement_rate": 0.94,
+        "polarity_agreement_count": 49,
+        "polarity_agreement_rate": 0.98,
+        "five_label_cohen_kappa": 0.8150431565967939,
+        "polarity_cohen_kappa": 0.9358151476251604,
+        "positive_set_jaccard": 1.0,
+        "group_pair_jaccard": 1.0,
+        "group_pair_union_count": 1,
+        "group_pair_intersection_count": 1,
+        "review_queue_count": 3,
+        "review_priority_counts": {
+          "P1": 1,
+          "P0": 2
+        }
+      },
+      "label_counts": {
+        "codex": {
+          "irrelevant": 40,
+          "relevant": 6,
+          "uncertain": 1,
+          "must_keep": 2,
+          "acceptable_alternative": 1
+        },
+        "claude": {
+          "irrelevant": 41,
+          "relevant": 8,
+          "acceptable_alternative": 1
+        }
+      },
+      "confusion_matrix": {
+        "must_keep": {
+          "must_keep": 0,
+          "relevant": 2,
+          "acceptable_alternative": 0,
+          "irrelevant": 0,
+          "uncertain": 0
+        },
+        "relevant": {
+          "must_keep": 0,
+          "relevant": 6,
+          "acceptable_alternative": 0,
+          "irrelevant": 0,
+          "uncertain": 0
+        },
+        "acceptable_alternative": {
+          "must_keep": 0,
+          "relevant": 0,
+          "acceptable_alternative": 1,
+          "irrelevant": 0,
+          "uncertain": 0
+        },
+        "irrelevant": {
+          "must_keep": 0,
+          "relevant": 0,
+          "acceptable_alternative": 0,
+          "irrelevant": 40,
+          "uncertain": 0
+        },
+        "uncertain": {
+          "must_keep": 0,
+          "relevant": 0,
+          "acceptable_alternative": 0,
+          "irrelevant": 1,
+          "uncertain": 0
+        }
+      },
+      "review_queue": [
+        {
+          "candidate_id": "c_0028",
+          "title": "邮储银行新一代智能客服“小邮”上线",
+          "url": "http://np.fjsen.com/2018-01/04/content_20666561.htm",
+          "codex_label": "uncertain",
+          "codex_evidence_group": "",
+          "codex_confidence": "low",
+          "codex_reason_code": "CORE_SIGNAL_WITHOUT_BIDDING_PROOF",
+          "claude_label": "irrelevant",
+          "claude_evidence_group": "",
+          "claude_confidence": "medium",
+          "claude_reason_code": "NON_BIDDING_CONTEXT",
+          "exact_label_agreement": false,
+          "polarity_agreement": false,
+          "group_membership_agreement": true,
+          "review_priority": "P1",
+          "review_reasons": [
+            "UNCERTAIN_DISAGREEMENT",
+            "LABEL_DISAGREEMENT"
+          ]
+        },
+        {
+          "candidate_id": "c_0030",
+          "title": "中国邮政储蓄银行语音智能化系统大模型辅助客户服务软件开发与集成服务采购项目招标公告",
+          "url": "https://www.ebnew.com/businessShow/695467221.html",
+          "codex_label": "must_keep",
+          "codex_evidence_group": "",
+          "codex_confidence": "high",
+          "codex_reason_code": "UNIQUE_TARGET_CORE_BIDDING",
+          "claude_label": "relevant",
+          "claude_evidence_group": "postal_hq_voice_ai_cs_tender",
+          "claude_confidence": "high",
+          "claude_reason_code": "PARENT_CORE_BIDDING",
+          "exact_label_agreement": false,
+          "polarity_agreement": true,
+          "group_membership_agreement": true,
+          "review_priority": "P0",
+          "review_reasons": [
+            "MUST_KEEP_REVIEW_REQUIRED",
+            "MUST_KEEP_DISAGREEMENT",
+            "LABEL_DISAGREEMENT"
+          ]
+        },
+        {
+          "candidate_id": "c_0043",
+          "title": "中国邮政储蓄银行信用卡智能客服系统2025年新增功能工程邮储大脑智能语言语音系统配套软件技术开发与集成采购项目单一来源采购前公示 - 中国邮政集团有限公司",
+          "url": "https://www.chinapost.com.cn/xhtml1/report/2509/460-1.htm",
+          "codex_label": "must_keep",
+          "codex_evidence_group": "",
+          "codex_confidence": "high",
+          "codex_reason_code": "UNIQUE_TARGET_CORE_BIDDING",
+          "claude_label": "relevant",
+          "claude_evidence_group": "postal_hq_creditcard_intelligent_cs_tender",
+          "claude_confidence": "high",
+          "claude_reason_code": "PARENT_CORE_BIDDING",
+          "exact_label_agreement": false,
+          "polarity_agreement": true,
+          "group_membership_agreement": true,
+          "review_priority": "P0",
+          "review_reasons": [
+            "MUST_KEEP_REVIEW_REQUIRED",
+            "MUST_KEEP_DISAGREEMENT",
+            "LABEL_DISAGREEMENT"
+          ]
+        }
+      ]
+    },
+    {
+      "sample_name": "pacific",
+      "candidate_count": 137,
+      "metrics": {
+        "exact_label_agreement_count": 113,
+        "exact_label_agreement_rate": 0.8248175182481752,
+        "polarity_agreement_count": 116,
+        "polarity_agreement_rate": 0.8467153284671532,
+        "five_label_cohen_kappa": 0.6376859504132232,
+        "polarity_cohen_kappa": 0.6505102040816326,
+        "positive_set_jaccard": 0.6458333333333334,
+        "group_pair_jaccard": 0.64,
+        "group_pair_union_count": 25,
+        "group_pair_intersection_count": 16,
+        "review_queue_count": 26,
+        "review_priority_counts": {
+          "P1": 7,
+          "P0": 19
+        }
+      },
+      "label_counts": {
+        "codex": {
+          "irrelevant": 89,
+          "relevant": 22,
+          "uncertain": 5,
+          "acceptable_alternative": 18,
+          "must_keep": 3
+        },
+        "claude": {
+          "irrelevant": 101,
+          "relevant": 18,
+          "acceptable_alternative": 17,
+          "must_keep": 1
+        }
+      },
+      "confusion_matrix": {
+        "must_keep": {
+          "must_keep": 1,
+          "relevant": 2,
+          "acceptable_alternative": 0,
+          "irrelevant": 0,
+          "uncertain": 0
+        },
+        "relevant": {
+          "must_keep": 0,
+          "relevant": 14,
+          "acceptable_alternative": 1,
+          "irrelevant": 7,
+          "uncertain": 0
+        },
+        "acceptable_alternative": {
+          "must_keep": 0,
+          "relevant": 0,
+          "acceptable_alternative": 13,
+          "irrelevant": 5,
+          "uncertain": 0
+        },
+        "irrelevant": {
+          "must_keep": 0,
+          "relevant": 2,
+          "acceptable_alternative": 2,
+          "irrelevant": 85,
+          "uncertain": 0
+        },
+        "uncertain": {
+          "must_keep": 0,
+          "relevant": 0,
+          "acceptable_alternative": 1,
+          "irrelevant": 4,
+          "uncertain": 0
+        }
+      },
+      "review_queue": [
+        {
+          "candidate_id": "c_0022",
+          "title": "科技研究院问答对话平台建设项目采购",
+          "url": "https://tip.taikang.com/jzxbj/11054.jhtml",
+          "codex_label": "relevant",
+          "codex_evidence_group": "evidence_465e2e7eaa",
+          "codex_confidence": "medium",
+          "codex_reason_code": "INDUSTRY_ADJACENT_BIDDING",
+          "claude_label": "relevant",
+          "claude_evidence_group": "industry_insurance_dialogue_case",
+          "claude_confidence": "medium",
+          "claude_reason_code": "INDUSTRY_CORE_BIDDING",
+          "exact_label_agreement": true,
+          "polarity_agreement": true,
+          "group_membership_agreement": false,
+          "review_priority": "P1",
+          "review_reasons": [
+            "GROUP_MEMBERSHIP_DISAGREEMENT"
+          ]
+        },
+        {
+          "candidate_id": "c_0024",
+          "title": "聊城市聊城市某项目采购智能客服系统采购项目竞争性谈判公告-山东招标网",
+          "url": "https://sd.bidcenter.com.cn/diqucontent-394905575-1.html",
+          "codex_label": "relevant",
+          "codex_evidence_group": "evidence_a2673e0b46",
+          "codex_confidence": "medium",
+          "codex_reason_code": "INDUSTRY_CORE_BIDDING",
+          "claude_label": "irrelevant",
+          "claude_evidence_group": "",
+          "claude_confidence": "medium",
+          "claude_reason_code": "INSUFFICIENT_CONTEXT",
+          "exact_label_agreement": false,
+          "polarity_agreement": false,
+          "group_membership_agreement": false,
+          "review_priority": "P0",
+          "review_reasons": [
+            "POSITIVE_NEGATIVE_CONFLICT",
+            "LABEL_DISAGREEMENT",
+            "GROUP_MEMBERSHIP_DISAGREEMENT"
+          ]
+        },
+        {
+          "candidate_id": "c_0027",
+          "title": "太保科技创新对话文本生成技术,提升客户行为模拟准确性",
+          "url": "https://www.sohu.com/a/874168831_121956424",
+          "codex_label": "uncertain",
+          "codex_evidence_group": "",
+          "codex_confidence": "low",
+          "codex_reason_code": "CORE_SIGNAL_WITHOUT_BIDDING_PROOF",
+          "claude_label": "irrelevant",
+          "claude_evidence_group": "",
+          "claude_confidence": "medium",
+          "claude_reason_code": "NON_BIDDING_CONTEXT",
+          "exact_label_agreement": false,
+          "polarity_agreement": false,
+          "group_membership_agreement": true,
+          "review_priority": "P1",
+          "review_reasons": [
+            "UNCERTAIN_DISAGREEMENT",
+            "LABEL_DISAGREEMENT"
+          ]
+        },
+        {
+          "candidate_id": "c_0032",
+          "title": "关于中国太平洋保险(集团)官网智能推荐平台业务采购方案征集公告",
+          "url": "http://www.cfcpn.com/plist/caigou",
+          "codex_label": "relevant",
+          "codex_evidence_group": "evidence_70d9b9c4ff",
+          "codex_confidence": "medium",
+          "codex_reason_code": "TARGET_ADJACENT_BIDDING",
+          "claude_label": "irrelevant",
+          "claude_evidence_group": "",
+          "claude_confidence": "high",
+          "claude_reason_code": "UNRELATED_PROCUREMENT",
+          "exact_label_agreement": false,
+          "polarity_agreement": false,
+          "group_membership_agreement": false,
+          "review_priority": "P0",
+          "review_reasons": [
+            "POSITIVE_NEGATIVE_CONFLICT",
+            "LABEL_DISAGREEMENT",
+            "GROUP_MEMBERSHIP_DISAGREEMENT"
+          ]
+        },
+        {
+          "candidate_id": "c_0037",
+          "title": "中国太平洋保险(集团)股份有限公司智能排班软件采购项目方案征集公告",
+          "url": "https://purchase.cpic.com.cn/cms/channel/ywgg1/2000019.htm",
+          "codex_label": "relevant",
+          "codex_evidence_group": "evidence_063306f0e7",
+          "codex_confidence": "medium",
+          "codex_reason_code": "TARGET_ADJACENT_BIDDING",
+          "claude_label": "irrelevant",
+          "claude_evidence_group": "",
+          "claude_confidence": "high",
+          "claude_reason_code": "UNRELATED_PROCUREMENT",
+          "exact_label_agreement": false,
+          "polarity_agreement": false,
+          "group_membership_agreement": false,
+          "review_priority": "P0",
+          "review_reasons": [
+            "POSITIVE_NEGATIVE_CONFLICT",
+            "LABEL_DISAGREEMENT",
+            "GROUP_MEMBERSHIP_DISAGREEMENT"
+          ]
+        },
+        {
+          "candidate_id": "c_0040",
+          "title": "关于中国太平洋保险（集团）2018版官网智能推荐系统模型工程化高级服务采购方案征集公告",
+          "url": "https://life.cpic.com.cn/c/2020-01-20/1590731.shtml",
+          "codex_label": "relevant",
+          "codex_evidence_group": "evidence_7974bc796e",
+          "codex_confidence": "medium",
+          "codex_reason_code": "TARGET_ADJACENT_BIDDING",
+          "claude_label": "irrelevant",
+          "claude_evidence_group": "",
+          "claude_confidence": "high",
+          "claude_reason_code": "UNRELATED_PROCUREMENT",
+          "exact_label_agreement": false,
+          "polarity_agreement": false,
+          "group_membership_agreement": false,
+          "review_priority": "P0",
+          "review_reasons": [
+            "POSITIVE_NEGATIVE_CONFLICT",
+            "LABEL_DISAGREEMENT",
+            "GROUP_MEMBERSHIP_DISAGREEMENT"
+          ]
+        },
+        {
+          "candidate_id": "c_0042",
+          "title": "北京经纬信息技术有限公司2024年太原局客服系统相关设备维保服务项目更正公告",
+          "url": "https://www.bidcenter.com.cn/news-307395313-6.html",
+          "codex_label": "relevant",
+          "codex_evidence_group": "evidence_1fb54b5793",
+          "codex_confidence": "medium",
+          "codex_reason_code": "INDUSTRY_CORE_BIDDING",
+          "claude_label": "irrelevant",
+          "claude_evidence_group": "",
+          "claude_confidence": "high",
+          "claude_reason_code": "UNRELATED_PROCUREMENT",
+          "exact_label_agreement": false,
+          "polarity_agreement": false,
+          "group_membership_agreement": false,
+          "review_priority": "P0",
+          "review_reasons": [
+            "POSITIVE_NEGATIVE_CONFLICT",
+            "LABEL_DISAGREEMENT",
+            "GROUP_MEMBERSHIP_DISAGREEMENT"
+          ]
+        },
+        {
+          "candidate_id": "c_0049",
+          "title": "关于中国太平洋保险（集团）产险电销智能语音助手 POC 方案征集公告",
+          "url": "https://www.cpic.com.cn/c/2018-05-09/1490873.shtml",
+          "codex_label": "must_keep",
+          "codex_evidence_group": "",
+          "codex_confidence": "high",
+          "codex_reason_code": "UNIQUE_TARGET_CORE_BIDDING",
+          "claude_label": "relevant",
+          "claude_evidence_group": "target_cpic_voice_assistant_poc",
+          "claude_confidence": "high",
+          "claude_reason_code": "TARGET_CORE_BIDDING",
+          "exact_label_agreement": false,
+          "polarity_agreement": true,
+          "group_membership_agreement": false,
+          "review_priority": "P0",
+          "review_reasons": [
+            "MUST_KEEP_REVIEW_REQUIRED",
+            "MUST_KEEP_DISAGREEMENT",
+            "LABEL_DISAGREEMENT",
+            "GROUP_MEMBERSHIP_DISAGREEMENT"
+          ]
+        },
+        {
+          "candidate_id": "c_0051",
+          "title": "中国太平洋保险集团外呼智能分配服务招标公告",
+          "url": "https://www.bidcenter.com.cn/news-321599011-1.html",
+          "codex_label": "irrelevant",
+          "codex_evidence_group": "",
+          "codex_confidence": "high",
+          "codex_reason_code": "NO_CUSTOMER_SERVICE_SIGNAL",
+          "claude_label": "relevant",
+          "claude_evidence_group": "target_cpic_outbound_dispatch",
+          "claude_confidence": "medium",
+          "claude_reason_code": "TARGET_CORE_BIDDING",
+          "exact_label_agreement": false,
+          "polarity_agreement": false,
+          "group_membership_agreement": false,
+          "review_priority": "P0",
+          "review_reasons": [
+            "POSITIVE_NEGATIVE_CONFLICT",
+            "LABEL_DISAGREEMENT",
+            "GROUP_MEMBERSHIP_DISAGREEMENT"
+          ]
+        },
+        {
+          "candidate_id": "c_0055",
+          "title": "上海中国太平洋保险(集团)股份有限公司产险P17智能化改造项目(预测式排班)比选成交结果公告",
+          "url": "https://www.bidcenter.com.cn/newscontent-87318723-4.html",
+          "codex_label": "irrelevant",
+          "codex_evidence_group": "",
+          "codex_confidence": "high",
+          "codex_reason_code": "NO_CUSTOMER_SERVICE_SIGNAL",
+          "claude_label": "relevant",
+          "claude_evidence_group": "target_cpic_p17_predictive_scheduling",
+          "claude_confidence": "medium",
+          "claude_reason_code": "TARGET_CORE_BIDDING",
+          "exact_label_agreement": false,
+          "polarity_agreement": false,
+          "group_membership_agreement": false,
+          "review_priority": "P0",
+          "review_reasons": [
+            "POSITIVE_NEGATIVE_CONFLICT",
+            "LABEL_DISAGREEMENT",
+            "GROUP_MEMBERSHIP_DISAGREEMENT"
+          ]
+        },
+        {
+          "candidate_id": "c_0061",
+          "title": "2025年产险电网销智能化培训管理项目配套采购项目项目公告",
+          "url": "https://purchase.cpic.com.cn/cms/channel/ywgg1/1000846.htm",
+          "codex_label": "relevant",
+          "codex_evidence_group": "evidence_4c3a630156",
+          "codex_confidence": "medium",
+          "codex_reason_code": "TARGET_ADJACENT_BIDDING",
+          "claude_label": "irrelevant",
+          "claude_evidence_group": "",
+          "claude_confidence": "medium",
+          "claude_reason_code": "UNRELATED_PROCUREMENT",
+          "exact_label_agreement": false,
+          "polarity_agreement": false,
+          "group_membership_agreement": true,
+          "review_priority": "P0",
+          "review_reasons": [
+            "POSITIVE_NEGATIVE_CONFLICT",
+            "LABEL_DISAGREEMENT"
+          ]
+        },
+        {
+          "candidate_id": "c_0081",
+          "title": "竞争性报价 - 泰康保险集团采购供应链管理平台",
+          "url": "https://tip.taikang.com/jzxbj/11054.jhtml",
+          "codex_label": "relevant",
+          "codex_evidence_group": "evidence_7901a883d5",
+          "codex_confidence": "medium",
+          "codex_reason_code": "INDUSTRY_ADJACENT_BIDDING",
+          "claude_label": "acceptable_alternative",
+          "claude_evidence_group": "industry_insurance_dialogue_case",
+          "claude_confidence": "medium",
+          "claude_reason_code": "DUPLICATE_EVENT_ALTERNATIVE",
+          "exact_label_agreement": false,
+          "polarity_agreement": true,
+          "group_membership_agreement": false,
+          "review_priority": "P1",
+          "review_reasons": [
+            "LABEL_DISAGREEMENT",
+            "GROUP_MEMBERSHIP_DISAGREEMENT"
+          ]
+        },
+        {
+          "candidate_id": "c_0083",
+          "title": "聊城市某项目采购智能客服系统采购项目竞争性谈判公告",
+          "url": "https://sd.bidcenter.com.cn/diqucontent-394905575-1.html",
+          "codex_label": "acceptable_alternative",
+          "codex_evidence_group": "evidence_a2673e0b46",
+          "codex_confidence": "medium",
+          "codex_reason_code": "DUPLICATE_EVENT_ALTERNATIVE",
+          "claude_label": "irrelevant",
+          "claude_evidence_group": "",
+          "claude_confidence": "medium",
+          "claude_reason_code": "INSUFFICIENT_CONTEXT",
+          "exact_label_agreement": false,
+          "polarity_agreement": false,
+          "group_membership_agreement": false,
+          "review_priority": "P0",
+          "review_reasons": [
+            "POSITIVE_NEGATIVE_CONFLICT",
+            "LABEL_DISAGREEMENT",
+            "GROUP_MEMBERSHIP_DISAGREEMENT"
+          ]
+        },
+        {
+          "candidate_id": "c_0086",
+          "title": "太保科技创新对话文本生成技术,提升客户行为模拟准确性",
+          "url": "https://www.sohu.com/a/874168831_121956424",
+          "codex_label": "uncertain",
+          "codex_evidence_group": "",
+          "codex_confidence": "low",
+          "codex_reason_code": "CORE_SIGNAL_WITHOUT_BIDDING_PROOF",
+          "claude_label": "irrelevant",
+          "claude_evidence_group": "",
+          "claude_confidence": "medium",
+          "claude_reason_code": "NON_BIDDING_CONTEXT",
+          "exact_label_agreement": false,
+          "polarity_agreement": false,
+          "group_membership_agreement": true,
+          "review_priority": "P1",
+          "review_reasons": [
+            "UNCERTAIN_DISAGREEMENT",
+            "LABEL_DISAGREEMENT"
+          ]
+        },
+        {
+          "candidate_id": "c_0093",
+          "title": "关于中国太平洋保险(集团)官网智能推荐平台业务采购方案征集公告",
+          "url": "http://www.cfcpn.com/plist/caigou",
+          "codex_label": "acceptable_alternative",
+          "codex_evidence_group": "evidence_70d9b9c4ff",
+          "codex_confidence": "medium",
+          "codex_reason_code": "DUPLICATE_EVENT_ALTERNATIVE",
+          "claude_label": "irrelevant",
+          "claude_evidence_group": "",
+          "claude_confidence": "high",
+          "claude_reason_code": "UNRELATED_PROCUREMENT",
+          "exact_label_agreement": false,
+          "polarity_agreement": false,
+          "group_membership_agreement": false,
+          "review_priority": "P0",
+          "review_reasons": [
+            "POSITIVE_NEGATIVE_CONFLICT",
+            "LABEL_DISAGREEMENT",
+            "GROUP_MEMBERSHIP_DISAGREEMENT"
+          ]
+        },
+        {
+          "candidate_id": "c_0098",
+          "title": "智能排班软件采购项目方案征集公告",
+          "url": "https://purchase.cpic.com.cn/cms/channel/ywgg1/2000019.htm",
+          "codex_label": "acceptable_alternative",
+          "codex_evidence_group": "evidence_063306f0e7",
+          "codex_confidence": "medium",
+          "codex_reason_code": "DUPLICATE_EVENT_ALTERNATIVE",
+          "claude_label": "irrelevant",
+          "claude_evidence_group": "",
+          "claude_confidence": "high",
+          "claude_reason_code": "UNRELATED_PROCUREMENT",
+          "exact_label_agreement": false,
+          "polarity_agreement": false,
+          "group_membership_agreement": false,
+          "review_priority": "P0",
+          "review_reasons": [
+            "POSITIVE_NEGATIVE_CONFLICT",
+            "LABEL_DISAGREEMENT",
+            "GROUP_MEMBERSHIP_DISAGREEMENT"
+          ]
+        },
+        {
+          "candidate_id": "c_0100",
+          "title": "关于中国太平洋保险（集团）2018版官网智能推荐系统模型工程化高级服务采购方案征集公告",
+          "url": "https://life.cpic.com.cn/c/2020-01-20/1590731.shtml",
+          "codex_label": "acceptable_alternative",
+          "codex_evidence_group": "evidence_7974bc796e",
+          "codex_confidence": "medium",
+          "codex_reason_code": "DUPLICATE_EVENT_ALTERNATIVE",
+          "claude_label": "irrelevant",
+          "claude_evidence_group": "",
+          "claude_confidence": "high",
+          "claude_reason_code": "UNRELATED_PROCUREMENT",
+          "exact_label_agreement": false,
+          "polarity_agreement": false,
+          "group_membership_agreement": false,
+          "review_priority": "P0",
+          "review_reasons": [
+            "POSITIVE_NEGATIVE_CONFLICT",
+            "LABEL_DISAGREEMENT",
+            "GROUP_MEMBERSHIP_DISAGREEMENT"
+          ]
+        },
+        {
+          "candidate_id": "c_0105",
+          "title": "北京经纬信息技术有限公司2024年太原局客服系统相关设备维保服务项目更正公告",
+          "url": "https://www.bidcenter.com.cn/news-307395313-6.html",
+          "codex_label": "acceptable_alternative",
+          "codex_evidence_group": "evidence_1fb54b5793",
+          "codex_confidence": "medium",
+          "codex_reason_code": "DUPLICATE_EVENT_ALTERNATIVE",
+          "claude_label": "irrelevant",
+          "claude_evidence_group": "",
+          "claude_confidence": "high",
+          "claude_reason_code": "UNRELATED_PROCUREMENT",
+          "exact_label_agreement": false,
+          "polarity_agreement": false,
+          "group_membership_agreement": false,
+          "review_priority": "P0",
+          "review_reasons": [
+            "POSITIVE_NEGATIVE_CONFLICT",
+            "LABEL_DISAGREEMENT",
+            "GROUP_MEMBERSHIP_DISAGREEMENT"
+          ]
+        },
+        {
+          "candidate_id": "c_0113",
+          "title": "关于中国太平洋保险（集团）产险电销智能",
+          "url": "https://www.cpic.com.cn/c/2018-05-09/1490873.shtml",
+          "codex_label": "uncertain",
+          "codex_evidence_group": "",
+          "codex_confidence": "low",
+          "codex_reason_code": "CORE_SIGNAL_WITHOUT_BIDDING_PROOF",
+          "claude_label": "acceptable_alternative",
+          "claude_evidence_group": "target_cpic_voice_assistant_poc",
+          "claude_confidence": "medium",
+          "claude_reason_code": "DUPLICATE_EVENT_ALTERNATIVE",
+          "exact_label_agreement": false,
+          "polarity_agreement": false,
+          "group_membership_agreement": false,
+          "review_priority": "P1",
+          "review_reasons": [
+            "UNCERTAIN_DISAGREEMENT",
+            "LABEL_DISAGREEMENT",
+            "GROUP_MEMBERSHIP_DISAGREEMENT"
+          ]
+        },
+        {
+          "candidate_id": "c_0114",
+          "title": "中国太平洋保险集团外呼智能分配服务招标公告",
+          "url": "https://www.bidcenter.com.cn/news-321599011-1.html",
+          "codex_label": "irrelevant",
+          "codex_evidence_group": "",
+          "codex_confidence": "high",
+          "codex_reason_code": "NO_CUSTOMER_SERVICE_SIGNAL",
+          "claude_label": "acceptable_alternative",
+          "claude_evidence_group": "target_cpic_outbound_dispatch",
+          "claude_confidence": "medium",
+          "claude_reason_code": "DUPLICATE_EVENT_ALTERNATIVE",
+          "exact_label_agreement": false,
+          "polarity_agreement": false,
+          "group_membership_agreement": false,
+          "review_priority": "P0",
+          "review_reasons": [
+            "POSITIVE_NEGATIVE_CONFLICT",
+            "LABEL_DISAGREEMENT",
+            "GROUP_MEMBERSHIP_DISAGREEMENT"
+          ]
+        },
+        {
+          "candidate_id": "c_0118",
+          "title": "智能语音识别系统项目系统测试和安全测评服务采购项目",
+          "url": "https://350102.bidcenter.com.cn/bidinfo-5-a0f73512c37219a9c5b9632ae54295b9adde52a9d4d93f9f.html",
+          "codex_label": "relevant",
+          "codex_evidence_group": "evidence_3ecb7e211f",
+          "codex_confidence": "medium",
+          "codex_reason_code": "INDUSTRY_CORE_BIDDING",
+          "claude_label": "irrelevant",
+          "claude_evidence_group": "",
+          "claude_confidence": "high",
+          "claude_reason_code": "UNRELATED_PROCUREMENT",
+          "exact_label_agreement": false,
+          "polarity_agreement": false,
+          "group_membership_agreement": true,
+          "review_priority": "P0",
+          "review_reasons": [
+            "POSITIVE_NEGATIVE_CONFLICT",
+            "LABEL_DISAGREEMENT"
+          ]
+        },
+        {
+          "candidate_id": "c_0120",
+          "title": "中国太平洋保险集团24年在线AI智能客服辅助功能“个客小保”方案征集招标公告-采招网",
+          "url": "https://www.bidcenter.com.cn/news-307447073-1.html",
+          "codex_label": "must_keep",
+          "codex_evidence_group": "",
+          "codex_confidence": "high",
+          "codex_reason_code": "UNIQUE_TARGET_CORE_BIDDING",
+          "claude_label": "relevant",
+          "claude_evidence_group": "target_cpic_ai_cs_assistant",
+          "claude_confidence": "high",
+          "claude_reason_code": "TARGET_CORE_BIDDING",
+          "exact_label_agreement": false,
+          "polarity_agreement": true,
+          "group_membership_agreement": true,
+          "review_priority": "P0",
+          "review_reasons": [
+            "MUST_KEEP_REVIEW_REQUIRED",
+            "MUST_KEEP_DISAGREEMENT",
+            "LABEL_DISAGREEMENT"
+          ]
+        },
+        {
+          "candidate_id": "c_0121",
+          "title": "上海中国太平洋保险(集团)股份有限公司产险P17智能化改造项目(预测式排班)比选成交结果公告",
+          "url": "https://www.bidcenter.com.cn/newscontent-87318723-4.html",
+          "codex_label": "irrelevant",
+          "codex_evidence_group": "",
+          "codex_confidence": "high",
+          "codex_reason_code": "NO_CUSTOMER_SERVICE_SIGNAL",
+          "claude_label": "acceptable_alternative",
+          "claude_evidence_group": "target_cpic_p17_predictive_scheduling",
+          "claude_confidence": "medium",
+          "claude_reason_code": "DUPLICATE_EVENT_ALTERNATIVE",
+          "exact_label_agreement": false,
+          "polarity_agreement": false,
+          "group_membership_agreement": false,
+          "review_priority": "P0",
+          "review_reasons": [
+            "POSITIVE_NEGATIVE_CONFLICT",
+            "LABEL_DISAGREEMENT",
+            "GROUP_MEMBERSHIP_DISAGREEMENT"
+          ]
+        },
+        {
+          "candidate_id": "c_0129",
+          "title": "清华产研院《产业智能化白皮书》发布,智能客服降本增效明显! - 知乎",
+          "url": "https://zhuanlan.zhihu.com/p/77632735",
+          "codex_label": "uncertain",
+          "codex_evidence_group": "",
+          "codex_confidence": "low",
+          "codex_reason_code": "CORE_SIGNAL_WITHOUT_BIDDING_PROOF",
+          "claude_label": "irrelevant",
+          "claude_evidence_group": "",
+          "claude_confidence": "high",
+          "claude_reason_code": "LOW_QUALITY_GENERIC_PAGE",
+          "exact_label_agreement": false,
+          "polarity_agreement": false,
+          "group_membership_agreement": true,
+          "review_priority": "P1",
+          "review_reasons": [
+            "UNCERTAIN_DISAGREEMENT",
+            "LABEL_DISAGREEMENT"
+          ]
+        },
+        {
+          "candidate_id": "c_0132",
+          "title": "关于中国太平洋保险（集团）产险电销录音系统信创改造采购项目方案征集公告",
+          "url": "http://m.cpic.com.cn/c/2024-11-27/1868311.shtml",
+          "codex_label": "must_keep",
+          "codex_evidence_group": "",
+          "codex_confidence": "high",
+          "codex_reason_code": "UNIQUE_TARGET_CORE_BIDDING",
+          "claude_label": "must_keep",
+          "claude_evidence_group": "",
+          "claude_confidence": "high",
+          "claude_reason_code": "TARGET_CORE_BIDDING",
+          "exact_label_agreement": true,
+          "polarity_agreement": true,
+          "group_membership_agreement": true,
+          "review_priority": "P0",
+          "review_reasons": [
+            "MUST_KEEP_REVIEW_REQUIRED"
+          ]
+        },
+        {
+          "candidate_id": "c_0135",
+          "title": "太平洋保险呼叫中心-客服系统解决方案-天润融通",
+          "url": "https://www.ti-net.com.cn/cases/104.html",
+          "codex_label": "uncertain",
+          "codex_evidence_group": "",
+          "codex_confidence": "low",
+          "codex_reason_code": "CORE_SIGNAL_WITHOUT_BIDDING_PROOF",
+          "claude_label": "irrelevant",
+          "claude_evidence_group": "",
+          "claude_confidence": "medium",
+          "claude_reason_code": "NON_BIDDING_CONTEXT",
+          "exact_label_agreement": false,
+          "polarity_agreement": false,
+          "group_membership_agreement": true,
+          "review_priority": "P1",
+          "review_reasons": [
+            "UNCERTAIN_DISAGREEMENT",
+            "LABEL_DISAGREEMENT"
+          ]
+        }
+      ]
+    }
+  ]
+}

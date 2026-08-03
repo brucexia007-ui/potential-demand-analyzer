@@ -1,0 +1,98 @@
+name: CI
+
+permissions:
+  contents: read
+
+# 每次推送到正式/开发分支以及面向正式分支的 PR 都运行测试
+on:
+  push:
+    branches: [main, master, develop]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  test-backend:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    services:
+      postgres:
+        image: pgvector/pgvector:pg16-bookworm@sha256:1d533553fefe4f12e5d80c7b80622ba0c382abb5758856f52983d8789179f0fb
+        env:
+          POSTGRES_DB: analyzer_test
+          POSTGRES_USER: analyzer
+          POSTGRES_PASSWORD: analyzer_pwd
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      DATABASE_URL_TEST: postgresql://analyzer:analyzer_pwd@localhost:5432/analyzer_test
+      REDIS_URL: redis://localhost:6379/0
+      ENV: test
+      SECRET_KEY: ci-only-secret-key-not-for-production-0001
+      CONFIG_ENCRYPTION_KEY: MDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDA=
+
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 校验本地 Compose
+        run: |
+          cp .env.example .env
+          docker compose -f docker-compose.yml -f docker-compose.local.yml config --quiet
+
+      - name: 安装 Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: 安装依赖
+        run: |
+          cd backend
+          pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pytest pytest-asyncio pytest-cov
+
+      - name: 运行测试
+        run: |
+          cd backend
+          python -m pytest --tb=short -v --cov=app --cov-report=term-missing
+
+  test-frontend:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 安装 Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: 安装前端依赖
+        run: |
+          cd frontend
+          npm ci
+
+      - name: 构建检查
+        run: |
+          cd frontend
+          node --test tests/security-dependencies.test.mjs
+          npm run build

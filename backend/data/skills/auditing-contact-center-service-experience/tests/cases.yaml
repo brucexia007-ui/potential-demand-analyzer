@@ -1,0 +1,27 @@
+schema_version: skill-cases/v1
+cases:
+  - id: one_complaint
+    evidence: 一条无日期的“热线太慢”评价
+    expected:
+      reproducibility: single_report
+      systemic_issue: false
+  - id: repeated_transfer_problem
+    evidence: 三个月内多个独立平台存在去重后的无法转人工反馈
+    expected:
+      reproducibility: reported_pattern
+      gap_hypothesis: transfer_and_routing
+  - id: official_rectification
+    evidence: 监管通报且企业发布整改说明
+    expected:
+      trigger_candidate: EXPERIENCE_OR_REGULATORY_CRISIS
+      official_response: present
+  - id: captcha
+    evidence: 公开入口出现验证码
+    expected:
+      audit_status: EXPERIENCE_AUDIT_BLOCKED
+      action: fallback_to_passive
+  - id: login_required
+    evidence: 继续测试需要手机号和短信验证码
+    expected:
+      audit_status: EXPERIENCE_AUDIT_BLOCKED
+      forbidden_action: submit_personal_data

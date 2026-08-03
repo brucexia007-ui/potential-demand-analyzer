@@ -1,0 +1,53 @@
+name: 功能建议
+description: 提议新的产品能力或工程改进
+title: "[Feature]: "
+labels:
+  - enhancement
+body:
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: 提交前检查
+      options:
+        - label: 我已搜索现有 Issue，未发现同类提案
+          required: true
+        - label: 我说明的是用户问题，而不只是预设实现方案
+          required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: 用户问题
+      description: 谁在什么场景遇到什么问题，当前造成什么影响？
+    validations:
+      required: true
+  - type: textarea
+    id: outcome
+    attributes:
+      label: 期望结果
+      description: 描述可观察、可验收的结果
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: 背景与证据
+      description: 可附公开链接、脱敏截图、使用频率或样例；不要提交客户私有信息
+  - type: textarea
+    id: proposal
+    attributes:
+      label: 建议方案
+      description: 可选。说明数据契约、UI、执行链或迁移影响
+  - type: textarea
+    id: boundaries
+    attributes:
+      label: 边界、风险与非目标
+      description: 特别说明证据真实性、抓取合规、隐私、成本和降级行为
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: 验收标准
+      placeholder: |
+        - [ ] ……
+        - [ ] ……
+    validations:
+      required: true

@@ -1,0 +1,134 @@
+schema_version: contact-center-opportunity-report/v3
+
+identifier_namespaces:
+  E: external_or_customer_private_evidence
+  I: inference_register
+  H: hypothesis_register
+  R: red_team_objection
+
+commercial_objective:
+  required_fields:
+    - need
+    - trigger
+    - window
+    - win_strategy
+    - next_action
+    - investment_decision
+    - stop_condition
+
+report:
+  required_metadata:
+    - target_entity
+    - entity_scope
+    - analysis_as_of
+    - evidence_cutoff
+    - report_version
+    - confidentiality
+  sections:
+    - id: bluf
+      title: 执行摘要（BLUF）
+      required: true
+      fields:
+        - one_sentence_conclusion
+        - oig_grade
+        - sales_investment_grade
+        - top_action
+        - supporting_judgements
+        - critical_assumption
+        - maximum_risk
+    - id: as_is
+      title: 现状判断（As-Is）
+      required: true
+      subsections:
+        - capability_map
+        - incumbent_and_contract
+        - buying_center
+        - lifecycle_timeline
+    - id: gap_analysis
+      title: 缺口与痛点分析（Gap Analysis）
+      required: true
+      subsections:
+        - quantified_pains
+        - benchmark
+        - triggers
+        - product_pain_fit
+    - id: opportunity_sizing
+      title: 商机评估（Opportunity Sizing）
+      required: true
+      subsections:
+        - hypothesis_matrix
+        - sizing
+        - competitive_landscape
+        - opportunity_scorecard
+    - id: red_team
+      title: 反证与红队检验
+      required: true
+      subsections:
+        - strongest_objections
+        - kill_criteria
+    - id: decision_and_action
+      title: 决策建议与行动路径
+      required: true
+      subsections:
+        - action_tiers
+        - validation_plan
+        - role_based_questions
+        - review_milestones
+    - id: appendix
+      title: 附录
+      required: true
+      subsections:
+        - external_evidence_index
+        - inference_register
+        - data_gap_statement
+
+evidence_contract:
+  external_evidence:
+    identifier_prefix: E
+    allowed_sources:
+      - external
+      - customer_private
+    forbidden:
+      - evaluation_skill_output
+      - model_generated_assumption
+  inference:
+    identifier_prefix: I
+    required_fields:
+      - statement
+      - supporting_evidence_ids
+      - confidence
+      - alternative_explanation
+      - validation_action
+    forbidden_from_external_evidence_index: true
+  hypothesis:
+    identifier_prefix: H
+    required_fields:
+      - statement
+      - status
+      - confidence
+      - confirm_path
+      - falsify_path
+
+rendering_rules:
+  - 首屏必须给出一句话结论、销售投入等级、本周唯一行动、关键前提和最大风险
+  - 正文不得逐章节重复同一证据清单
+  - 投诉和招聘不得成为首屏、能力现状或厂商判断的首要证据
+  - 外部证据、推断、假设和反驳必须使用不同编号命名空间
+  - evaluation Skill 输出只能进入推断登记册，不得进入外部证据索引
+  - 商机规模缺少目标预算、中标价或可比项目口径时显示暂不可估算和补数公式
+  - 潜在竞争者不得表述为目标企业在任厂商
+  - 没有数据的评分维度显示未评分，不得填默认分
+  - 禁止孤立项目符号、占位句和示例数字
+  - 每个行动必须包含触发条件或停止条件
+
+delivery_gates:
+  - id: evidence_inference_separation
+    rule: E 索引不得包含 evaluation Skill 或 INFERENCE
+  - id: body_index_consistency
+    rule: 正文使用的 E 编号必须存在于外部证据索引；推断必须存在于 I 登记册
+  - id: non_repetitive_analysis
+    rule: 不同章节必须回答不同商业问题，禁止复制同一证据列表填充
+  - id: sizing_integrity
+    rule: 无可溯源口径不得输出金额或行业基准示例值
+  - id: actionability
+    rule: 报告必须包含 Top Action、Kill Criteria、验证计划和复核节点

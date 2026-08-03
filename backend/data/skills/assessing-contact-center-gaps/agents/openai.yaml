@@ -1,0 +1,4 @@
+interface:
+  display_name: "客服中心缺口评估"
+  short_description: "基于证据评估客服能力、成熟度、覆盖缺口、采购动力和商机形态"
+  default_prompt: "使用 $assessing-contact-center-gaps 评估目标企业客服中心缺口、触发、窗口和商机候选。"

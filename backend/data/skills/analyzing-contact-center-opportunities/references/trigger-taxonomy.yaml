@@ -1,0 +1,86 @@
+schema_version: contact-center-trigger-taxonomy/v1
+
+triggers:
+  ACTIVE_PROCUREMENT:
+    strength: hard
+    window_certainty: high
+    examples:
+      - 有效期内的招标、采购意向、资格预审、RFI 或公开方案征集
+    rules:
+      - 截止日期必须晚于 analysis_as_of
+      - 必须确认采购主体与目标企业关系
+  RE_TENDER_OR_FAILED_PROCUREMENT:
+    strength: hard
+    window_certainty: high
+    examples:
+      - 废标后重招
+      - 终止后重新采购
+      - 原项目明确重新组织采购
+  CONTRACT_EXPIRY:
+    strength: medium
+    window_certainty: medium
+    examples:
+      - 合同、服务期或维保期有明确结束日期
+    rules:
+      - 到期只形成观察窗口，不自动形成正在采购结论
+      - 未发现续约并不等于不会续约
+  POLICY_OR_COMPLIANCE:
+    strength: conditional
+    window_certainty: medium
+    examples:
+      - 目标企业适用的监管整改要求
+      - 明确落到客服系统的信创或数据合规任务
+    rules:
+      - 通用行业政策只能形成背景
+      - 必须证明适用范围、截止时间或目标企业行动
+  TECHNOLOGY_EOL_EOS:
+    strength: conditional
+    window_certainty: medium
+    examples:
+      - 已确认在用产品停止销售、停止服务或无法适配目标架构
+    rules:
+      - 必须同时确认目标企业在用产品和生命周期事件
+  BUSINESS_EXPANSION_OR_BOTTLENECK:
+    strength: soft
+    window_certainty: low
+    examples:
+      - 新业务、新区域、新渠道或坐席规模扩张
+      - 峰值容量、全渠道或集成瓶颈
+  EXPERIENCE_OR_REGULATORY_CRISIS:
+    strength: conditional
+    window_certainty: medium
+    examples:
+      - 监管通报
+      - 持续且同类的服务投诉
+      - 官方承认并启动整改
+    rules:
+      - 单条投诉不得单独触发
+  INCUMBENT_FAILURE:
+    strength: conditional
+    window_certainty: medium
+    examples:
+      - 交付失败
+      - 重大停服
+      - 连续考核不合格
+    rules:
+      - 行业传闻或其他客户事件不能直接外推到目标企业
+  BUDGET_PATTERN:
+    strength: soft
+    window_certainty: low
+    examples:
+      - 至少三个可比年度出现稳定的采购月份模式
+    rules:
+      - 只能提示接洽时机
+      - 不得写成已获预算或必然招标
+  LEADERSHIP_OR_STRATEGY_CHANGE:
+    strength: soft
+    window_certainty: low
+    examples:
+      - 相关高管变更并伴随公开的数字化或服务战略
+    rules:
+      - 单纯人事变动不得升级为明确商机
+
+combination_rules:
+  - hard 触发可支撑明确窗口，但仍需核对适配性和竞争风险
+  - 两个独立 conditional 触发可提高优先级，但不能替代有效采购公告
+  - soft 触发只能形成验证型线索，除非与 hard 或 conditional 触发交叉印证

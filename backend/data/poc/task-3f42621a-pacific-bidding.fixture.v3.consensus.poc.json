@@ -1,0 +1,156 @@
+{
+  "annotation_policy": "business_label/v1; is_gold_reference仅作来源审计",
+  "annotation_summary": {
+    "evidence_group_count": 18,
+    "irrelevant_count": 92,
+    "must_keep_count": 7,
+    "positive_count": 41,
+    "uncertain_count": 4
+  },
+  "call_timeout_seconds": 60.0,
+  "candidate_count": 137,
+  "fixture_candidate_source": "evidence_snapshot",
+  "fixture_task_ref": "task_eb97f1f2e972",
+  "g1_passed": false,
+  "max_output_tokens": 8000,
+  "max_retries": 0,
+  "output_token_warning_threshold": 4000,
+  "requested_model": "deepseek-v4-pro",
+  "schema_version": "task-screening-poc/v2",
+  "screening_context_sha256": "d33ee1f29d615ec30cea87531a0ce37496fe2ca2fe670f520d5924f6ce5660b1",
+  "screening_protocol": "full_scorecard_deterministic_top_k/v1",
+  "strategies": {
+    "single_scorecard": {
+      "average_evidence_group_recall_at_k": 0.0,
+      "average_must_keep_recall_at_k": 0.0,
+      "average_ndcg_at_k": 0.0,
+      "call_count": 3,
+      "cost": null,
+      "cost_status": "unknown",
+      "finish_reason_counts": {
+        "length": 3
+      },
+      "g1_gates": {
+        "cost_complete": false,
+        "evidence_group_recall": false,
+        "judged_precision": false,
+        "must_keep_all_views": false,
+        "schema_success": false,
+        "top_k_overlap": false
+      },
+      "g1_passed": false,
+      "min_top_k_jaccard": 1.0,
+      "min_top_k_overlap_at_k": 0.0,
+      "minimum_judged_precision_at_k": null,
+      "models": [
+        "deepseek-v4-pro"
+      ],
+      "output_token_warning_count": 3,
+      "output_token_warning_threshold": 4000,
+      "p90_latency_seconds": 70.022048,
+      "providers": [
+        "DeepSeek"
+      ],
+      "schema_success_rate": 0.0,
+      "strategy": "single_scorecard",
+      "token_budget_status": "warning_exceeded",
+      "token_usage": {
+        "input_tokens": 54639,
+        "output_tokens": 24000,
+        "total_tokens": 78639
+      },
+      "views": [
+        {
+          "errors": [
+            "JSONDecodeError"
+          ],
+          "evidence_group_recall_at_k": 0.0,
+          "failure_count": 1,
+          "invocation_audit": {
+            "error": "JSONDecodeError: Expecting value: line 947 column 4 (char 23597)",
+            "finish_reason": "length",
+            "latency_seconds": 70.022048,
+            "model": "deepseek-v4-pro",
+            "provider": "DeepSeek",
+            "response_content_length": 23597,
+            "token_warning": true,
+            "usage": {
+              "input_tokens": 18213,
+              "output_tokens": 8000,
+              "total_tokens": 26213
+            }
+          },
+          "judged_precision_at_k": null,
+          "must_keep_recall_at_k": 0.0,
+          "ndcg_at_k": 0.0,
+          "schema_success": false,
+          "scorecard_count": 0,
+          "scorecards": [],
+          "top_k_ids": [],
+          "view": "rotation_0"
+        },
+        {
+          "errors": [
+            "JSONDecodeError"
+          ],
+          "evidence_group_recall_at_k": 0.0,
+          "failure_count": 1,
+          "invocation_audit": {
+            "error": "JSONDecodeError: Unterminated string starting at: line 969 column 22 (char 23887)",
+            "finish_reason": "length",
+            "latency_seconds": 69.066958,
+            "model": "deepseek-v4-pro",
+            "provider": "DeepSeek",
+            "response_content_length": 23898,
+            "token_warning": true,
+            "usage": {
+              "input_tokens": 18213,
+              "output_tokens": 8000,
+              "total_tokens": 26213
+            }
+          },
+          "judged_precision_at_k": null,
+          "must_keep_recall_at_k": 0.0,
+          "ndcg_at_k": 0.0,
+          "schema_success": false,
+          "scorecard_count": 0,
+          "scorecards": [],
+          "top_k_ids": [],
+          "view": "rotation_45"
+        },
+        {
+          "errors": [
+            "JSONDecodeError"
+          ],
+          "evidence_group_recall_at_k": 0.0,
+          "failure_count": 1,
+          "invocation_audit": {
+            "error": "JSONDecodeError: Expecting property name enclosed in double quotes: line 948 column 1 (char 23427)",
+            "finish_reason": "length",
+            "latency_seconds": 68.597797,
+            "model": "deepseek-v4-pro",
+            "provider": "DeepSeek",
+            "response_content_length": 23427,
+            "token_warning": true,
+            "usage": {
+              "input_tokens": 18213,
+              "output_tokens": 8000,
+              "total_tokens": 26213
+            }
+          },
+          "judged_precision_at_k": null,
+          "must_keep_recall_at_k": 0.0,
+          "ndcg_at_k": 0.0,
+          "schema_success": false,
+          "scorecard_count": 0,
+          "scorecards": [],
+          "top_k_ids": [],
+          "view": "rotation_91"
+        }
+      ]
+    }
+  },
+  "thinking_mode": "disabled",
+  "token_policy": "quality_first_soft_warning/v1",
+  "top_k": 20
+}

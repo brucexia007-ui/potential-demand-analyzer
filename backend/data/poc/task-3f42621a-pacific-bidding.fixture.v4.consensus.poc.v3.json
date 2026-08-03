@@ -1,0 +1,1590 @@
+{
+  "annotation_policy": "business_label/v1; is_gold_reference仅作来源审计",
+  "annotation_summary": {
+    "active_target_opportunity_count": 0,
+    "evidence_group_count": 18,
+    "irrelevant_count": 92,
+    "must_keep_count": 7,
+    "positive_count": 41,
+    "priority_target_count": 5,
+    "target_procurement_group_count": 12,
+    "uncertain_count": 4
+  },
+  "call_timeout_seconds": 60.0,
+  "candidate_count": 137,
+  "fixture_candidate_source": "evidence_snapshot",
+  "fixture_task_ref": "task_eb97f1f2e972",
+  "g1_passed": false,
+  "max_output_tokens": 16440,
+  "max_retries": 0,
+  "output_token_warning_threshold": 4000,
+  "prompt_profile": "broad_research_role_lifecycle/v1",
+  "requested_model": "deepseek-v4-pro",
+  "schema_version": "task-screening-poc/v3",
+  "screening_context_sha256": "d33ee1f29d615ec30cea87531a0ce37496fe2ca2fe670f520d5924f6ce5660b1",
+  "screening_protocol": "role_aware_full_scorecard_deterministic_top_le_k/v3",
+  "selection_policy": {
+    "exclude_evidence_roles": [
+      "out_of_scope",
+      "uncertain"
+    ],
+    "exclude_evidence_types": [
+      "weak_or_irrelevant"
+    ],
+    "max_selected_count": 20,
+    "minimum_eligible_relevance": 2,
+    "ordering": [
+      "evidence_role_priority_desc",
+      "relevance_desc",
+      "evidence_type_priority_desc",
+      "source_quality_desc",
+      "novelty_desc",
+      "published_at_desc",
+      "candidate_id_asc"
+    ]
+  },
+  "strategies": {
+    "single_scorecard": {
+      "average_active_target_opportunity_recall_at_k": null,
+      "average_evidence_group_recall_at_k": 0.185185,
+      "average_must_keep_recall_at_k": 0.095238,
+      "average_ndcg_at_k": 0.084962,
+      "average_priority_target_recall_at_k": 0.133333,
+      "average_target_procurement_group_recall_at_k": 0.277778,
+      "call_count": 3,
+      "cost": null,
+      "cost_complete": false,
+      "cost_status": "unknown",
+      "finish_reason_counts": {
+        "stop": 3
+      },
+      "g1_gates": {
+        "active_target_opportunity_all_views": true,
+        "priority_target_all_views": false,
+        "research_role_precision": false,
+        "schema_success": false,
+        "target_procurement_group_recall": false,
+        "top_k_overlap": false
+      },
+      "g1_passed": false,
+      "min_top_k_jaccard": 0.0,
+      "min_top_k_overlap_at_k": 0.0,
+      "minimum_judged_precision_at_k": 0.65,
+      "minimum_research_role_precision_at_k": 0.65,
+      "models": [
+        "deepseek-v4-pro"
+      ],
+      "output_token_warning_count": 3,
+      "output_token_warning_threshold": 4000,
+      "p90_latency_seconds": 103.1712,
+      "providers": [
+        "DeepSeek"
+      ],
+      "schema_success_rate": 0.333333,
+      "strategy": "single_scorecard",
+      "token_budget_status": "warning_exceeded",
+      "token_usage": {
+        "input_tokens": 56328,
+        "output_tokens": 37662,
+        "total_tokens": 93990
+      },
+      "views": [
+        {
+          "active_target_opportunity_recall_at_k": null,
+          "errors": [
+            "ValueError"
+          ],
+          "evidence_group_recall_at_k": 0.0,
+          "failure_count": 1,
+          "invocation_audit": {
+            "error": "ValueError: 候选 c_0135 的 evidence_type 非法",
+            "finish_reason": "stop",
+            "latency_seconds": 102.141327,
+            "model": "deepseek-v4-pro",
+            "provider": "DeepSeek",
+            "response_content_length": 39822,
+            "token_warning": true,
+            "usage": {
+              "input_tokens": 18776,
+              "output_tokens": 12470,
+              "total_tokens": 31246
+            }
+          },
+          "judged_precision_at_k": null,
+          "must_keep_recall_at_k": 0.0,
+          "ndcg_at_k": 0.0,
+          "priority_target_recall_at_k": 0.0,
+          "research_role_precision_at_k": null,
+          "schema_success": false,
+          "scorecard_count": 0,
+          "scorecards": [],
+          "selected_count": 0,
+          "target_procurement_group_recall_at_k": 0.0,
+          "top_k_ids": [],
+          "view": "rotation_0"
+        },
+        {
+          "active_target_opportunity_recall_at_k": null,
+          "errors": [],
+          "evidence_group_recall_at_k": 0.555556,
+          "failure_count": 0,
+          "invocation_audit": {
+            "error": null,
+            "finish_reason": "stop",
+            "latency_seconds": 100.871475,
+            "model": "deepseek-v4-pro",
+            "provider": "DeepSeek",
+            "response_content_length": 39697,
+            "token_warning": true,
+            "usage": {
+              "input_tokens": 18776,
+              "output_tokens": 12457,
+              "total_tokens": 31233
+            }
+          },
+          "judged_precision_at_k": 0.65,
+          "must_keep_recall_at_k": 0.285714,
+          "ndcg_at_k": 0.254887,
+          "priority_target_recall_at_k": 0.4,
+          "research_role_precision_at_k": 0.65,
+          "schema_success": true,
+          "scorecard_count": 137,
+          "scorecards": [
+            {
+              "candidate_id": "c_0001",
+              "evidence_role": "out_of_scope",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "procurement_lifecycle": "not_applicable",
+              "reason_code": "OUT_OF_SCOPE",
+              "relevance": 1,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0002",
+              "evidence_role": "out_of_scope",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "procurement_lifecycle": "not_applicable",
+              "reason_code": "OUT_OF_SCOPE",
+              "relevance": 1,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0003",
+              "evidence_role": "out_of_scope",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "procurement_lifecycle": "not_applicable",
+              "reason_code": "OUT_OF_SCOPE",
+              "relevance": 1,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0004",
+              "evidence_role": "target_procurement",
+              "evidence_type": "target_direct",
+              "novelty": 2,
+              "procurement_lifecycle": "historical_or_unknown",
+              "reason_code": "TARGET_PROCUREMENT",
+              "relevance": 3,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0005",
+              "evidence_role": "out_of_scope",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "procurement_lifecycle": "not_applicable",
+              "reason_code": "OUT_OF_SCOPE",
+              "relevance": 1,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0006",
+              "evidence_role": "uncertain",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "procurement_lifecycle": "not_applicable",
+              "reason_code": "UNCERTAIN",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0007",
+              "evidence_role": "out_of_scope",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "procurement_lifecycle": "not_applicable",
+              "reason_code": "OUT_OF_SCOPE",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0008",
+              "evidence_role": "target_procurement",
+              "evidence_type": "target_direct",
+              "novelty": 1,
+              "procurement_lifecycle": "historical_or_unknown",
+              "reason_code": "TARGET_PROCUREMENT",
+              "relevance": 3,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0009",
+              "evidence_role": "out_of_scope",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 1,
+              "procurement_lifecycle": "not_applicable",
+              "reason_code": "OUT_OF_SCOPE",
+              "relevance": 1,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0010",
+              "evidence_role": "out_of_scope",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "procurement_lifecycle": "not_applicable",
+              "reason_code": "OUT_OF_SCOPE",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0011",
+              "evidence_role": "target_procurement",
+              "evidence_type": "target_direct",
+              "novelty": 0,
+              "procurement_lifecycle": "historical_or_unknown",
+              "reason_code": "TARGET_PROCUREMENT",
+              "relevance": 3,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0012",
+              "evidence_role": "target_procurement",
+              "evidence_type": "target_direct",
+              "novelty": 0,
+              "procurement_lifecycle": "historical_or_unknown",
+              "reason_code": "TARGET_PROCUREMENT",
+              "relevance": 3,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0013",
+              "evidence_role": "out_of_scope",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "procurement_lifecycle": "not_applicable",
+              "reason_code": "OUT_OF_SCOPE",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0014",
+              "evidence_role": "out_of_scope",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "procurement_lifecycle": "not_applicable",
+              "reason_code": "OUT_OF_SCOPE",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0015",
+              "evidence_role": "out_of_scope",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "procurement_lifecycle": "not_applicable",
+              "reason_code": "OUT_OF_SCOPE",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0016",
+              "evidence_role": "out_of_scope",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "procurement_lifecycle": "not_applicable",
+              "reason_code": "OUT_OF_SCOPE",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0017",
+              "evidence_role": "target_procurement",
+              "evidence_type": "target_direct",
+              "novelty": 0,
+              "procurement_lifecycle": "historical_or_unknown",
+              "reason_code": "TARGET_PROCUREMENT",
+              "relevance": 3,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0018",
+              "evidence_role": "target_procurement",
+              "evidence_type": "target_direct",
+              "novelty": 1,
+              "procurement_lifecycle": "historical_or_unknown",
+              "reason_code": "TARGET_PROCUREMENT",
+              "relevance": 3,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0019",
+              "evidence_role": "industry_capability_intelligence",
+              "evidence_type": "industry_analog",
+              "novelty": 0,
+              "procurement_lifecycle": "not_applicable",
+              "reason_code": "INDUSTRY_INTELLIGENCE",
+              "relevance": 2,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0020",
+              "evidence_role": "out_of_scope",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "procurement_lifecycle": "not_applicable",
+              "reason_code": "OUT_OF_SCOPE",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0021",
+              "evidence_role": "out_of_scope",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "procurement_lifecycle": "not_applicable",
+              "reason_code": "OUT_OF_SCOPE",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0022",
+              "evidence_role": "industry_capability_intelligence",
+              "evidence_type": "industry_analog",
+              "novelty": 0,
+              "procurement_lifecycle": "not_applicable",
+              "reason_code": "INDUSTRY_INTELLIGENCE",
+              "relevance": 2,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0023",
+              "evidence_role": "out_of_scope",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "procurement_lifecycle": "not_applicable",
+              "reason_code": "OUT_OF_SCOPE",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0024",
+              "evidence_role": "industry_capability_intelligence",
+              "evidence_type": "industry_analog",
+              "novelty": 1,
+              "procurement_lifecycle": "not_applicable",
+              "reason_code": "INDUSTRY_INTELLIGENCE",
+              "relevance": 2,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0025",
+              "evidence_role": "out_of_scope",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "procurement_lifecycle": "not_applicable",
+              "reason_code": "OUT_OF_SCOPE",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0026",
+              "evidence_role": "out_of_scope",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "procurement_lifecycle": "not_applicable",
+              "reason_code": "OUT_OF_SCOPE",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0027",
+              "evidence_role": "target_operation_signal",
+              "evidence_type": "target_adjacent",
+              "novelty": 1,
+              "procurement_lifecycle": "not_applicable",
+              "reason_code": "TARGET_OPERATION",
+              "relevance": 2,
+              "source_quality": 0
+            },
+            {
+              "candidate_id": "c_0028",
+              "evidence_role": "industry_capability_intelligence",
+              "evidence_type": "industry_analog",
+              "novelty": 0,
+              "procurement_lifecycle": "not_applicable",
+              "reason_code": "INDUSTRY_INTELLIGENCE",
+              "relevance": 2,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0029",
+              "evidence_role": "uncertain",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "procurement_lifecycle": "not_applicable",
+              "reason_code": "UNCERTAIN",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0030",
+              "evidence_role": "target_procurement",
+              "evidence_type": "target_direct",
+              "novelty": 1,
+              "procurement_lifecycle": "historical_or_unknown",
+              "reason_code": "TARGET_PROCUREMENT",
+              "relevance": 3,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0031",
+              "evidence_role": "out_of_scope",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "procurement_lifecycle": "not_applicable",
+              "reason_code": "OUT_OF_SCOPE",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0032",
+              "evidence_role": "target_procurement",
+              "evidence_type": "target_adjacent",
+              "novelty": 0,
+              "procurement_lifecycle": "historical_or_unknown",
+              "reason_code": "TARGET_PROCUREMENT",
+              "relevance": 2,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0033",
+              "evidence_role": "target_procurement",
+              "evidence_type": "target_direct",
+              "novelty": 2,
+              "procurement_lifecycle": "historical_or_unknown",
+              "reason_code": "TARGET_PROCUREMENT",
+              "relevance": 3,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0034",
+              "evidence_role": "out_of_scope",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "procurement_lifecycle": "not_applicable",
+              "reason_code": "OUT_OF_SCOPE",
+              "relevance": 1,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0035",
+              "evidence_role": "out_of_scope",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "procurement_lifecycle": "not_applicable",
+              "reason_code": "OUT_OF_SCOPE",
+              "relevance": 1,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0036",
+              "evidence_role": "out_of_scope",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "procurement_lifecycle": "not_applicable",
+              "reason_code": "OUT_OF_SCOPE",
+              "relevance": 1,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0037",
+              "evidence_role": "target_procurement",
+              "evidence_type": "target_direct",
+              "novelty": 1,
+              "procurement_lifecycle": "historical_or_unknown",
+              "reason_code": "TARGET_PROCUREMENT",
+              "relevance": 3,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0038",
+              "evidence_role": "target_procurement",
+              "evidence_type": "target_direct",
+              "novelty": 2,
+              "procurement_lifecycle": "historical_or_unknown",
+              "reason_code": "TARGET_PROCUREMENT",
+              "relevance": 3,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0039",
+              "evidence_role": "out_of_scope",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "procurement_lifecycle": "not_applicable",
+              "reason_code": "OUT_OF_SCOPE",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0040",
+              "evidence_role": "target_procurement",
+              "evidence_type": "target_adjacent",
+              "novelty": 0,
+              "procurement_lifecycle": "historical_or_unknown",
+              "reason_code": "TARGET_PROCUREMENT",
+              "relevance": 2,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0041",
+              "evidence_role": "out_of_scope",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "procurement_lifecycle": "not_applicable",
+              "reason_code": "OUT_OF_SCOPE",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0042",
+              "evidence_role": "out_of_scope",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "procurement_lifecycle": "not_applicable",
+              "reason_code": "OUT_OF_SCOPE",
+              "relevance": 1,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0043",
+              "evidence_role": "out_of_scope",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "procurement_lifecycle": "not_applicable",
+              "reason_code": "OUT_OF_SCOPE",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0044",
+              "evidence_role": "out_of_scope",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "procurement_lifecycle": "not_applicable",
+              "reason_code": "OUT_OF_SCOPE",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0045",
+              "evidence_role": "out_of_scope",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "procurement_lifecycle": "not_applicable",
+              "reason_code": "OUT_OF_SCOPE",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0046",
+              "evidence_role": "out_of_scope",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "procurement_lifecycle": "not_applicable",
+              "reason_code": "OUT_OF_SCOPE",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0047",
+              "evidence_role": "out_of_scope",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "procurement_lifecycle": "not_applicable",
+              "reason_code": "OUT_OF_SCOPE",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0048",
+              "evidence_role": "target_procurement",
+              "evidence_type": "target_direct",
+              "novelty": 0,
+              "procurement_lifecycle": "historical_or_unknown",
+              "reason_code": "TARGET_PROCUREMENT",
+              "relevance": 3,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0049",
+              "evidence_role": "target_procurement",
+              "evidence_type": "target_direct",
+              "novelty": 0,
+              "procurement_lifecycle": "historical_or_unknown",
+              "reason_code": "TARGET_PROCUREMENT",
+              "relevance": 3,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0050",
+              "evidence_role": "target_procurement",
+              "evidence_type": "target_direct",
+              "novelty": 0,
+              "procurement_lifecycle": "historical_or_unknown",
+              "reason_code": "TARGET_PROCUREMENT",
+              "relevance": 3,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0051",
+              "evidence_role": "target_procurement",
+              "evidence_type": "target_direct",
+              "novelty": 1,
+              "procurement_lifecycle": "historical_or_unknown",
+              "reason_code": "TARGET_PROCUREMENT",
+              "relevance": 3,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0052",
+              "evidence_role": "target_procurement",
+              "evidence_type": "target_direct",
+              "novelty": 1,
+              "procurement_lifecycle": "historical_or_unknown",
+              "reason_code": "TARGET_PROCUREMENT",
+              "relevance": 3,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0053",
+              "evidence_role": "out_of_scope",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "procurement_lifecycle": "not_applicable",
+              "reason_code": "OUT_OF_SCOPE",
+              "relevance": 1,
+              "source_quality": 0
+            },
+            {
+              "candidate_id": "c_0054",
+              "evidence_role": "uncertain",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "procurement_lifecycle": "not_applicable",
+              "reason_code": "UNCERTAIN",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0055",
+              "evidence_role": "target_procurement",
+              "evidence_type": "target_direct",
+              "novelty": 0,
+              "procurement_lifecycle": "historical_or_unknown",
+              "reason_code": "TARGET_PROCUREMENT",
+              "relevance": 3,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0056",
+              "evidence_role": "uncertain",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "procurement_lifecycle": "not_applicable",
+              "reason_code": "UNCERTAIN",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0057",
+              "evidence_role": "out_of_scope",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "procurement_lifecycle": "not_applicable",
+              "reason_code": "OUT_OF_SCOPE",
+              "relevance": 1,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0058",
+              "evidence_role": "target_procurement",
+              "evidence_type": "target_adjacent",
+              "novelty": 1,
+              "procurement_lifecycle": "historical_or_unknown",
+              "reason_code": "TARGET_PROCUREMENT",
+              "relevance": 2,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0059",
+              "evidence_role": "out_of_scope",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "procurement_lifecycle": "not_applicable",
+              "reason_code": "OUT_OF_SCOPE",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0060",
+              "evidence_role": "out_of_scope",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "procurement_lifecycle": "not_applicable",
+              "reason_code": "OUT_OF_SCOPE",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0061",
+              "evidence_role": "target_procurement",
+              "evidence_type": "target_direct",
+              "novelty": 2,
+              "procurement_lifecycle": "historical_or_unknown",
+              "reason_code": "TARGET_PROCUREMENT",
+              "relevance": 3,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0062",
+              "evidence_role": "target_procurement",
+              "evidence_type": "target_direct",
+              "novelty": 2,
+              "procurement_lifecycle": "historical_or_unknown",
+              "reason_code": "TARGET_PROCUREMENT",
+              "relevance": 3,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0063",
+              "evidence_role": "out_of_scope",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "procurement_lifecycle": "not_applicable",
+              "reason_code": "OUT_OF_SCOPE",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0064",
+              "evidence_role": "out_of_scope",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "procurement_lifecycle": "not_applicable",
+              "reason_code": "OUT_OF_SCOPE",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0065",
+              "evidence_role": "industry_capability_intelligence",
+              "evidence_type": "industry_analog",
+              "novelty": 1,
+              "procurement_lifecycle": "not_applicable",
+              "reason_code": "INDUSTRY_INTELLIGENCE",
+              "relevance": 2,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0066",
+              "evidence_role": "out_of_scope",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "procurement_lifecycle": "not_applicable",
+              "reason_code": "OUT_OF_SCOPE",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0067",
+              "evidence_role": "target_operation_signal",
+              "evidence_type": "target_adjacent",
+              "novelty": 2,
+              "procurement_lifecycle": "not_applicable",
+              "reason_code": "TARGET_OPERATION",
+              "relevance": 2,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0068",
+              "evidence_role": "out_of_scope",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 1,
+              "procurement_lifecycle": "not_applicable",
+              "reason_code": "OUT_OF_SCOPE",
+              "relevance": 1,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0069",
+              "evidence_role": "out_of_scope",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "procurement_lifecycle": "not_applicable",
+              "reason_code": "OUT_OF_SCOPE",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0070",
+              "evidence_role": "target_procurement",
+              "evidence_type": "target_direct",
+              "novelty": 0,
+              "procurement_lifecycle": "historical_or_unknown",
+              "reason_code": "TARGET_PROCUREMENT",
+              "relevance": 3,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0071",
+              "evidence_role": "target_procurement",
+              "evidence_type": "target_direct",
+              "novelty": 0,
+              "procurement_lifecycle": "historical_or_unknown",
+              "reason_code": "TARGET_PROCUREMENT",
+              "relevance": 3,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0072",
+              "evidence_role": "out_of_scope",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "procurement_lifecycle": "not_applicable",
+              "reason_code": "OUT_OF_SCOPE",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0073",
+              "evidence_role": "out_of_scope",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "procurement_lifecycle": "not_applicable",
+              "reason_code": "OUT_OF_SCOPE",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0074",
+              "evidence_role": "out_of_scope",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "procurement_lifecycle": "not_applicable",
+              "reason_code": "OUT_OF_SCOPE",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0075",
+              "evidence_role": "out_of_scope",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "procurement_lifecycle": "not_applicable",
+              "reason_code": "OUT_OF_SCOPE",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0076",
+              "evidence_role": "target_procurement",
+              "evidence_type": "target_direct",
+              "novelty": 0,
+              "procurement_lifecycle": "historical_or_unknown",
+              "reason_code": "TARGET_PROCUREMENT",
+              "relevance": 3,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0077",
+              "evidence_role": "target_procurement",
+              "evidence_type": "target_direct",
+              "novelty": 1,
+              "procurement_lifecycle": "historical_or_unknown",
+              "reason_code": "TARGET_PROCUREMENT",
+              "relevance": 3,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0078",
+              "evidence_role": "industry_capability_intelligence",
+              "evidence_type": "industry_analog",
+              "novelty": 0,
+              "procurement_lifecycle": "not_applicable",
+              "reason_code": "INDUSTRY_INTELLIGENCE",
+              "relevance": 2,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0079",
+              "evidence_role": "out_of_scope",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "procurement_lifecycle": "not_applicable",
+              "reason_code": "OUT_OF_SCOPE",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0080",
+              "evidence_role": "out_of_scope",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "procurement_lifecycle": "not_applicable",
+              "reason_code": "OUT_OF_SCOPE",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0081",
+              "evidence_role": "industry_capability_intelligence",
+              "evidence_type": "industry_analog",
+              "novelty": 0,
+              "procurement_lifecycle": "not_applicable",
+              "reason_code": "INDUSTRY_INTELLIGENCE",
+              "relevance": 2,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0082",
+              "evidence_role": "out_of_scope",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "procurement_lifecycle": "not_applicable",
+              "reason_code": "OUT_OF_SCOPE",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0083",
+              "evidence_role": "industry_capability_intelligence",
+              "evidence_type": "industry_analog",
+              "novelty": 1,
+              "procurement_lifecycle": "not_applicable",
+              "reason_code": "INDUSTRY_INTELLIGENCE",
+              "relevance": 2,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0084",
+              "evidence_role": "out_of_scope",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "procurement_lifecycle": "not_applicable",
+              "reason_code": "OUT_OF_SCOPE",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0085",
+              "evidence_role": "out_of_scope",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "procurement_lifecycle": "not_applicable",
+              "reason_code": "OUT_OF_SCOPE",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0086",
+              "evidence_role": "target_operation_signal",
+              "evidence_type": "target_adjacent",
+              "novelty": 1,
+              "procurement_lifecycle": "not_applicable",
+              "reason_code": "TARGET_OPERATION",
+              "relevance": 2,
+              "source_quality": 0
+            },
+            {
+              "candidate_id": "c_0087",
+              "evidence_role": "industry_capability_intelligence",
+              "evidence_type": "industry_analog",
+              "novelty": 0,
+              "procurement_lifecycle": "not_applicable",
+              "reason_code": "INDUSTRY_INTELLIGENCE",
+              "relevance": 2,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0088",
+              "evidence_role": "uncertain",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "procurement_lifecycle": "not_applicable",
+              "reason_code": "UNCERTAIN",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0089",
+              "evidence_role": "target_procurement",
+              "evidence_type": "target_direct",
+              "novelty": 1,
+              "procurement_lifecycle": "historical_or_unknown",
+              "reason_code": "TARGET_PROCUREMENT",
+              "relevance": 3,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0090",
+              "evidence_role": "out_of_scope",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "procurement_lifecycle": "not_applicable",
+              "reason_code": "OUT_OF_SCOPE",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0091",
+              "evidence_role": "out_of_scope",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "procurement_lifecycle": "not_applicable",
+              "reason_code": "OUT_OF_SCOPE",
+              "relevance": 1,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0092",
+              "evidence_role": "target_procurement",
+              "evidence_type": "target_direct",
+              "novelty": 2,
+              "procurement_lifecycle": "historical_or_unknown",
+              "reason_code": "TARGET_PROCUREMENT",
+              "relevance": 3,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0093",
+              "evidence_role": "target_procurement",
+              "evidence_type": "target_adjacent",
+              "novelty": 0,
+              "procurement_lifecycle": "historical_or_unknown",
+              "reason_code": "TARGET_PROCUREMENT",
+              "relevance": 2,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0094",
+              "evidence_role": "target_procurement",
+              "evidence_type": "target_direct",
+              "novelty": 2,
+              "procurement_lifecycle": "historical_or_unknown",
+              "reason_code": "TARGET_PROCUREMENT",
+              "relevance": 3,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0095",
+              "evidence_role": "out_of_scope",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "procurement_lifecycle": "not_applicable",
+              "reason_code": "OUT_OF_SCOPE",
+              "relevance": 1,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0096",
+              "evidence_role": "out_of_scope",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "procurement_lifecycle": "not_applicable",
+              "reason_code": "OUT_OF_SCOPE",
+              "relevance": 1,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0097",
+              "evidence_role": "out_of_scope",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "procurement_lifecycle": "not_applicable",
+              "reason_code": "OUT_OF_SCOPE",
+              "relevance": 1,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0098",
+              "evidence_role": "target_procurement",
+              "evidence_type": "target_direct",
+              "novelty": 1,
+              "procurement_lifecycle": "historical_or_unknown",
+              "reason_code": "TARGET_PROCUREMENT",
+              "relevance": 3,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0099",
+              "evidence_role": "target_procurement",
+              "evidence_type": "target_direct",
+              "novelty": 2,
+              "procurement_lifecycle": "historical_or_unknown",
+              "reason_code": "TARGET_PROCUREMENT",
+              "relevance": 3,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0100",
+              "evidence_role": "target_procurement",
+              "evidence_type": "target_adjacent",
+              "novelty": 0,
+              "procurement_lifecycle": "historical_or_unknown",
+              "reason_code": "TARGET_PROCUREMENT",
+              "relevance": 2,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0101",
+              "evidence_role": "out_of_scope",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "procurement_lifecycle": "not_applicable",
+              "reason_code": "OUT_OF_SCOPE",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0102",
+              "evidence_role": "out_of_scope",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "procurement_lifecycle": "not_applicable",
+              "reason_code": "OUT_OF_SCOPE",
+              "relevance": 0,
+              "source_quality": 0
+            },
+            {
+              "candidate_id": "c_0103",
+              "evidence_role": "out_of_scope",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "procurement_lifecycle": "not_applicable",
+              "reason_code": "OUT_OF_SCOPE",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0104",
+              "evidence_role": "out_of_scope",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "procurement_lifecycle": "not_applicable",
+              "reason_code": "OUT_OF_SCOPE",
+              "relevance": 0,
+              "source_quality": 0
+            },
+            {
+              "candidate_id": "c_0105",
+              "evidence_role": "out_of_scope",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "procurement_lifecycle": "not_applicable",
+              "reason_code": "OUT_OF_SCOPE",
+              "relevance": 1,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0106",
+              "evidence_role": "out_of_scope",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "procurement_lifecycle": "not_applicable",
+              "reason_code": "OUT_OF_SCOPE",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0107",
+              "evidence_role": "out_of_scope",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "procurement_lifecycle": "not_applicable",
+              "reason_code": "OUT_OF_SCOPE",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0108",
+              "evidence_role": "out_of_scope",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "procurement_lifecycle": "not_applicable",
+              "reason_code": "OUT_OF_SCOPE",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0109",
+              "evidence_role": "out_of_scope",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "procurement_lifecycle": "not_applicable",
+              "reason_code": "OUT_OF_SCOPE",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0110",
+              "evidence_role": "out_of_scope",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "procurement_lifecycle": "not_applicable",
+              "reason_code": "OUT_OF_SCOPE",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0111",
+              "evidence_role": "target_procurement",
+              "evidence_type": "target_direct",
+              "novelty": 0,
+              "procurement_lifecycle": "historical_or_unknown",
+              "reason_code": "TARGET_PROCUREMENT",
+              "relevance": 3,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0112",
+              "evidence_role": "target_procurement",
+              "evidence_type": "target_direct",
+              "novelty": 0,
+              "procurement_lifecycle": "historical_or_unknown",
+              "reason_code": "TARGET_PROCUREMENT",
+              "relevance": 3,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0113",
+              "evidence_role": "target_procurement",
+              "evidence_type": "target_direct",
+              "novelty": 0,
+              "procurement_lifecycle": "historical_or_unknown",
+              "reason_code": "TARGET_PROCUREMENT",
+              "relevance": 3,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0114",
+              "evidence_role": "target_procurement",
+              "evidence_type": "target_direct",
+              "novelty": 1,
+              "procurement_lifecycle": "historical_or_unknown",
+              "reason_code": "TARGET_PROCUREMENT",
+              "relevance": 3,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0115",
+              "evidence_role": "out_of_scope",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "procurement_lifecycle": "not_applicable",
+              "reason_code": "OUT_OF_SCOPE",
+              "relevance": 1,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0116",
+              "evidence_role": "out_of_scope",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "procurement_lifecycle": "not_applicable",
+              "reason_code": "OUT_OF_SCOPE",
+              "relevance": 1,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0117",
+              "evidence_role": "target_procurement",
+              "evidence_type": "target_direct",
+              "novelty": 1,
+              "procurement_lifecycle": "historical_or_unknown",
+              "reason_code": "TARGET_PROCUREMENT",
+              "relevance": 3,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0118",
+              "evidence_role": "out_of_scope",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "procurement_lifecycle": "not_applicable",
+              "reason_code": "OUT_OF_SCOPE",
+              "relevance": 1,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0119",
+              "evidence_role": "uncertain",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "procurement_lifecycle": "not_applicable",
+              "reason_code": "UNCERTAIN",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0120",
+              "evidence_role": "target_procurement",
+              "evidence_type": "target_direct",
+              "novelty": 1,
+              "procurement_lifecycle": "historical_or_unknown",
+              "reason_code": "TARGET_PROCUREMENT",
+              "relevance": 3,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0121",
+              "evidence_role": "target_procurement",
+              "evidence_type": "target_direct",
+              "novelty": 0,
+              "procurement_lifecycle": "historical_or_unknown",
+              "reason_code": "TARGET_PROCUREMENT",
+              "relevance": 3,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0122",
+              "evidence_role": "target_procurement",
+              "evidence_type": "target_adjacent",
+              "novelty": 1,
+              "procurement_lifecycle": "historical_or_unknown",
+              "reason_code": "TARGET_PROCUREMENT",
+              "relevance": 2,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0123",
+              "evidence_role": "out_of_scope",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "procurement_lifecycle": "not_applicable",
+              "reason_code": "OUT_OF_SCOPE",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0124",
+              "evidence_role": "out_of_scope",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "procurement_lifecycle": "not_applicable",
+              "reason_code": "OUT_OF_SCOPE",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0125",
+              "evidence_role": "out_of_scope",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "procurement_lifecycle": "not_applicable",
+              "reason_code": "OUT_OF_SCOPE",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0126",
+              "evidence_role": "target_operation_signal",
+              "evidence_type": "target_adjacent",
+              "novelty": 1,
+              "procurement_lifecycle": "not_applicable",
+              "reason_code": "TARGET_OPERATION",
+              "relevance": 2,
+              "source_quality": 0
+            },
+            {
+              "candidate_id": "c_0127",
+              "evidence_role": "industry_capability_intelligence",
+              "evidence_type": "industry_analog",
+              "novelty": 0,
+              "procurement_lifecycle": "not_applicable",
+              "reason_code": "INDUSTRY_INTELLIGENCE",
+              "relevance": 2,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0128",
+              "evidence_role": "out_of_scope",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "procurement_lifecycle": "not_applicable",
+              "reason_code": "OUT_OF_SCOPE",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0129",
+              "evidence_role": "out_of_scope",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "procurement_lifecycle": "not_applicable",
+              "reason_code": "OUT_OF_SCOPE",
+              "relevance": 1,
+              "source_quality": 0
+            },
+            {
+              "candidate_id": "c_0130",
+              "evidence_role": "out_of_scope",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "procurement_lifecycle": "not_applicable",
+              "reason_code": "OUT_OF_SCOPE",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0131",
+              "evidence_role": "target_operation_signal",
+              "evidence_type": "target_adjacent",
+              "novelty": 1,
+              "procurement_lifecycle": "not_applicable",
+              "reason_code": "TARGET_OPERATION",
+              "relevance": 2,
+              "source_quality": 0
+            },
+            {
+              "candidate_id": "c_0132",
+              "evidence_role": "target_procurement",
+              "evidence_type": "target_direct",
+              "novelty": 1,
+              "procurement_lifecycle": "historical_or_unknown",
+              "reason_code": "TARGET_PROCUREMENT",
+              "relevance": 3,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0133",
+              "evidence_role": "target_operation_signal",
+              "evidence_type": "target_adjacent",
+              "novelty": 0,
+              "procurement_lifecycle": "not_applicable",
+              "reason_code": "TARGET_OPERATION",
+              "relevance": 2,
+              "source_quality": 0
+            },
+            {
+              "candidate_id": "c_0134",
+              "evidence_role": "target_procurement",
+              "evidence_type": "target_adjacent",
+              "novelty": 0,
+              "procurement_lifecycle": "historical_or_unknown",
+              "reason_code": "TARGET_PROCUREMENT",
+              "relevance": 2,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0135",
+              "evidence_role": "vendor_case_intelligence",
+              "evidence_type": "target_adjacent",
+              "novelty": 0,
+              "procurement_lifecycle": "not_applicable",
+              "reason_code": "VENDOR_CASE",
+              "relevance": 2,
+              "source_quality": 0
+            },
+            {
+              "candidate_id": "c_0136",
+              "evidence_role": "out_of_scope",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 1,
+              "procurement_lifecycle": "not_applicable",
+              "reason_code": "OUT_OF_SCOPE",
+              "relevance": 0,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0137",
+              "evidence_role": "out_of_scope",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "procurement_lifecycle": "not_applicable",
+              "reason_code": "OUT_OF_SCOPE",
+              "relevance": 0,
+              "source_quality": 1
+            }
+          ],
+          "selected_count": 20,
+          "target_procurement_group_recall_at_k": 0.833333,
+          "top_k_ids": [
+            "c_0092",
+            "c_0062",
+            "c_0061",
+            "c_0132",
+            "c_0117",
+            "c_0098",
+            "c_0089",
+            "c_0077",
+            "c_0112",
+            "c_0113",
+            "c_0111",
+            "c_0076",
+            "c_0071",
+            "c_0070",
+            "c_0099",
+            "c_0094",
+            "c_0120",
+            "c_0114",
+            "c_0008",
+            "c_0121"
+          ],
+          "view": "rotation_45"
+        },
+        {
+          "active_target_opportunity_recall_at_k": null,
+          "errors": [
+            "ValueError"
+          ],
+          "evidence_group_recall_at_k": 0.0,
+          "failure_count": 1,
+          "invocation_audit": {
+            "error": "ValueError: 候选 c_0135 的 evidence_type 非法",
+            "finish_reason": "stop",
+            "latency_seconds": 103.1712,
+            "model": "deepseek-v4-pro",
+            "provider": "DeepSeek",
+            "response_content_length": 40884,
+            "token_warning": true,
+            "usage": {
+              "input_tokens": 18776,
+              "output_tokens": 12735,
+              "total_tokens": 31511
+            }
+          },
+          "judged_precision_at_k": null,
+          "must_keep_recall_at_k": 0.0,
+          "ndcg_at_k": 0.0,
+          "priority_target_recall_at_k": 0.0,
+          "research_role_precision_at_k": null,
+          "schema_success": false,
+          "scorecard_count": 0,
+          "scorecards": [],
+          "selected_count": 0,
+          "target_procurement_group_recall_at_k": 0.0,
+          "top_k_ids": [],
+          "view": "rotation_91"
+        }
+      ]
+    }
+  },
+  "thinking_mode": "disabled",
+  "token_policy": "quality_first_soft_warning/v1",
+  "top_k": 20
+}

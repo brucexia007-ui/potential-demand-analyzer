@@ -1,0 +1,27 @@
+schema_version: skill-cases/v1
+cases:
+  - id: absent_with_requirement
+    facts: 能力被确认不存在，且有效采购明确要求
+    expected:
+      gap_status: ABSENT_GAP
+      grade_candidate: G5
+  - id: present_low_coverage
+    facts: 智能质检生产运行但覆盖率仅为 5%，客户目标为全量
+    expected:
+      gap_status: COVERAGE_GAP
+      archetype: EXPANSION_OR_UPGRADE
+  - id: unknown_capability
+    facts: 未检索到智能客服现状
+    expected:
+      gap_status: EVIDENCE_UNKNOWN
+      forbidden_grade: G3
+  - id: historical_only
+    facts: 三年前已验收，无当前触发
+    expected:
+      grade_candidate_max: G1
+  - id: locked_core
+    facts: CTI 深度定制且刚续约，上层智能质检缺失
+    expected:
+      archetype: SIDECAR_INCREMENTAL
+      risk_flags:
+        - core_lock_in

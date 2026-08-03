@@ -1,0 +1,199 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-body: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-mono: ui-monospace, "Cascadia Code", "Source Code Pro", Menlo, monospace;
+  --ink: #0b0f0d;
+  --ink-muted: #5b625f;
+  --paper: #f6f8f5;
+  --surface: #ffffff;
+  --line: rgba(11, 15, 13, 0.12);
+  --line-strong: rgba(11, 15, 13, 0.24);
+  --signal-lime: #d7ff44;
+  --signal-cyan: #49d7ff;
+  --shadow-soft: 0 20px 60px rgba(11, 15, 13, 0.08);
+  --shadow-panel: 0 1px 0 rgba(255, 255, 255, 0.75) inset, 0 12px 30px rgba(11, 15, 13, 0.07);
+}
+
+html, body {
+  padding: 0;
+  margin: 0;
+  min-height: 100%;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* 基础排版样式 */
+body {
+  color: var(--ink);
+  background-color: var(--paper);
+  background-image:
+    linear-gradient(rgba(11, 15, 13, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(11, 15, 13, 0.045) 1px, transparent 1px),
+    linear-gradient(135deg, rgba(215, 255, 68, 0.16), transparent 36%, rgba(73, 215, 255, 0.12));
+  background-size: 48px 48px, 48px 48px, auto;
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  letter-spacing: 0;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+::selection {
+  background: var(--signal-lime);
+  color: var(--ink);
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-rise-in {
+  animation: rise-in 0.4s ease both;
+}
+
+.type-cursor {
+  display: inline-block;
+  width: 2px;
+  height: 1.1em;
+  margin-left: 2px;
+  vertical-align: middle;
+  background: currentColor;
+  animation: blink 1s step-end infinite;
+}
+
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* 报告排版优化 */
+.prose h1 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: var(--ink);
+}
+
+.prose h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+  color: var(--ink);
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 0.5rem;
+}
+
+.prose h3 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin-top: 1.25rem;
+  margin-bottom: 0.5rem;
+  color: var(--ink);
+}
+
+.prose p {
+  line-height: 1.75;
+  margin-bottom: 1rem;
+  color: #2f3432;
+}
+
+.prose ul, .prose ol {
+  margin-bottom: 1rem;
+  padding-left: 1.5rem;
+}
+
+.prose li {
+  line-height: 1.7;
+  margin-bottom: 0.5rem;
+}
+
+.prose blockquote {
+  border-left: 3px solid var(--ink);
+  padding-left: 1rem;
+  margin: 1rem 0;
+  color: #3d4441;
+  background: rgba(255, 255, 255, 0.72);
+  padding: 0.75rem 1rem;
+}
+
+.prose code {
+  background: rgba(11, 15, 13, 0.06);
+  padding: 0.2rem 0.4rem;
+  border-radius: 4px;
+  font-size: 0.9em;
+  color: #b91c1c;
+  font-family: var(--font-mono);
+}
+
+.prose pre {
+  background: #0b0f0d;
+  color: #f7f8f5;
+  padding: 1rem;
+  border-radius: 6px;
+  overflow-x: auto;
+  margin: 1rem 0;
+}
+
+.prose pre code {
+  background: transparent;
+  color: inherit;
+  padding: 0;
+}
+
+.prose table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1rem 0;
+}
+
+.prose th, .prose td {
+  border: 1px solid var(--line);
+  padding: 0.75rem 1rem;
+  text-align: left;
+}
+
+.prose th {
+  background: rgba(11, 15, 13, 0.04);
+  font-weight: 600;
+}
+
+.prose tr:nth-child(even) {
+  background: rgba(11, 15, 13, 0.025);
+}
+
+.prose a {
+  color: #0b5f74;
+  text-decoration: underline;
+}
+
+.prose a:hover {
+  color: #0b0f0d;
+}

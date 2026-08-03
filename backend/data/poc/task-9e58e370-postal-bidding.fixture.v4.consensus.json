@@ -1,0 +1,1937 @@
+{
+  "annotation_status": "completed",
+  "candidate_count": 50,
+  "candidate_source": "evidence_snapshot",
+  "candidates": [
+    {
+      "business_label": "irrelevant",
+      "candidate_id": "c_0001",
+      "domain": "www.zbwmy.com",
+      "gold_references": [
+        "para_1",
+        "para_3",
+        "para_6"
+      ],
+      "is_gold_reference": true,
+      "published_at": "2026-07-01T10:54:06.077262+00:00",
+      "snippet": "该项目原为公开招标，因两轮公开招标均未能成立，仅有上海德慧信息技术有限公司和杭州云象网络技术有限公司两家供应商，经研究采购方式转为竞争性磋商。",
+      "source": "web_scrape",
+      "source_kind": "evidence_snapshot",
+      "title": "中国邮政储蓄银行上海分行电信诈骗涉案风险账户智能识别信息化工程项目竞争性磋商情况说明",
+      "url": "http://www.zbwmy.com/150/153/2024/08/16/141112306.html",
+      "evidence_role": "out_of_scope",
+      "procurement_lifecycle": "not_applicable",
+      "annotation_audit": {
+        "codex": {
+          "business_label": "irrelevant",
+          "evidence_group": "",
+          "confidence": "high",
+          "reason_code": "NO_CUSTOMER_SERVICE_SIGNAL"
+        },
+        "claude": {
+          "business_label": "irrelevant",
+          "evidence_group": "",
+          "confidence": "high",
+          "reason_code": "UNRELATED_PROCUREMENT"
+        },
+        "expert": null,
+        "role_annotation": {
+          "annotator": "codex",
+          "evidence_role": "out_of_scope",
+          "procurement_lifecycle": "not_applicable",
+          "active_until": "",
+          "comment": "Codex最终标注：沿用共识无关标签，排除在广义研究范围外。"
+        }
+      }
+    },
+    {
+      "business_label": "irrelevant",
+      "candidate_id": "c_0002",
+      "domain": "www.chinapost.com.cn",
+      "gold_references": [],
+      "is_gold_reference": false,
+      "published_at": "2026-07-01T10:54:06.077267+00:00",
+      "snippet": "采购编号:2025采购-060，公示期:2025年8月28日至2025年8月30日",
+      "source": "web_scrape",
+      "source_kind": "evidence_snapshot",
+      "title": "中国邮政储蓄银行上海分行招聘服务项目中标候选人公示",
+      "url": "https://www.chinapost.com.cn/xhtml1/report/25081/4-1.htm",
+      "evidence_role": "out_of_scope",
+      "procurement_lifecycle": "not_applicable",
+      "annotation_audit": {
+        "codex": {
+          "business_label": "irrelevant",
+          "evidence_group": "",
+          "confidence": "high",
+          "reason_code": "NO_CUSTOMER_SERVICE_SIGNAL"
+        },
+        "claude": {
+          "business_label": "irrelevant",
+          "evidence_group": "",
+          "confidence": "high",
+          "reason_code": "UNRELATED_PROCUREMENT"
+        },
+        "expert": null,
+        "role_annotation": {
+          "annotator": "codex",
+          "evidence_role": "out_of_scope",
+          "procurement_lifecycle": "not_applicable",
+          "active_until": "",
+          "comment": "Codex最终标注：沿用共识无关标签，排除在广义研究范围外。"
+        }
+      }
+    },
+    {
+      "business_label": "irrelevant",
+      "candidate_id": "c_0003",
+      "domain": "www.chinamae.com",
+      "gold_references": [],
+      "is_gold_reference": false,
+      "published_at": "2026-07-01T10:54:06.077268+00:00",
+      "snippet": "上海分行广告宣传策划服务项目公开招标，于2023年8月22日开标。第一中标候选人：******有限公司；第二中标候选人：******有限公司。公示期：2023年8月24日至2023年8月28日。",
+      "source": "web_scrape",
+      "source_kind": "evidence_snapshot",
+      "title": "中国邮政储蓄银行上海分行广告宣传策划服务项目中标候选人公示",
+      "url": "https://www.chinamae.com/purchases/5b58760a603fd939a8cc20f39829f814",
+      "evidence_role": "out_of_scope",
+      "procurement_lifecycle": "not_applicable",
+      "annotation_audit": {
+        "codex": {
+          "business_label": "irrelevant",
+          "evidence_group": "",
+          "confidence": "high",
+          "reason_code": "UNRELATED_PROCUREMENT"
+        },
+        "claude": {
+          "business_label": "irrelevant",
+          "evidence_group": "",
+          "confidence": "high",
+          "reason_code": "UNRELATED_PROCUREMENT"
+        },
+        "expert": null,
+        "role_annotation": {
+          "annotator": "codex",
+          "evidence_role": "out_of_scope",
+          "procurement_lifecycle": "not_applicable",
+          "active_until": "",
+          "comment": "Codex最终标注：沿用共识无关标签，排除在广义研究范围外。"
+        }
+      }
+    },
+    {
+      "business_label": "irrelevant",
+      "candidate_id": "c_0004",
+      "domain": "jl.chinapost.com.cn",
+      "gold_references": [],
+      "is_gold_reference": false,
+      "published_at": "2026-07-01T10:54:06.077269+00:00",
+      "snippet": "中国邮政储蓄银行上海分行营销活动权益平台 专业服务项目成交结果公告 一、项目名称:中国邮政储蓄银行上海分行营销活动权益平台专业服务项目 二、项目编号:[2023]邮银沪BGS0081PC(采购编号20",
+      "source": "web_scrape",
+      "source_kind": "evidence_snapshot",
+      "title": "中国邮政储蓄银行上海分行营销活动权益平台 专业服务项目成交结果公告 - 中国邮政集团有限公司",
+      "url": "http://jl.chinapost.com.cn/xhtml1/report/2402/1573-1.htm",
+      "evidence_role": "out_of_scope",
+      "procurement_lifecycle": "not_applicable",
+      "annotation_audit": {
+        "codex": {
+          "business_label": "irrelevant",
+          "evidence_group": "",
+          "confidence": "high",
+          "reason_code": "UNRELATED_PROCUREMENT"
+        },
+        "claude": {
+          "business_label": "irrelevant",
+          "evidence_group": "",
+          "confidence": "high",
+          "reason_code": "UNRELATED_PROCUREMENT"
+        },
+        "expert": null,
+        "role_annotation": {
+          "annotator": "codex",
+          "evidence_role": "out_of_scope",
+          "procurement_lifecycle": "not_applicable",
+          "active_until": "",
+          "comment": "Codex最终标注：沿用共识无关标签，排除在广义研究范围外。"
+        }
+      }
+    },
+    {
+      "business_label": "irrelevant",
+      "candidate_id": "c_0005",
+      "domain": "www.cbi360.net",
+      "gold_references": [],
+      "is_gold_reference": false,
+      "published_at": "2026-07-01T10:54:06.077271+00:00",
+      "snippet": "项目地区: 上海市 -上海市，业绩类型: 勘察设计，建设单位: 中国邮政储蓄银行股份有限公司上海分行，中标时间: 2",
+      "source": "web_scrape",
+      "source_kind": "evidence_snapshot",
+      "title": "中国邮政储蓄银行上海分行工程项目委托设计服务项目(标段三:设计类审图服务)",
+      "url": "https://www.cbi360.net/hhb/sg_1295142/zb_14093071.html",
+      "evidence_role": "out_of_scope",
+      "procurement_lifecycle": "not_applicable",
+      "annotation_audit": {
+        "codex": {
+          "business_label": "irrelevant",
+          "evidence_group": "",
+          "confidence": "medium",
+          "reason_code": "NO_CUSTOMER_SERVICE_SIGNAL"
+        },
+        "claude": {
+          "business_label": "irrelevant",
+          "evidence_group": "",
+          "confidence": "high",
+          "reason_code": "UNRELATED_PROCUREMENT"
+        },
+        "expert": null,
+        "role_annotation": {
+          "annotator": "codex",
+          "evidence_role": "out_of_scope",
+          "procurement_lifecycle": "not_applicable",
+          "active_until": "",
+          "comment": "Codex最终标注：沿用共识无关标签，排除在广义研究范围外。"
+        }
+      }
+    },
+    {
+      "business_label": "irrelevant",
+      "candidate_id": "c_0006",
+      "domain": "bj.bidcenter.com.cn",
+      "gold_references": [
+        "para_5"
+      ],
+      "is_gold_reference": true,
+      "published_at": "2026-07-01T10:54:06.077272+00:00",
+      "snippet": "中国邮政(略)北京分行委托华信咨(略)就中国邮政储蓄银行北京分行2025年智能营销终端采购项目(招标编号:HX-(略)-114)采用公开招标形式进行采购",
+      "source": "web_scrape",
+      "source_kind": "evidence_snapshot",
+      "title": "中国邮政储蓄银行北京分行2025年智能营销终端采购项目公开招标公告",
+      "url": "https://bj.bidcenter.com.cn/diqucontent-395139362-1.html",
+      "evidence_role": "out_of_scope",
+      "procurement_lifecycle": "not_applicable",
+      "annotation_audit": {
+        "codex": {
+          "business_label": "irrelevant",
+          "evidence_group": "",
+          "confidence": "high",
+          "reason_code": "NO_CUSTOMER_SERVICE_SIGNAL"
+        },
+        "claude": {
+          "business_label": "irrelevant",
+          "evidence_group": "",
+          "confidence": "high",
+          "reason_code": "UNRELATED_PROCUREMENT"
+        },
+        "expert": null,
+        "role_annotation": {
+          "annotator": "codex",
+          "evidence_role": "out_of_scope",
+          "procurement_lifecycle": "not_applicable",
+          "active_until": "",
+          "comment": "Codex最终标注：沿用共识无关标签，排除在广义研究范围外。"
+        }
+      }
+    },
+    {
+      "business_label": "irrelevant",
+      "candidate_id": "c_0007",
+      "domain": "sh.bidcenter.com.cn",
+      "gold_references": [
+        "para_3",
+        "para_6"
+      ],
+      "is_gold_reference": true,
+      "published_at": "2026-07-01T10:54:06.077273+00:00",
+      "snippet": "中国邮政储蓄银行上海分行通信线路服务项目(标段四分行第三方业务通信线路服务采购项目)(第2次招标)公开招标公告 2025-05-27 中国邮政 (略) 上海分行委托上海 (略) 就上海分 (略) 服务",
+      "source": "web_scrape",
+      "source_kind": "evidence_snapshot",
+      "title": "中国邮政储蓄银行上海分行通信线路服务项目(标段四分行第三方业务通信线路服务采购项目)(第2次招标)公开招标公告",
+      "url": "https://sh.bidcenter.com.cn/diqucontent-357735574-1.html",
+      "evidence_role": "out_of_scope",
+      "procurement_lifecycle": "not_applicable",
+      "annotation_audit": {
+        "codex": {
+          "business_label": "irrelevant",
+          "evidence_group": "",
+          "confidence": "high",
+          "reason_code": "NO_CUSTOMER_SERVICE_SIGNAL"
+        },
+        "claude": {
+          "business_label": "irrelevant",
+          "evidence_group": "",
+          "confidence": "high",
+          "reason_code": "UNRELATED_PROCUREMENT"
+        },
+        "expert": null,
+        "role_annotation": {
+          "annotator": "codex",
+          "evidence_role": "out_of_scope",
+          "procurement_lifecycle": "not_applicable",
+          "active_until": "",
+          "comment": "Codex最终标注：沿用共识无关标签，排除在广义研究范围外。"
+        }
+      }
+    },
+    {
+      "business_label": "relevant",
+      "candidate_id": "c_0008",
+      "domain": "www.bidcenter.com.cn",
+      "gold_references": [
+        "para_5",
+        "para_6"
+      ],
+      "is_gold_reference": true,
+      "published_at": "2026-07-01T10:54:06.077274+00:00",
+      "snippet": "中标价格根据中标单价据实结算，总价不超过*.00元；合同签署后30个日历日完成项目的部署、调试、上线运行。",
+      "source": "web_scrape",
+      "source_kind": "evidence_snapshot",
+      "title": "中国邮政储蓄银行股份有限公司深圳分行智能客服管理系统项目第二次中标结果公示-采招网",
+      "url": "https://www.bidcenter.com.cn/news-275815240-4.html",
+      "evidence_role": "target_procurement",
+      "procurement_lifecycle": "closed_or_failed",
+      "evidence_group": "evidence_b30a96f2e3",
+      "annotation_audit": {
+        "codex": {
+          "business_label": "relevant",
+          "evidence_group": "evidence_b30a96f2e3",
+          "confidence": "medium",
+          "reason_code": "SIBLING_CORE_BIDDING"
+        },
+        "claude": {
+          "business_label": "relevant",
+          "evidence_group": "sibling_branch_intelligent_cs_case",
+          "confidence": "medium",
+          "reason_code": "SIBLING_BRANCH_CASE"
+        },
+        "expert": null,
+        "role_annotation": {
+          "annotator": "codex",
+          "evidence_role": "target_procurement",
+          "procurement_lifecycle": "closed_or_failed",
+          "active_until": "",
+          "comment": "Codex最终标注：归入 target_procurement；当前样本未提供可核验的在途有效期。"
+        }
+      }
+    },
+    {
+      "business_label": "relevant",
+      "candidate_id": "c_0009",
+      "domain": "www.ccgp.gov.cn",
+      "gold_references": [
+        "para_1",
+        "para_3",
+        "para_6"
+      ],
+      "is_gold_reference": true,
+      "published_at": "2026-07-01T10:54:06.077275+00:00",
+      "snippet": "土地交易市场智能客服系统建设项目中标，采购单位为上海市土地交易事务中心。",
+      "source": "web_scrape",
+      "source_kind": "evidence_snapshot",
+      "title": "上海市土地交易事务中心土地交易市场智能客服系统建设项目中标公告",
+      "url": "http://www.ccgp.gov.cn/cggg/dfgg/zbgg/202412/t20241217_23892604.htm",
+      "evidence_role": "industry_capability_intelligence",
+      "procurement_lifecycle": "closed_or_failed",
+      "evidence_group": "evidence_113a49fd6f",
+      "annotation_audit": {
+        "codex": {
+          "business_label": "relevant",
+          "evidence_group": "evidence_113a49fd6f",
+          "confidence": "high",
+          "reason_code": "INDUSTRY_CORE_BIDDING"
+        },
+        "claude": {
+          "business_label": "relevant",
+          "evidence_group": "industry_intelligent_cs_case",
+          "confidence": "medium",
+          "reason_code": "INDUSTRY_CORE_BIDDING"
+        },
+        "expert": null,
+        "role_annotation": {
+          "annotator": "codex",
+          "evidence_role": "industry_capability_intelligence",
+          "procurement_lifecycle": "closed_or_failed",
+          "active_until": "",
+          "comment": "Codex最终标注：归入 industry_capability_intelligence；当前样本未提供可核验的在途有效期。"
+        }
+      }
+    },
+    {
+      "business_label": "irrelevant",
+      "candidate_id": "c_0010",
+      "domain": "www.mpaypass.com.cn",
+      "gold_references": [],
+      "is_gold_reference": false,
+      "published_at": "2026-07-01T10:54:06.077277+00:00",
+      "snippet": "由中国邮政储蓄银行股份有限公司上海分行委托上海宁信建设工程咨询有限公司组织的收单业务设备项目公开招标,于2021年6月29日10:15在上海市虹口区东大名路1080号2楼评标室准时开标。",
+      "source": "web_scrape",
+      "source_kind": "evidence_snapshot",
+      "title": "邮储银行上海分行收单业务设备项目中标候选人公示",
+      "url": "https://www.mpaypass.com.cn/news/202107/08203500.html",
+      "evidence_role": "out_of_scope",
+      "procurement_lifecycle": "not_applicable",
+      "annotation_audit": {
+        "codex": {
+          "business_label": "irrelevant",
+          "evidence_group": "",
+          "confidence": "high",
+          "reason_code": "NO_CUSTOMER_SERVICE_SIGNAL"
+        },
+        "claude": {
+          "business_label": "irrelevant",
+          "evidence_group": "",
+          "confidence": "high",
+          "reason_code": "UNRELATED_PROCUREMENT"
+        },
+        "expert": null,
+        "role_annotation": {
+          "annotator": "codex",
+          "evidence_role": "out_of_scope",
+          "procurement_lifecycle": "not_applicable",
+          "active_until": "",
+          "comment": "Codex最终标注：沿用共识无关标签，排除在广义研究范围外。"
+        }
+      }
+    },
+    {
+      "business_label": "relevant",
+      "candidate_id": "c_0011",
+      "domain": "www.bidcenter.com.cn",
+      "gold_references": [
+        "para_3"
+      ],
+      "is_gold_reference": true,
+      "published_at": "2026-07-01T10:54:06.077278+00:00",
+      "snippet": "智能客服交互系统支持服务成交公示，中标金额6.84万元",
+      "source": "web_scrape",
+      "source_kind": "evidence_snapshot",
+      "title": "上海市信息网络有限公司智能客服交互系统支持服务成交公示",
+      "url": "https://www.bidcenter.com.cn/news-307895867-4.html",
+      "evidence_role": "industry_capability_intelligence",
+      "procurement_lifecycle": "closed_or_failed",
+      "evidence_group": "evidence_d6cb8b3360",
+      "annotation_audit": {
+        "codex": {
+          "business_label": "relevant",
+          "evidence_group": "evidence_d6cb8b3360",
+          "confidence": "medium",
+          "reason_code": "INDUSTRY_CORE_BIDDING"
+        },
+        "claude": {
+          "business_label": "relevant",
+          "evidence_group": "industry_intelligent_cs_support_case",
+          "confidence": "medium",
+          "reason_code": "INDUSTRY_CORE_BIDDING"
+        },
+        "expert": null,
+        "role_annotation": {
+          "annotator": "codex",
+          "evidence_role": "industry_capability_intelligence",
+          "procurement_lifecycle": "closed_or_failed",
+          "active_until": "",
+          "comment": "Codex最终标注：归入 industry_capability_intelligence；当前样本未提供可核验的在途有效期。"
+        }
+      }
+    },
+    {
+      "business_label": "relevant",
+      "candidate_id": "c_0012",
+      "domain": "jl.chinapost.com.cn",
+      "gold_references": [
+        "para_1",
+        "para_3",
+        "para_6"
+      ],
+      "is_gold_reference": true,
+      "published_at": "2026-07-01T10:54:06.077279+00:00",
+      "snippet": "一、项目名称:中国邮政储蓄银行上海分行IP电话系统业务改造项目 二、项目编号:[2023]邮银沪BGS0065PC(采购编号:2023-",
+      "source": "web_scrape",
+      "source_kind": "evidence_snapshot",
+      "title": "中国邮政储蓄银行上海分行IP电话系统业务改造项目 成交结果公告",
+      "url": "http://jl.chinapost.com.cn/xhtml1/report/2402/1590-1.htm",
+      "evidence_role": "target_procurement",
+      "procurement_lifecycle": "closed_or_failed",
+      "evidence_group": "evidence_6052e17bdf",
+      "annotation_audit": {
+        "codex": {
+          "business_label": "relevant",
+          "evidence_group": "evidence_6052e17bdf",
+          "confidence": "medium",
+          "reason_code": "TARGET_ADJACENT_BIDDING"
+        },
+        "claude": {
+          "business_label": "relevant",
+          "evidence_group": "target_branch_ip_phone_tender",
+          "confidence": "medium",
+          "reason_code": "TARGET_ADJACENT_BIDDING"
+        },
+        "expert": null,
+        "role_annotation": {
+          "annotator": "codex",
+          "evidence_role": "target_procurement",
+          "procurement_lifecycle": "closed_or_failed",
+          "active_until": "",
+          "comment": "Codex最终标注：归入 target_procurement；当前样本未提供可核验的在途有效期。"
+        }
+      }
+    },
+    {
+      "business_label": "irrelevant",
+      "candidate_id": "c_0013",
+      "domain": "www.chinapost.com.cn",
+      "gold_references": [],
+      "is_gold_reference": false,
+      "published_at": "2026-07-01T10:54:06.077280+00:00",
+      "snippet": "中国邮政储蓄银行上海分行统一前置系统2025年新增功能信息化项目中标候选人公示，采购编号：2025采购-054，公示期：2025年8月28日至2025年8月30日。",
+      "source": "web_scrape",
+      "source_kind": "evidence_snapshot",
+      "title": "中国邮政储蓄银行上海分行统一前置系统2025年新增功能信息化项目中标候选人公示",
+      "url": "https://www.chinapost.com.cn/xhtml1/report/25081/3-1.htm",
+      "evidence_role": "out_of_scope",
+      "procurement_lifecycle": "not_applicable",
+      "annotation_audit": {
+        "codex": {
+          "business_label": "irrelevant",
+          "evidence_group": "",
+          "confidence": "high",
+          "reason_code": "NO_CUSTOMER_SERVICE_SIGNAL"
+        },
+        "claude": {
+          "business_label": "irrelevant",
+          "evidence_group": "",
+          "confidence": "high",
+          "reason_code": "UNRELATED_PROCUREMENT"
+        },
+        "expert": null,
+        "role_annotation": {
+          "annotator": "codex",
+          "evidence_role": "out_of_scope",
+          "procurement_lifecycle": "not_applicable",
+          "active_until": "",
+          "comment": "Codex最终标注：沿用共识无关标签，排除在广义研究范围外。"
+        }
+      }
+    },
+    {
+      "business_label": "irrelevant",
+      "candidate_id": "c_0014",
+      "domain": "js.chinapost.com.cn",
+      "gold_references": [],
+      "is_gold_reference": false,
+      "published_at": "2026-07-01T10:54:06.077281+00:00",
+      "snippet": "公示结束时间:2020年5月25日 一、概况 由中国邮政储蓄银行股份有限公司上海分行委托上海治汇工程造价咨询有限公司组织的金融终端及经济数据库服务项目公开招标,于2020年5月20日8点4",
+      "source": "web_scrape",
+      "source_kind": "evidence_snapshot",
+      "title": "中国邮政储蓄银行上海分行金融终端及经济数据库服务项目中标候选人公示",
+      "url": "http://js.chinapost.com.cn/html1/report/20056/4621-1.htm",
+      "evidence_role": "out_of_scope",
+      "procurement_lifecycle": "not_applicable",
+      "annotation_audit": {
+        "codex": {
+          "business_label": "irrelevant",
+          "evidence_group": "",
+          "confidence": "high",
+          "reason_code": "NO_CUSTOMER_SERVICE_SIGNAL"
+        },
+        "claude": {
+          "business_label": "irrelevant",
+          "evidence_group": "",
+          "confidence": "high",
+          "reason_code": "UNRELATED_PROCUREMENT"
+        },
+        "expert": null,
+        "role_annotation": {
+          "annotator": "codex",
+          "evidence_role": "out_of_scope",
+          "procurement_lifecycle": "not_applicable",
+          "active_until": "",
+          "comment": "Codex最终标注：沿用共识无关标签，排除在广义研究范围外。"
+        }
+      }
+    },
+    {
+      "business_label": "irrelevant",
+      "candidate_id": "c_0015",
+      "domain": "www.chinabidding.com",
+      "gold_references": [],
+      "is_gold_reference": false,
+      "published_at": "2026-07-01T10:54:06.077282+00:00",
+      "snippet": "中国邮政储蓄银行上海分行智慧寺庙信息化项目中标候选人公示，采购编号:2024采购-081，公示期:2024年11月28日至2024年11月30日",
+      "source": "web_scrape",
+      "source_kind": "evidence_snapshot",
+      "title": "中国邮政储蓄银行上海分行“智慧寺庙”信息化项目中标候选人公示",
+      "url": "https://www.chinabidding.com/bidDetail/260667686-BidResult.html",
+      "evidence_role": "out_of_scope",
+      "procurement_lifecycle": "not_applicable",
+      "annotation_audit": {
+        "codex": {
+          "business_label": "irrelevant",
+          "evidence_group": "",
+          "confidence": "high",
+          "reason_code": "NO_CUSTOMER_SERVICE_SIGNAL"
+        },
+        "claude": {
+          "business_label": "irrelevant",
+          "evidence_group": "",
+          "confidence": "high",
+          "reason_code": "UNRELATED_PROCUREMENT"
+        },
+        "expert": null,
+        "role_annotation": {
+          "annotator": "codex",
+          "evidence_role": "out_of_scope",
+          "procurement_lifecycle": "not_applicable",
+          "active_until": "",
+          "comment": "Codex最终标注：沿用共识无关标签，排除在广义研究范围外。"
+        }
+      }
+    },
+    {
+      "business_label": "irrelevant",
+      "candidate_id": "c_0016",
+      "domain": "www.dljczb.com",
+      "gold_references": [
+        "para_5"
+      ],
+      "is_gold_reference": true,
+      "published_at": "2026-07-01T10:54:06.077283+00:00",
+      "snippet": "中国邮政储蓄银行股份有限公司江西省分行(以下简称“招标人”)就营业部智能机器人采购项目,以公开招标方式进行采购,欢迎国内合格投标人前来参与投标。",
+      "source": "web_scrape",
+      "source_kind": "evidence_snapshot",
+      "title": "中国邮政储蓄银行股份有限公司江西省分行营业部智能机器人采购项目招标公告",
+      "url": "https://www.dljczb.com/zhaobiao/show-360826/",
+      "evidence_role": "out_of_scope",
+      "procurement_lifecycle": "not_applicable",
+      "annotation_audit": {
+        "codex": {
+          "business_label": "irrelevant",
+          "evidence_group": "",
+          "confidence": "high",
+          "reason_code": "NO_CUSTOMER_SERVICE_SIGNAL"
+        },
+        "claude": {
+          "business_label": "irrelevant",
+          "evidence_group": "",
+          "confidence": "high",
+          "reason_code": "UNRELATED_PROCUREMENT"
+        },
+        "expert": null,
+        "role_annotation": {
+          "annotator": "codex",
+          "evidence_role": "out_of_scope",
+          "procurement_lifecycle": "not_applicable",
+          "active_until": "",
+          "comment": "Codex最终标注：沿用共识无关标签，排除在广义研究范围外。"
+        }
+      }
+    },
+    {
+      "business_label": "irrelevant",
+      "candidate_id": "c_0017",
+      "domain": "www.bidcenter.com.cn",
+      "gold_references": [],
+      "is_gold_reference": false,
+      "published_at": "2026-07-01T10:54:06.077284+00:00",
+      "snippet": "海南中国邮政储蓄银行海南省分行营业网点智能机器人采购项目测试公告 来自:采招网(www.bidcenter.com.cn) 所属地区 海南省 - 海口市 - 美兰区 发布时间 2019/4/8 招标业",
+      "source": "web_scrape",
+      "source_kind": "evidence_snapshot",
+      "title": "海南中国邮政储蓄银行海南省分行营业网点智能机器人采购项目测试公告-采招网",
+      "url": "https://www.bidcenter.com.cn/newscontent-68071720-1.html",
+      "evidence_role": "out_of_scope",
+      "procurement_lifecycle": "not_applicable",
+      "annotation_audit": {
+        "codex": {
+          "business_label": "irrelevant",
+          "evidence_group": "",
+          "confidence": "high",
+          "reason_code": "NO_CUSTOMER_SERVICE_SIGNAL"
+        },
+        "claude": {
+          "business_label": "irrelevant",
+          "evidence_group": "",
+          "confidence": "high",
+          "reason_code": "UNRELATED_PROCUREMENT"
+        },
+        "expert": null,
+        "role_annotation": {
+          "annotator": "codex",
+          "evidence_role": "out_of_scope",
+          "procurement_lifecycle": "not_applicable",
+          "active_until": "",
+          "comment": "Codex最终标注：沿用共识无关标签，排除在广义研究范围外。"
+        }
+      }
+    },
+    {
+      "business_label": "irrelevant",
+      "candidate_id": "c_0018",
+      "domain": "www.mpaypass.com.cn",
+      "gold_references": [],
+      "is_gold_reference": false,
+      "published_at": "2026-07-01T10:54:06.077285+00:00",
+      "snippet": "中国邮政储蓄银行股份有限公司宁波分行就RPA机器人采购项目进行公开询价，经过询价小组评审，现将采购结果公示如下:",
+      "source": "web_scrape",
+      "source_kind": "evidence_snapshot",
+      "title": "RPA机器人采购项目",
+      "url": "https://www.mpaypass.com.cn/news/202111/15182231.html",
+      "evidence_role": "out_of_scope",
+      "procurement_lifecycle": "not_applicable",
+      "annotation_audit": {
+        "codex": {
+          "business_label": "irrelevant",
+          "evidence_group": "",
+          "confidence": "high",
+          "reason_code": "NO_CUSTOMER_SERVICE_SIGNAL"
+        },
+        "claude": {
+          "business_label": "irrelevant",
+          "evidence_group": "",
+          "confidence": "high",
+          "reason_code": "UNRELATED_PROCUREMENT"
+        },
+        "expert": null,
+        "role_annotation": {
+          "annotator": "codex",
+          "evidence_role": "out_of_scope",
+          "procurement_lifecycle": "not_applicable",
+          "active_until": "",
+          "comment": "Codex最终标注：沿用共识无关标签，排除在广义研究范围外。"
+        }
+      }
+    },
+    {
+      "business_label": "irrelevant",
+      "candidate_id": "c_0019",
+      "domain": "www.chinamae.com",
+      "gold_references": [],
+      "is_gold_reference": false,
+      "published_at": "2026-07-01T10:54:06.077286+00:00",
+      "snippet": "信息类型: 结果公示 区域: 北京",
+      "source": "web_scrape",
+      "source_kind": "evidence_snapshot",
+      "title": "中国邮政储蓄银行北京分行机器人流程自动化采购项目 中标候选人公示-机电设备采购平台",
+      "url": "https://www.chinamae.com/purchases/1250aabeae7ec1d552e4be2fbc6cd697",
+      "evidence_role": "out_of_scope",
+      "procurement_lifecycle": "not_applicable",
+      "annotation_audit": {
+        "codex": {
+          "business_label": "irrelevant",
+          "evidence_group": "",
+          "confidence": "high",
+          "reason_code": "NO_CUSTOMER_SERVICE_SIGNAL"
+        },
+        "claude": {
+          "business_label": "irrelevant",
+          "evidence_group": "",
+          "confidence": "high",
+          "reason_code": "UNRELATED_PROCUREMENT"
+        },
+        "expert": null,
+        "role_annotation": {
+          "annotator": "codex",
+          "evidence_role": "out_of_scope",
+          "procurement_lifecycle": "not_applicable",
+          "active_until": "",
+          "comment": "Codex最终标注：沿用共识无关标签，排除在广义研究范围外。"
+        }
+      }
+    },
+    {
+      "business_label": "irrelevant",
+      "candidate_id": "c_0020",
+      "domain": "www.cptu.org.cn",
+      "gold_references": [],
+      "is_gold_reference": false,
+      "published_at": "2026-07-01T10:54:06.077287+00:00",
+      "snippet": "中捷通信有限公司作为招标代理机构,受中国邮政储蓄银行股份有限公司北京分行委托,于2022年1月18日在采购与招标网(www.chinabidding.cn)和中国邮政集团公司官网(http://www",
+      "source": "web_scrape",
+      "source_kind": "evidence_snapshot",
+      "title": "中国邮政储蓄银行北京分行机器人流程自动化采购项目 中标结果公示",
+      "url": "http://www.cptu.org.cn/html1/report/2203/2149-1.htm",
+      "evidence_role": "out_of_scope",
+      "procurement_lifecycle": "not_applicable",
+      "annotation_audit": {
+        "codex": {
+          "business_label": "irrelevant",
+          "evidence_group": "",
+          "confidence": "high",
+          "reason_code": "NO_CUSTOMER_SERVICE_SIGNAL"
+        },
+        "claude": {
+          "business_label": "irrelevant",
+          "evidence_group": "",
+          "confidence": "high",
+          "reason_code": "UNRELATED_PROCUREMENT"
+        },
+        "expert": null,
+        "role_annotation": {
+          "annotator": "codex",
+          "evidence_role": "out_of_scope",
+          "procurement_lifecycle": "not_applicable",
+          "active_until": "",
+          "comment": "Codex最终标注：沿用共识无关标签，排除在广义研究范围外。"
+        }
+      }
+    },
+    {
+      "business_label": "irrelevant",
+      "candidate_id": "c_0021",
+      "domain": "www.chinapost.com.cn",
+      "gold_references": [
+        "para_5"
+      ],
+      "is_gold_reference": true,
+      "published_at": "2026-07-01T10:54:06.077289+00:00",
+      "snippet": "中国邮政储蓄银行股份有限公司天津分行委托华信咨询设计研究院有限公司就中国邮政储蓄银行天津分行2025年智能机器人采购项目(第",
+      "source": "web_scrape",
+      "source_kind": "evidence_snapshot",
+      "title": "中国邮政储蓄银行天津分行2025年智能机器人采购项目(第二次) 公开招标公告",
+      "url": "https://www.chinapost.com.cn/html1/report/2508/9881-1.htm",
+      "evidence_role": "out_of_scope",
+      "procurement_lifecycle": "not_applicable",
+      "annotation_audit": {
+        "codex": {
+          "business_label": "irrelevant",
+          "evidence_group": "",
+          "confidence": "high",
+          "reason_code": "NO_CUSTOMER_SERVICE_SIGNAL"
+        },
+        "claude": {
+          "business_label": "irrelevant",
+          "evidence_group": "",
+          "confidence": "high",
+          "reason_code": "UNRELATED_PROCUREMENT"
+        },
+        "expert": null,
+        "role_annotation": {
+          "annotator": "codex",
+          "evidence_role": "out_of_scope",
+          "procurement_lifecycle": "not_applicable",
+          "active_until": "",
+          "comment": "Codex最终标注：沿用共识无关标签，排除在广义研究范围外。"
+        }
+      }
+    },
+    {
+      "business_label": "irrelevant",
+      "candidate_id": "c_0022",
+      "domain": "www.163.com",
+      "gold_references": [],
+      "is_gold_reference": false,
+      "published_at": "2026-07-01T10:54:06.077290+00:00",
+      "snippet": "又一批机器人被邮储银行采购，分别投放于中国邮政储蓄银行金乡县支行，济南市历下支行，济宁市任城区洸河路支行以及济南辛庄支行。",
+      "source": "web_scrape",
+      "source_kind": "evidence_snapshot",
+      "title": "被邮政储蓄银行反复采购机器人的是谁?邮储_网易订阅",
+      "url": "https://www.163.com/dy/article/GR7OROSM05458MH2.html",
+      "evidence_role": "out_of_scope",
+      "procurement_lifecycle": "not_applicable",
+      "annotation_audit": {
+        "codex": {
+          "business_label": "irrelevant",
+          "evidence_group": "",
+          "confidence": "high",
+          "reason_code": "NO_CUSTOMER_SERVICE_SIGNAL"
+        },
+        "claude": {
+          "business_label": "irrelevant",
+          "evidence_group": "",
+          "confidence": "medium",
+          "reason_code": "NON_BIDDING_CONTEXT"
+        },
+        "expert": null,
+        "role_annotation": {
+          "annotator": "codex",
+          "evidence_role": "out_of_scope",
+          "procurement_lifecycle": "not_applicable",
+          "active_until": "",
+          "comment": "Codex最终标注：沿用共识无关标签，排除在广义研究范围外。"
+        }
+      }
+    },
+    {
+      "business_label": "irrelevant",
+      "candidate_id": "c_0023",
+      "domain": "www.imrobotic.com",
+      "gold_references": [],
+      "is_gold_reference": false,
+      "published_at": "2026-07-01T10:54:06.077291+00:00",
+      "snippet": "需求已通过审核;内容已电话确认真",
+      "source": "web_scrape",
+      "source_kind": "evidence_snapshot",
+      "title": "上海某快递公司-立镖分拣机器人采购需求_机器人在线!",
+      "url": "https://www.imrobotic.com/buop/detail/2636.html",
+      "evidence_role": "out_of_scope",
+      "procurement_lifecycle": "not_applicable",
+      "annotation_audit": {
+        "codex": {
+          "business_label": "irrelevant",
+          "evidence_group": "",
+          "confidence": "high",
+          "reason_code": "NO_CUSTOMER_SERVICE_SIGNAL"
+        },
+        "claude": {
+          "business_label": "irrelevant",
+          "evidence_group": "",
+          "confidence": "high",
+          "reason_code": "UNRELATED_PROCUREMENT"
+        },
+        "expert": null,
+        "role_annotation": {
+          "annotator": "codex",
+          "evidence_role": "out_of_scope",
+          "procurement_lifecycle": "not_applicable",
+          "active_until": "",
+          "comment": "Codex最终标注：沿用共识无关标签，排除在广义研究范围外。"
+        }
+      }
+    },
+    {
+      "business_label": "irrelevant",
+      "candidate_id": "c_0024",
+      "domain": "www.bidcenter.com.cn",
+      "gold_references": [],
+      "is_gold_reference": false,
+      "published_at": "2026-07-01T10:54:06.077292+00:00",
+      "snippet": "上海银行机器人流程自动化产品选型采购项目采购结果公示 发布时间 2024-09-29 项目编号 点击查看 中标金额 详见内容 采购规模走势",
+      "source": "web_scrape",
+      "source_kind": "evidence_snapshot",
+      "title": "上海银行机器人流程自动化产品选型采购项目采购结果公示",
+      "url": "https://www.bidcenter.com.cn/news-312239348-4.html",
+      "evidence_role": "out_of_scope",
+      "procurement_lifecycle": "not_applicable",
+      "annotation_audit": {
+        "codex": {
+          "business_label": "irrelevant",
+          "evidence_group": "",
+          "confidence": "high",
+          "reason_code": "NO_CUSTOMER_SERVICE_SIGNAL"
+        },
+        "claude": {
+          "business_label": "irrelevant",
+          "evidence_group": "",
+          "confidence": "high",
+          "reason_code": "UNRELATED_PROCUREMENT"
+        },
+        "expert": null,
+        "role_annotation": {
+          "annotator": "codex",
+          "evidence_role": "out_of_scope",
+          "procurement_lifecycle": "not_applicable",
+          "active_until": "",
+          "comment": "Codex最终标注：沿用共识无关标签，排除在广义研究范围外。"
+        }
+      }
+    },
+    {
+      "business_label": "irrelevant",
+      "candidate_id": "c_0025",
+      "domain": "max.book118.com",
+      "gold_references": [],
+      "is_gold_reference": false,
+      "published_at": "2026-07-01T10:54:06.077293+00:00",
+      "snippet": "项目名称:中国邮政储蓄银行重庆分行信用卡外呼分期外包服务项目竞争性谈判文件，采购人:中国邮政储蓄银行股份有限公司重庆分行，日期:二0一八年五月。",
+      "source": "web_scrape",
+      "source_kind": "evidence_snapshot",
+      "title": "中国邮政储蓄银行重庆分行信用卡外呼分期外包服务项目竞争性谈判文件",
+      "url": "https://max.book118.com/html/2018/0706/7044026120001136.shtm",
+      "evidence_role": "out_of_scope",
+      "procurement_lifecycle": "not_applicable",
+      "annotation_audit": {
+        "codex": {
+          "business_label": "irrelevant",
+          "evidence_group": "",
+          "confidence": "medium",
+          "reason_code": "NO_CUSTOMER_SERVICE_SIGNAL"
+        },
+        "claude": {
+          "business_label": "irrelevant",
+          "evidence_group": "",
+          "confidence": "high",
+          "reason_code": "UNRELATED_PROCUREMENT"
+        },
+        "expert": null,
+        "role_annotation": {
+          "annotator": "codex",
+          "evidence_role": "out_of_scope",
+          "procurement_lifecycle": "not_applicable",
+          "active_until": "",
+          "comment": "Codex最终标注：沿用共识无关标签，排除在广义研究范围外。"
+        }
+      }
+    },
+    {
+      "business_label": "relevant",
+      "candidate_id": "c_0026",
+      "domain": "www.bidcenter.com.cn",
+      "gold_references": [
+        "para_5",
+        "para_6"
+      ],
+      "is_gold_reference": true,
+      "published_at": "2026-07-01T10:54:06.077294+00:00",
+      "snippet": "中标金额 16.88万元",
+      "source": "web_scrape",
+      "source_kind": "evidence_snapshot",
+      "title": "中国邮政储蓄银行重庆分行智能外呼语音通讯服务中标候选人公示表-采招网",
+      "url": "https://www.bidcenter.com.cn/news-152237594-4.html",
+      "evidence_role": "target_procurement",
+      "procurement_lifecycle": "closed_or_failed",
+      "evidence_group": "evidence_701c4f9988",
+      "annotation_audit": {
+        "codex": {
+          "business_label": "relevant",
+          "evidence_group": "evidence_701c4f9988",
+          "confidence": "medium",
+          "reason_code": "SIBLING_CORE_BIDDING"
+        },
+        "claude": {
+          "business_label": "relevant",
+          "evidence_group": "sibling_branch_intelligent_outbound_case",
+          "confidence": "medium",
+          "reason_code": "SIBLING_BRANCH_CASE"
+        },
+        "expert": null,
+        "role_annotation": {
+          "annotator": "codex",
+          "evidence_role": "target_procurement",
+          "procurement_lifecycle": "closed_or_failed",
+          "active_until": "",
+          "comment": "Codex最终标注：归入 target_procurement；当前样本未提供可核验的在途有效期。"
+        }
+      }
+    },
+    {
+      "business_label": "irrelevant",
+      "candidate_id": "c_0027",
+      "domain": "it.b2b168.com",
+      "gold_references": [],
+      "is_gold_reference": false,
+      "published_at": "2026-07-01T10:54:06.077295+00:00",
+      "snippet": "产品价格: 面议 发货地址: 上海浦东 包装说明: 不限 产品数量: 9999.00 年 产品规格: 不限 信息编号: 187140162 公司编号: 23049811 言通客服 微信 1801473",
+      "source": "web_scrape",
+      "source_kind": "evidence_snapshot",
+      "title": "智能客服 性价比高的客服在线服务系统 全渠道一站式接入 - 八方资源网",
+      "url": "https://it.b2b168.com/s168-187140162.html",
+      "evidence_role": "out_of_scope",
+      "procurement_lifecycle": "not_applicable",
+      "annotation_audit": {
+        "codex": {
+          "business_label": "irrelevant",
+          "evidence_group": "",
+          "confidence": "high",
+          "reason_code": "LOW_QUALITY_GENERIC_PAGE"
+        },
+        "claude": {
+          "business_label": "irrelevant",
+          "evidence_group": "",
+          "confidence": "high",
+          "reason_code": "LOW_QUALITY_GENERIC_PAGE"
+        },
+        "expert": null,
+        "role_annotation": {
+          "annotator": "codex",
+          "evidence_role": "out_of_scope",
+          "procurement_lifecycle": "not_applicable",
+          "active_until": "",
+          "comment": "Codex最终标注：沿用共识无关标签，排除在广义研究范围外。"
+        }
+      }
+    },
+    {
+      "business_label": "uncertain",
+      "candidate_id": "c_0028",
+      "domain": "np.fjsen.com",
+      "gold_references": [
+        "para_1",
+        "para_5"
+      ],
+      "is_gold_reference": true,
+      "published_at": "2026-07-01T10:54:06.077296+00:00",
+      "snippet": "2017年12月23日,邮储银行新一代智能客服“小邮”成功上线。",
+      "source": "web_scrape",
+      "source_kind": "evidence_snapshot",
+      "title": "邮储银行新一代智能客服“小邮”上线",
+      "url": "http://np.fjsen.com/2018-01/04/content_20666561.htm",
+      "evidence_role": "target_operation_signal",
+      "procurement_lifecycle": "not_applicable",
+      "annotation_audit": {
+        "codex": {
+          "business_label": "uncertain",
+          "evidence_group": "",
+          "confidence": "low",
+          "reason_code": "CORE_SIGNAL_WITHOUT_BIDDING_PROOF"
+        },
+        "claude": {
+          "business_label": "irrelevant",
+          "evidence_group": "",
+          "confidence": "medium",
+          "reason_code": "NON_BIDDING_CONTEXT"
+        },
+        "expert": {
+          "business_label": "uncertain",
+          "evidence_group": "",
+          "comment": "无法看到URL内的内容，不过看标题有相关性；无法看原文内容"
+        },
+        "role_annotation": {
+          "annotator": "codex",
+          "evidence_role": "target_operation_signal",
+          "procurement_lifecycle": "not_applicable",
+          "active_until": "",
+          "comment": "Codex最终标注：归入 target_operation_signal；当前样本未提供可核验的在途有效期。"
+        }
+      }
+    },
+    {
+      "business_label": "irrelevant",
+      "candidate_id": "c_0029",
+      "domain": "www.bidcenter.com.cn",
+      "gold_references": [],
+      "is_gold_reference": false,
+      "published_at": "2026-07-01T10:54:06.077297+00:00",
+      "snippet": "中国邮政储蓄银行零售板块营销服务采购项目(02包“共享2017”之享公益、享盈财、享惠游、享HIGH购营销服务)竞争性谈判公告",
+      "source": "web_scrape",
+      "source_kind": "evidence_snapshot",
+      "title": "中国邮政储蓄银行零售板块营销服务采购项目(02包“共享2017”之享公益、享盈财、享惠游、享HIGH购营销服务)竞争性谈判公告",
+      "url": "https://www.bidcenter.com.cn/newscontent-43079462-1.html",
+      "evidence_role": "out_of_scope",
+      "procurement_lifecycle": "not_applicable",
+      "annotation_audit": {
+        "codex": {
+          "business_label": "irrelevant",
+          "evidence_group": "",
+          "confidence": "high",
+          "reason_code": "NO_CUSTOMER_SERVICE_SIGNAL"
+        },
+        "claude": {
+          "business_label": "irrelevant",
+          "evidence_group": "",
+          "confidence": "high",
+          "reason_code": "UNRELATED_PROCUREMENT"
+        },
+        "expert": null,
+        "role_annotation": {
+          "annotator": "codex",
+          "evidence_role": "out_of_scope",
+          "procurement_lifecycle": "not_applicable",
+          "active_until": "",
+          "comment": "Codex最终标注：沿用共识无关标签，排除在广义研究范围外。"
+        }
+      }
+    },
+    {
+      "business_label": "must_keep",
+      "candidate_id": "c_0030",
+      "domain": "www.ebnew.com",
+      "gold_references": [
+        "para_1",
+        "para_5",
+        "para_6"
+      ],
+      "is_gold_reference": true,
+      "published_at": "2026-07-01T10:54:06.077298+00:00",
+      "snippet": "中国邮政储蓄银行股份有限公司委托中国通信建设集团有限公司就中国邮政储蓄银行语音智能化系统大模型辅助客户服务软件开发与集成服务采购项目(招标编号:采用公开...",
+      "source": "web_scrape",
+      "source_kind": "evidence_snapshot",
+      "title": "中国邮政储蓄银行语音智能化系统大模型辅助客户服务软件开发与集成服务采购项目招标公告",
+      "url": "https://www.ebnew.com/businessShow/695467221.html",
+      "evidence_role": "target_procurement",
+      "procurement_lifecycle": "historical_or_unknown",
+      "annotation_audit": {
+        "codex": {
+          "business_label": "must_keep",
+          "evidence_group": "",
+          "confidence": "high",
+          "reason_code": "UNIQUE_TARGET_CORE_BIDDING"
+        },
+        "claude": {
+          "business_label": "relevant",
+          "evidence_group": "postal_hq_voice_ai_cs_tender",
+          "confidence": "high",
+          "reason_code": "PARENT_CORE_BIDDING"
+        },
+        "expert": {
+          "business_label": "must_keep",
+          "evidence_group": "",
+          "comment": "邮储总行语音智能化大模型辅助客服采购，直接体现核心能力建设，保留为关键证据。"
+        },
+        "role_annotation": {
+          "annotator": "codex",
+          "evidence_role": "target_procurement",
+          "procurement_lifecycle": "historical_or_unknown",
+          "active_until": "",
+          "comment": "Codex最终标注：归入 target_procurement；当前样本未提供可核验的在途有效期。"
+        }
+      }
+    },
+    {
+      "business_label": "relevant",
+      "candidate_id": "c_0031",
+      "domain": "www.bupt.edu.cn",
+      "gold_references": [],
+      "is_gold_reference": false,
+      "published_at": "2026-07-01T10:54:06.077299+00:00",
+      "snippet": "项目概况：智能客服系统采购项目的潜在供应商应在华采招标集团有限公司获取采购文件，并于2021年11月05日09点30分前提交响应文件。",
+      "source": "web_scrape",
+      "source_kind": "evidence_snapshot",
+      "title": "智能客服系统竞争性磋商-北京邮电大学",
+      "url": "https://www.bupt.edu.cn/info/1083/84625.htm",
+      "evidence_role": "industry_capability_intelligence",
+      "procurement_lifecycle": "historical_or_unknown",
+      "evidence_group": "evidence_89734bfc12",
+      "annotation_audit": {
+        "codex": {
+          "business_label": "relevant",
+          "evidence_group": "evidence_89734bfc12",
+          "confidence": "medium",
+          "reason_code": "INDUSTRY_CORE_BIDDING"
+        },
+        "claude": {
+          "business_label": "relevant",
+          "evidence_group": "industry_bupt_intelligent_cs_case",
+          "confidence": "medium",
+          "reason_code": "INDUSTRY_CORE_BIDDING"
+        },
+        "expert": null,
+        "role_annotation": {
+          "annotator": "codex",
+          "evidence_role": "industry_capability_intelligence",
+          "procurement_lifecycle": "historical_or_unknown",
+          "active_until": "",
+          "comment": "Codex最终标注：归入 industry_capability_intelligence；当前样本未提供可核验的在途有效期。"
+        }
+      }
+    },
+    {
+      "business_label": "irrelevant",
+      "candidate_id": "c_0032",
+      "domain": "zt.sta.edu.cn",
+      "gold_references": [],
+      "is_gold_reference": false,
+      "published_at": "2026-07-01T10:54:06.077300+00:00",
+      "snippet": "沪ICP备09077319号-8 沪公网安备 31009102000051号 访问量: 1000 华山路校区:上海市华山路630号 邮编:200040 电话:+86-021-62482920 传真:+",
+      "source": "web_scrape",
+      "source_kind": "evidence_snapshot",
+      "title": "竞争性谈判流程图",
+      "url": "https://zt.sta.edu.cn/70/d7/c3823a94423/page.htm",
+      "evidence_role": "out_of_scope",
+      "procurement_lifecycle": "not_applicable",
+      "annotation_audit": {
+        "codex": {
+          "business_label": "irrelevant",
+          "evidence_group": "",
+          "confidence": "medium",
+          "reason_code": "NO_CUSTOMER_SERVICE_SIGNAL"
+        },
+        "claude": {
+          "business_label": "irrelevant",
+          "evidence_group": "",
+          "confidence": "high",
+          "reason_code": "LOW_QUALITY_GENERIC_PAGE"
+        },
+        "expert": null,
+        "role_annotation": {
+          "annotator": "codex",
+          "evidence_role": "out_of_scope",
+          "procurement_lifecycle": "not_applicable",
+          "active_until": "",
+          "comment": "Codex最终标注：沿用共识无关标签，排除在广义研究范围外。"
+        }
+      }
+    },
+    {
+      "business_label": "irrelevant",
+      "candidate_id": "c_0033",
+      "domain": "www.docin.com",
+      "gold_references": [],
+      "is_gold_reference": false,
+      "published_at": "2026-07-01T10:54:06.077301+00:00",
+      "snippet": "竞争性谈判文件，项目号:20A00187，谈判项目编号:1708-BT2000401770AHS",
+      "source": "web_scrape",
+      "source_kind": "evidence_snapshot",
+      "title": "重庆市公安局高新技术产业开发区分局执法办案智能审讯系统",
+      "url": "https://www.docin.com/p-3991991684.html",
+      "evidence_role": "out_of_scope",
+      "procurement_lifecycle": "not_applicable",
+      "annotation_audit": {
+        "codex": {
+          "business_label": "irrelevant",
+          "evidence_group": "",
+          "confidence": "high",
+          "reason_code": "LOW_QUALITY_GENERIC_PAGE"
+        },
+        "claude": {
+          "business_label": "irrelevant",
+          "evidence_group": "",
+          "confidence": "high",
+          "reason_code": "UNRELATED_PROCUREMENT"
+        },
+        "expert": null,
+        "role_annotation": {
+          "annotator": "codex",
+          "evidence_role": "out_of_scope",
+          "procurement_lifecycle": "not_applicable",
+          "active_until": "",
+          "comment": "Codex最终标注：沿用共识无关标签，排除在广义研究范围外。"
+        }
+      }
+    },
+    {
+      "business_label": "irrelevant",
+      "candidate_id": "c_0034",
+      "domain": "it.b2b168.com",
+      "gold_references": [],
+      "is_gold_reference": false,
+      "published_at": "2026-07-01T10:54:06.077302+00:00",
+      "snippet": "产品价格: 面议 发货地址: 上海浦东 包装说明: 不限 产品数量: 9999.00 年 产品规格: 不限 信息编号: 184815721 公司编号: 23049811 言通客服 微信 1801473",
+      "source": "web_scrape",
+      "source_kind": "evidence_snapshot",
+      "title": "全渠道一站式接入 在线网络客服 在线客服平台公司 - 八方资源网",
+      "url": "https://it.b2b168.com/s168-184815721.html",
+      "evidence_role": "out_of_scope",
+      "procurement_lifecycle": "not_applicable",
+      "annotation_audit": {
+        "codex": {
+          "business_label": "irrelevant",
+          "evidence_group": "",
+          "confidence": "high",
+          "reason_code": "LOW_QUALITY_GENERIC_PAGE"
+        },
+        "claude": {
+          "business_label": "irrelevant",
+          "evidence_group": "",
+          "confidence": "high",
+          "reason_code": "LOW_QUALITY_GENERIC_PAGE"
+        },
+        "expert": null,
+        "role_annotation": {
+          "annotator": "codex",
+          "evidence_role": "out_of_scope",
+          "procurement_lifecycle": "not_applicable",
+          "active_until": "",
+          "comment": "Codex最终标注：沿用共识无关标签，排除在广义研究范围外。"
+        }
+      }
+    },
+    {
+      "business_label": "irrelevant",
+      "candidate_id": "c_0035",
+      "domain": "www.bidcenter.com.cn",
+      "gold_references": [],
+      "is_gold_reference": false,
+      "published_at": "2026-07-01T10:54:06.077303+00:00",
+      "snippet": "中标金额 详见内容 采购规模走势 通过数据统计分析,按月度提供全国近一年的 采购中标金额 的变化趋势分布情况。您可以通过分析结果合理的安排自己的投标活动。",
+      "source": "web_scrape",
+      "source_kind": "evidence_snapshot",
+      "title": "中国邮政储蓄银行上海分行平面及网络媒体资源投放代理项目中标候选人公示-采招网",
+      "url": "https://www.bidcenter.com.cn/news-269174746-4.html",
+      "evidence_role": "out_of_scope",
+      "procurement_lifecycle": "not_applicable",
+      "annotation_audit": {
+        "codex": {
+          "business_label": "irrelevant",
+          "evidence_group": "",
+          "confidence": "high",
+          "reason_code": "UNRELATED_PROCUREMENT"
+        },
+        "claude": {
+          "business_label": "irrelevant",
+          "evidence_group": "",
+          "confidence": "high",
+          "reason_code": "UNRELATED_PROCUREMENT"
+        },
+        "expert": null,
+        "role_annotation": {
+          "annotator": "codex",
+          "evidence_role": "out_of_scope",
+          "procurement_lifecycle": "not_applicable",
+          "active_until": "",
+          "comment": "Codex最终标注：沿用共识无关标签，排除在广义研究范围外。"
+        }
+      }
+    },
+    {
+      "business_label": "irrelevant",
+      "candidate_id": "c_0036",
+      "domain": "www.bosc.cn",
+      "gold_references": [],
+      "is_gold_reference": false,
+      "published_at": "2026-07-01T10:54:06.077304+00:00",
+      "snippet": "智慧金融·专业服务 政府与公共项目业务 企业电子银行 授信申请 上海银行概况 投资者关系 其他信息公开 关于《上海银行服务项目收费标准(2021版)》公示",
+      "source": "web_scrape",
+      "source_kind": "evidence_snapshot",
+      "title": "关于《上海银行服务项目收费标准(2021版)》公示",
+      "url": "https://www.bosc.cn/zh/sy/tzgg/202101/t20210101_39187.shtml",
+      "evidence_role": "out_of_scope",
+      "procurement_lifecycle": "not_applicable",
+      "annotation_audit": {
+        "codex": {
+          "business_label": "irrelevant",
+          "evidence_group": "",
+          "confidence": "medium",
+          "reason_code": "NO_CUSTOMER_SERVICE_SIGNAL"
+        },
+        "claude": {
+          "business_label": "irrelevant",
+          "evidence_group": "",
+          "confidence": "high",
+          "reason_code": "UNRELATED_PROCUREMENT"
+        },
+        "expert": null,
+        "role_annotation": {
+          "annotator": "codex",
+          "evidence_role": "out_of_scope",
+          "procurement_lifecycle": "not_applicable",
+          "active_until": "",
+          "comment": "Codex最终标注：沿用共识无关标签，排除在广义研究范围外。"
+        }
+      }
+    },
+    {
+      "business_label": "irrelevant",
+      "candidate_id": "c_0037",
+      "domain": "m.bidcenter.com.cn",
+      "gold_references": [],
+      "is_gold_reference": false,
+      "published_at": "2026-07-01T10:54:06.077305+00:00",
+      "snippet": "中国邮政储蓄银行上海分行营业场所标识安装施工项目中标候选人公示，发布时间:2025-01-03 18:03:22",
+      "source": "web_scrape",
+      "source_kind": "evidence_snapshot",
+      "title": "中国邮政储蓄银行上海分行营业场所标识安装施工项目中标候选人公示",
+      "url": "https://m.bidcenter.com.cn/yezhugonggaolist-59390914-4.html",
+      "evidence_role": "out_of_scope",
+      "procurement_lifecycle": "not_applicable",
+      "annotation_audit": {
+        "codex": {
+          "business_label": "irrelevant",
+          "evidence_group": "",
+          "confidence": "high",
+          "reason_code": "UNRELATED_PROCUREMENT"
+        },
+        "claude": {
+          "business_label": "irrelevant",
+          "evidence_group": "",
+          "confidence": "high",
+          "reason_code": "UNRELATED_PROCUREMENT"
+        },
+        "expert": null,
+        "role_annotation": {
+          "annotator": "codex",
+          "evidence_role": "out_of_scope",
+          "procurement_lifecycle": "not_applicable",
+          "active_until": "",
+          "comment": "Codex最终标注：沿用共识无关标签，排除在广义研究范围外。"
+        }
+      }
+    },
+    {
+      "business_label": "irrelevant",
+      "candidate_id": "c_0038",
+      "domain": "zjzb.chinaccsscm.cn",
+      "gold_references": [],
+      "is_gold_reference": false,
+      "published_at": "2026-07-01T10:54:06.077306+00:00",
+      "snippet": "中国邮政储蓄银行股份有限公司深圳分行2021年度先进表彰项目中选结果公示，采购项目名称: 中国邮政储蓄银行股份有限公司深圳分行2021年度先进表彰项目，采购人名称:中国邮政储蓄银行股份有限公司深圳分行...",
+      "source": "web_scrape",
+      "source_kind": "evidence_snapshot",
+      "title": "中国邮政储蓄银行股份有限公司深圳分行2021年度先进表彰项目比选结果公告",
+      "url": "https://zjzb.chinaccsscm.cn/zbjg/45007.jhtml",
+      "evidence_role": "out_of_scope",
+      "procurement_lifecycle": "not_applicable",
+      "annotation_audit": {
+        "codex": {
+          "business_label": "irrelevant",
+          "evidence_group": "",
+          "confidence": "high",
+          "reason_code": "NO_CUSTOMER_SERVICE_SIGNAL"
+        },
+        "claude": {
+          "business_label": "irrelevant",
+          "evidence_group": "",
+          "confidence": "high",
+          "reason_code": "UNRELATED_PROCUREMENT"
+        },
+        "expert": null,
+        "role_annotation": {
+          "annotator": "codex",
+          "evidence_role": "out_of_scope",
+          "procurement_lifecycle": "not_applicable",
+          "active_until": "",
+          "comment": "Codex最终标注：沿用共识无关标签，排除在广义研究范围外。"
+        }
+      }
+    },
+    {
+      "business_label": "irrelevant",
+      "candidate_id": "c_0039",
+      "domain": "www.bidcenter.com.cn",
+      "gold_references": [],
+      "is_gold_reference": false,
+      "published_at": "2026-07-01T10:54:06.077307+00:00",
+      "snippet": "中国邮政储蓄银行上海分行与中建八局金融业务平台供应链金融信息系统对接项目单一来源采前公示",
+      "source": "web_scrape",
+      "source_kind": "evidence_snapshot",
+      "title": "中国邮政储蓄银行上海分行与中建八局金融业务平台供应链金融信息系统对接项目单一来源采前公示",
+      "url": "https://www.bidcenter.com.cn/newscontent-155542151-1.html",
+      "evidence_role": "out_of_scope",
+      "procurement_lifecycle": "not_applicable",
+      "annotation_audit": {
+        "codex": {
+          "business_label": "irrelevant",
+          "evidence_group": "",
+          "confidence": "medium",
+          "reason_code": "NO_CUSTOMER_SERVICE_SIGNAL"
+        },
+        "claude": {
+          "business_label": "irrelevant",
+          "evidence_group": "",
+          "confidence": "high",
+          "reason_code": "UNRELATED_PROCUREMENT"
+        },
+        "expert": null,
+        "role_annotation": {
+          "annotator": "codex",
+          "evidence_role": "out_of_scope",
+          "procurement_lifecycle": "not_applicable",
+          "active_until": "",
+          "comment": "Codex最终标注：沿用共识无关标签，排除在广义研究范围外。"
+        }
+      }
+    },
+    {
+      "business_label": "irrelevant",
+      "candidate_id": "c_0040",
+      "domain": "e.51sole.com",
+      "gold_references": [],
+      "is_gold_reference": false,
+      "published_at": "2026-07-01T10:54:06.077308+00:00",
+      "snippet": "上海鸟居科技有限公司 主营产品:储物柜,快递柜,无接触送餐柜 价格 ¥ 2,850.00 起订量 1套起批 货源所属商家已经过真实性核验 产品型号 快递柜标配版",
+      "source": "web_scrape",
+      "source_kind": "evidence_snapshot",
+      "title": "智能快递柜 小区联网寄存柜包裹收件柜扫码柜价格、电话、图片",
+      "url": "https://e.51sole.com/chanpin/333873722.htm",
+      "evidence_role": "out_of_scope",
+      "procurement_lifecycle": "not_applicable",
+      "annotation_audit": {
+        "codex": {
+          "business_label": "irrelevant",
+          "evidence_group": "",
+          "confidence": "high",
+          "reason_code": "LOW_QUALITY_GENERIC_PAGE"
+        },
+        "claude": {
+          "business_label": "irrelevant",
+          "evidence_group": "",
+          "confidence": "high",
+          "reason_code": "LOW_QUALITY_GENERIC_PAGE"
+        },
+        "expert": null,
+        "role_annotation": {
+          "annotator": "codex",
+          "evidence_role": "out_of_scope",
+          "procurement_lifecycle": "not_applicable",
+          "active_until": "",
+          "comment": "Codex最终标注：沿用共识无关标签，排除在广义研究范围外。"
+        }
+      }
+    },
+    {
+      "business_label": "irrelevant",
+      "candidate_id": "c_0041",
+      "domain": "www.abchina.com",
+      "gold_references": [],
+      "is_gold_reference": false,
+      "published_at": "2026-07-01T10:54:06.077309+00:00",
+      "snippet": "根据财政部《国有金融企业集中采购管理暂行规定》和中国农业银行集中采购相关规定,我行完成了营销宣传类项目采购。",
+      "source": "web_scrape",
+      "source_kind": "evidence_snapshot",
+      "title": "采购结果公告_上海分行",
+      "url": "https://www.abchina.com/cn/branch/sh/CG/JG/202508/t20250804_2457222.htm",
+      "evidence_role": "out_of_scope",
+      "procurement_lifecycle": "not_applicable",
+      "annotation_audit": {
+        "codex": {
+          "business_label": "irrelevant",
+          "evidence_group": "",
+          "confidence": "high",
+          "reason_code": "NO_CUSTOMER_SERVICE_SIGNAL"
+        },
+        "claude": {
+          "business_label": "irrelevant",
+          "evidence_group": "",
+          "confidence": "high",
+          "reason_code": "UNRELATED_PROCUREMENT"
+        },
+        "expert": null,
+        "role_annotation": {
+          "annotator": "codex",
+          "evidence_role": "out_of_scope",
+          "procurement_lifecycle": "not_applicable",
+          "active_until": "",
+          "comment": "Codex最终标注：沿用共识无关标签，排除在广义研究范围外。"
+        }
+      }
+    },
+    {
+      "business_label": "irrelevant",
+      "candidate_id": "c_0042",
+      "domain": "www.cfcpn.com",
+      "gold_references": [],
+      "is_gold_reference": false,
+      "published_at": "2026-07-01T10:54:06.077310+00:00",
+      "snippet": "根据工作需要,我行现公开征集自助设备动态密码锁项目供应商。",
+      "source": "web_scrape",
+      "source_kind": "evidence_snapshot",
+      "title": "中国邮政储蓄银行重庆分行自助设备动态密码锁项目供应商征集公告",
+      "url": "http://www.cfcpn.com/plist/zhengji",
+      "evidence_role": "out_of_scope",
+      "procurement_lifecycle": "not_applicable",
+      "annotation_audit": {
+        "codex": {
+          "business_label": "irrelevant",
+          "evidence_group": "",
+          "confidence": "high",
+          "reason_code": "NO_CUSTOMER_SERVICE_SIGNAL"
+        },
+        "claude": {
+          "business_label": "irrelevant",
+          "evidence_group": "",
+          "confidence": "high",
+          "reason_code": "UNRELATED_PROCUREMENT"
+        },
+        "expert": null,
+        "role_annotation": {
+          "annotator": "codex",
+          "evidence_role": "out_of_scope",
+          "procurement_lifecycle": "not_applicable",
+          "active_until": "",
+          "comment": "Codex最终标注：沿用共识无关标签，排除在广义研究范围外。"
+        }
+      }
+    },
+    {
+      "business_label": "must_keep",
+      "candidate_id": "c_0043",
+      "domain": "www.chinapost.com.cn",
+      "gold_references": [
+        "para_1",
+        "para_5",
+        "para_6"
+      ],
+      "is_gold_reference": true,
+      "published_at": "2026-07-01T10:54:06.077311+00:00",
+      "snippet": "采购单位为中国邮政储蓄银行股份有限公司，采购内容为配套改。",
+      "source": "web_scrape",
+      "source_kind": "evidence_snapshot",
+      "title": "中国邮政储蓄银行信用卡智能客服系统2025年新增功能工程邮储大脑智能语言语音系统配套软件技术开发与集成采购项目单一来源采购前公示 - 中国邮政集团有限公司",
+      "url": "https://www.chinapost.com.cn/xhtml1/report/2509/460-1.htm",
+      "evidence_role": "target_procurement",
+      "procurement_lifecycle": "historical_or_unknown",
+      "annotation_audit": {
+        "codex": {
+          "business_label": "must_keep",
+          "evidence_group": "",
+          "confidence": "high",
+          "reason_code": "UNIQUE_TARGET_CORE_BIDDING"
+        },
+        "claude": {
+          "business_label": "relevant",
+          "evidence_group": "postal_hq_creditcard_intelligent_cs_tender",
+          "confidence": "high",
+          "reason_code": "PARENT_CORE_BIDDING"
+        },
+        "expert": {
+          "business_label": "must_keep",
+          "evidence_group": "",
+          "comment": "邮储总行信用卡智能客服及智能语言语音系统采购，直接体现核心需求，保留为关键证据。"
+        },
+        "role_annotation": {
+          "annotator": "codex",
+          "evidence_role": "target_procurement",
+          "procurement_lifecycle": "historical_or_unknown",
+          "active_until": "",
+          "comment": "Codex最终标注：归入 target_procurement；当前样本未提供可核验的在途有效期。"
+        }
+      }
+    },
+    {
+      "business_label": "irrelevant",
+      "candidate_id": "c_0044",
+      "domain": "www.bidcenter.com.cn",
+      "gold_references": [
+        "para_3"
+      ],
+      "is_gold_reference": true,
+      "published_at": "2026-07-01T10:54:06.077312+00:00",
+      "snippet": "中国邮政储蓄银行上海分行电信诈骗涉案风险账户智能识别信息化工程项目成交结果公示，发布时间2024-08-29，项目编号及中标金额未公开。",
+      "source": "web_scrape",
+      "source_kind": "evidence_snapshot",
+      "title": "中国邮政储蓄银行上海分行电信诈骗涉案风险账户智能识别信息化工程项目成交结果公示",
+      "url": "https://www.bidcenter.com.cn/news-306193838-4.html",
+      "evidence_role": "out_of_scope",
+      "procurement_lifecycle": "not_applicable",
+      "annotation_audit": {
+        "codex": {
+          "business_label": "irrelevant",
+          "evidence_group": "",
+          "confidence": "high",
+          "reason_code": "NO_CUSTOMER_SERVICE_SIGNAL"
+        },
+        "claude": {
+          "business_label": "irrelevant",
+          "evidence_group": "",
+          "confidence": "high",
+          "reason_code": "UNRELATED_PROCUREMENT"
+        },
+        "expert": null,
+        "role_annotation": {
+          "annotator": "codex",
+          "evidence_role": "out_of_scope",
+          "procurement_lifecycle": "not_applicable",
+          "active_until": "",
+          "comment": "Codex最终标注：沿用共识无关标签，排除在广义研究范围外。"
+        }
+      }
+    },
+    {
+      "business_label": "irrelevant",
+      "candidate_id": "c_0045",
+      "domain": "www.chinapost.com.cn",
+      "gold_references": [],
+      "is_gold_reference": false,
+      "published_at": "2026-07-01T10:54:06.077313+00:00",
+      "snippet": "中国邮政储蓄银行安徽省分行零售客户企业微信智慧运营服务采购项目已完成合同签署工作",
+      "source": "web_scrape",
+      "source_kind": "evidence_snapshot",
+      "title": "中国邮政储蓄银行安徽省分行零售客户企业微信智慧运营服务采购项目成交结果公告",
+      "url": "https://www.chinapost.com.cn/html1/report/2511/3423-1.htm",
+      "evidence_role": "out_of_scope",
+      "procurement_lifecycle": "not_applicable",
+      "annotation_audit": {
+        "codex": {
+          "business_label": "irrelevant",
+          "evidence_group": "",
+          "confidence": "high",
+          "reason_code": "NO_CUSTOMER_SERVICE_SIGNAL"
+        },
+        "claude": {
+          "business_label": "irrelevant",
+          "evidence_group": "",
+          "confidence": "high",
+          "reason_code": "UNRELATED_PROCUREMENT"
+        },
+        "expert": null,
+        "role_annotation": {
+          "annotator": "codex",
+          "evidence_role": "out_of_scope",
+          "procurement_lifecycle": "not_applicable",
+          "active_until": "",
+          "comment": "Codex最终标注：沿用共识无关标签，排除在广义研究范围外。"
+        }
+      }
+    },
+    {
+      "business_label": "irrelevant",
+      "candidate_id": "c_0046",
+      "domain": "shanghai.jianyu360.cn",
+      "gold_references": [],
+      "is_gold_reference": false,
+      "published_at": "2026-07-01T10:54:06.077314+00:00",
+      "snippet": "中国邮政储蓄银行上海分行营业场所及业务库门禁设备项目成交结果",
+      "source": "web_scrape",
+      "source_kind": "evidence_snapshot",
+      "title": "中国邮政储蓄银行上海分行营业场所及业务库门禁设备项目成交结果公告",
+      "url": "https://shanghai.jianyu360.cn/jybx/20240624_24062382512953.html",
+      "evidence_role": "out_of_scope",
+      "procurement_lifecycle": "not_applicable",
+      "annotation_audit": {
+        "codex": {
+          "business_label": "irrelevant",
+          "evidence_group": "",
+          "confidence": "high",
+          "reason_code": "UNRELATED_PROCUREMENT"
+        },
+        "claude": {
+          "business_label": "irrelevant",
+          "evidence_group": "",
+          "confidence": "high",
+          "reason_code": "UNRELATED_PROCUREMENT"
+        },
+        "expert": null,
+        "role_annotation": {
+          "annotator": "codex",
+          "evidence_role": "out_of_scope",
+          "procurement_lifecycle": "not_applicable",
+          "active_until": "",
+          "comment": "Codex最终标注：沿用共识无关标签，排除在广义研究范围外。"
+        }
+      }
+    },
+    {
+      "business_label": "irrelevant",
+      "candidate_id": "c_0047",
+      "domain": "m.fang.com",
+      "gold_references": [],
+      "is_gold_reference": false,
+      "published_at": "2026-07-01T10:54:06.077315+00:00",
+      "snippet": "我是智能客服,提出你的需求,获得专属购房方案。",
+      "source": "web_scrape",
+      "source_kind": "evidence_snapshot",
+      "title": "智能客服",
+      "url": "https://m.fang.com/hd/fangchat/index.html",
+      "evidence_role": "out_of_scope",
+      "procurement_lifecycle": "not_applicable",
+      "annotation_audit": {
+        "codex": {
+          "business_label": "irrelevant",
+          "evidence_group": "",
+          "confidence": "high",
+          "reason_code": "LOW_QUALITY_GENERIC_PAGE"
+        },
+        "claude": {
+          "business_label": "irrelevant",
+          "evidence_group": "",
+          "confidence": "high",
+          "reason_code": "LOW_QUALITY_GENERIC_PAGE"
+        },
+        "expert": null,
+        "role_annotation": {
+          "annotator": "codex",
+          "evidence_role": "out_of_scope",
+          "procurement_lifecycle": "not_applicable",
+          "active_until": "",
+          "comment": "Codex最终标注：沿用共识无关标签，排除在广义研究范围外。"
+        }
+      }
+    },
+    {
+      "business_label": "irrelevant",
+      "candidate_id": "c_0048",
+      "domain": "330102.bidcenter.com.cn",
+      "gold_references": [],
+      "is_gold_reference": false,
+      "published_at": "2026-07-01T10:54:06.077316+00:00",
+      "snippet": "中国邮政储蓄银行浙江省分行全辖普通业务单证采购项目已完成合同签署工作，现将成交结果公告如下：采购内容为中国邮政储蓄银行浙江省分行全辖普通业务单证采购项目，采购人为中国邮政。",
+      "source": "web_scrape",
+      "source_kind": "evidence_snapshot",
+      "title": "中国邮政储蓄银行浙江省分行全辖普通业务单证采购项目成交结果公告",
+      "url": "https://330102.bidcenter.com.cn/bidinfo-4-a0f73512c37219a95d863e1d969fb664836f648462679389.html",
+      "evidence_role": "out_of_scope",
+      "procurement_lifecycle": "not_applicable",
+      "annotation_audit": {
+        "codex": {
+          "business_label": "irrelevant",
+          "evidence_group": "",
+          "confidence": "high",
+          "reason_code": "NO_CUSTOMER_SERVICE_SIGNAL"
+        },
+        "claude": {
+          "business_label": "irrelevant",
+          "evidence_group": "",
+          "confidence": "high",
+          "reason_code": "UNRELATED_PROCUREMENT"
+        },
+        "expert": null,
+        "role_annotation": {
+          "annotator": "codex",
+          "evidence_role": "out_of_scope",
+          "procurement_lifecycle": "not_applicable",
+          "active_until": "",
+          "comment": "Codex最终标注：沿用共识无关标签，排除在广义研究范围外。"
+        }
+      }
+    },
+    {
+      "business_label": "acceptable_alternative",
+      "candidate_id": "c_0049",
+      "domain": "www.bidcenter.com.cn",
+      "gold_references": [
+        "para_5"
+      ],
+      "is_gold_reference": true,
+      "published_at": "2026-07-01T10:54:06.077317+00:00",
+      "snippet": "第一中标候选人:深圳 (略)，价格:*.00元；第二中标候选人: (略) (略)，价格:*.88元。公示期:**日至**日，共12天。",
+      "source": "web_scrape",
+      "source_kind": "evidence_snapshot",
+      "title": "中国邮政储蓄银行股份有限公司深圳分行智能客服管理系统项目第二次中标候选人公示",
+      "url": "https://www.bidcenter.com.cn/news-271619592-4.html",
+      "evidence_role": "target_procurement",
+      "procurement_lifecycle": "closed_or_failed",
+      "evidence_group": "evidence_b30a96f2e3",
+      "annotation_audit": {
+        "codex": {
+          "business_label": "acceptable_alternative",
+          "evidence_group": "evidence_b30a96f2e3",
+          "confidence": "medium",
+          "reason_code": "DUPLICATE_EVENT_ALTERNATIVE"
+        },
+        "claude": {
+          "business_label": "acceptable_alternative",
+          "evidence_group": "sibling_branch_intelligent_cs_case",
+          "confidence": "medium",
+          "reason_code": "DUPLICATE_EVENT_ALTERNATIVE"
+        },
+        "expert": null,
+        "role_annotation": {
+          "annotator": "codex",
+          "evidence_role": "target_procurement",
+          "procurement_lifecycle": "closed_or_failed",
+          "active_until": "",
+          "comment": "Codex最终标注：归入 target_procurement；当前样本未提供可核验的在途有效期。"
+        }
+      }
+    },
+    {
+      "business_label": "irrelevant",
+      "candidate_id": "c_0050",
+      "domain": "shanghai.jianyu360.cn",
+      "gold_references": [],
+      "is_gold_reference": false,
+      "published_at": "2026-07-01T10:54:06.077318+00:00",
+      "snippet": "中国邮政储蓄银行上海分行网点安防达标项目施工中标候选人公示",
+      "source": "web_scrape",
+      "source_kind": "evidence_snapshot",
+      "title": "中国邮政储蓄银行上海分行网点安防达标项目施工中标候选人公示",
+      "url": "https://shanghai.jianyu360.cn/jybx/20241112_241111138590614.html",
+      "evidence_role": "out_of_scope",
+      "procurement_lifecycle": "not_applicable",
+      "annotation_audit": {
+        "codex": {
+          "business_label": "irrelevant",
+          "evidence_group": "",
+          "confidence": "high",
+          "reason_code": "UNRELATED_PROCUREMENT"
+        },
+        "claude": {
+          "business_label": "irrelevant",
+          "evidence_group": "",
+          "confidence": "high",
+          "reason_code": "UNRELATED_PROCUREMENT"
+        },
+        "expert": null,
+        "role_annotation": {
+          "annotator": "codex",
+          "evidence_role": "out_of_scope",
+          "procurement_lifecycle": "not_applicable",
+          "active_until": "",
+          "comment": "Codex最终标注：沿用共识无关标签，排除在广义研究范围外。"
+        }
+      }
+    }
+  ],
+  "dimension": "bidding_information",
+  "redacted": true,
+  "schema_version": "task-screening-fixture/v4",
+  "screening_context": {
+    "company_name": "中国邮政储蓄银行股份有限公司上海分行",
+    "demand_direction": "智能客服",
+    "dimension": "bidding_information",
+    "goal": "分析 中国邮政储蓄银行股份有限公司上海分行 的 智能客服 相关 bidding_information 信息"
+  },
+  "task_ref": "task_2f38e7a47f50",
+  "consensus_annotation": {
+    "method": "existing_business_consensus_with_codex_role_annotation/v1",
+    "business_consensus_source": "task_2f38e7a47f50",
+    "role_annotator": "codex",
+    "role_policy": "broad_research_roles_with_active_target_opportunity/v1",
+    "active_target_opportunity_count": 0
+  }
+}

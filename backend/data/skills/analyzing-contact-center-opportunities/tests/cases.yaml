@@ -1,0 +1,130 @@
+schema_version: contact-center-skill-golden-cases/v1
+
+cases:
+  - id: active_intelligent_service_tender
+    input: 某保险公司正在有效期内招标智能客服平台，我方满足关键资格
+    expected:
+      max_or_exact_grade: G5
+      required_archetype: SIDECAR_INCREMENTAL
+      must_verify:
+        - procurement_entity
+        - response_deadline
+        - product_fit
+
+  - id: maintenance_expiry_with_delivery_failure
+    input: 某银行客服平台维保合同六个月后到期，并有该项目连续交付不合格证据
+    expected:
+      max_or_exact_grade: G4
+      required_triggers:
+        - CONTRACT_EXPIRY
+        - INCUMBENT_FAILURE
+
+  - id: reproducible_transfer_failure
+    input: 官网机器人公开入口无法转人工，近三个月存在多条去重后的同类投诉
+    expected:
+      minimum_grade: G3
+      required_archetype: SIDECAR_INCREMENTAL
+      required_output:
+        - experience_gap
+        - counterevidence_search
+
+  - id: historical_tender_only
+    input: 三年前存在呼叫中心招标和中标，未发现合同期、续约或当前信号
+    expected:
+      max_grade: G1
+      forbidden_claims:
+        - current_procurement
+        - imminent_replacement
+
+  - id: award_is_not_go_live
+    input: 已发现智能质检中标公告，但没有合同、验收或上线证据
+    expected:
+      required_deployment_status: unknown
+      forbidden_claims:
+        - production_confirmed
+
+  - id: no_search_result
+    input: 未检索到目标企业客服平台材料
+    expected:
+      required_status: UNKNOWN
+      forbidden_claims:
+        - no_contact_center
+
+  - id: generic_xinchuang_policy
+    input: 只有行业信创政策，没有目标企业客服系统行动
+    expected:
+      max_grade: G2
+      trigger_usage: background_only
+
+  - id: unrelated_xinchuang_project
+    input: 目标企业完成办公终端国产化，但材料没有涉及客服系统
+    expected:
+      contact_center_xinchuang_status: UNKNOWN
+
+  - id: one_complaint
+    input: 一名用户投诉热线等待时间长
+    expected:
+      max_grade: G2
+      forbidden_claims:
+        - systemic_experience_failure
+
+  - id: recent_large_upgrade
+    input: 目标企业三个月前刚完成客服平台大规模升级和验收
+    expected:
+      risk_flags:
+        - recent_upgrade
+      forbidden_claims:
+        - near_term_full_replacement
+
+  - id: locked_core_with_ai_gap
+    input: 核心 CTI 深度定制且刚续约，但智能质检覆盖率很低
+    expected:
+      preferred_archetype: SIDECAR_INCREMENTAL
+      discouraged_archetype: RIP_AND_REPLACE
+
+  - id: bpo_is_not_saas
+    input: 客服人员由外包公司驻场，系统由客户自建
+    expected:
+      personnel_mode: outsourced_onsite
+      deployment_mode: on_premises
+
+  - id: supplier_case_only
+    input: 供应商官网称曾为目标企业建设客服系统，没有目标企业侧材料
+    expected:
+      maximum_presence_status: LIKELY_PRESENT
+      incumbent_confidence: limited
+
+  - id: holding_company
+    input: 目标是控股集团，实际热线和采购均由下属子公司运营
+    expected:
+      actions:
+        - resolve_operating_entity
+        - skip_group_experience_probe
+
+  - id: blocked_public_audit
+    input: 公开入口出现验证码或登录墙
+    expected:
+      audit_status: EXPERIENCE_AUDIT_BLOCKED
+      fallback: static_public_evidence
+      forbidden_actions:
+        - bypass_verification
+
+  - id: budget_pattern_insufficient
+    input: 仅发现两个年度在九月发布采购公告
+    expected:
+      budget_pattern_status: insufficient
+      forbidden_claims:
+        - best_contact_month_confirmed
+
+  - id: vendor_brand_prior
+    input: 现任厂商为外资品牌，但没有目标企业级停服、合规或服务风险
+    expected:
+      forbidden_claims:
+        - high_vulnerability_by_brand
+
+  - id: mature_ai_with_no_trigger
+    input: 智能客服已全量上线并持续优化，未发现当前触发
+    expected:
+      maximum_grade: G2
+      opportunity_focus:
+        - observation_or_adjacent_gap

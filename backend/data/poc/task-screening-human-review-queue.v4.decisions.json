@@ -1,0 +1,273 @@
+{
+  "schema_version": "task-screening-human-review-decisions/v1",
+  "source_workbook": "task-screening-human-review-queue.v4.xlsx",
+  "decision_count": 38,
+  "decisions": [
+    {
+      "sample_name": "shanghai",
+      "candidate_id": "c_0024",
+      "expert_final_label": "relevant",
+      "expert_evidence_group": "shanghai_bank_ephone_procurement",
+      "expert_comment": "有相关性，但非目标的呼叫中心业务，属于仅关联的业务场景；相关性弱"
+    },
+    {
+      "sample_name": "shanghai",
+      "candidate_id": "c_0044",
+      "expert_final_label": "must_keep",
+      "expert_evidence_group": "",
+      "expert_comment": "目标企业的多语言智能客服采购失败公告，仍明确证明项目需求，保留为不可替代关键证据。"
+    },
+    {
+      "sample_name": "shanghai",
+      "candidate_id": "c_0047",
+      "expert_final_label": "irrelevant",
+      "expert_evidence_group": "",
+      "expert_comment": "与上海银行不相关，也和金融行业无关；无企业属性"
+    },
+    {
+      "sample_name": "shanghai",
+      "candidate_id": "c_0001",
+      "expert_final_label": "uncertain",
+      "expert_evidence_group": "",
+      "expert_comment": "无法核查到原文信息；无法核查"
+    },
+    {
+      "sample_name": "shanghai",
+      "candidate_id": "c_0019",
+      "expert_final_label": "relevant",
+      "expert_evidence_group": "shanghai_mobile_virtual_call_center_2014",
+      "expert_comment": "主要和目标企业不匹配且项目时间久远，当然如果是目标企业，这里可以评估用户原有项目建设情况；与目标企业不一致，行业也不一致"
+    },
+    {
+      "sample_name": "shanghai",
+      "candidate_id": "c_0033",
+      "expert_final_label": "uncertain",
+      "expert_evidence_group": "",
+      "expert_comment": "无法看到URL内的内容，不过看标题有相关性；无法看原文内容"
+    },
+    {
+      "sample_name": "shanghai",
+      "candidate_id": "c_0037",
+      "expert_final_label": "uncertain",
+      "expert_evidence_group": "",
+      "expert_comment": "无法看到URL内的内容，不过看标题有相关性；无法看原文内容"
+    },
+    {
+      "sample_name": "shanghai",
+      "candidate_id": "c_0045",
+      "expert_final_label": "relevant",
+      "expert_evidence_group": "unionpay_video_customer_service_upgrade_2023",
+      "expert_comment": "有行业相关性"
+    },
+    {
+      "sample_name": "shanghai",
+      "candidate_id": "c_0050",
+      "expert_final_label": "acceptable_alternative",
+      "expert_evidence_group": "unionpay_video_customer_service_upgrade_2023",
+      "expert_comment": "有行业相关性；与 c_0045 为同一银联商务智能视频客服升级事件的另一来源，按规则调整为 acceptable_alternative。"
+    },
+    {
+      "sample_name": "postal",
+      "candidate_id": "c_0030",
+      "expert_final_label": "must_keep",
+      "expert_evidence_group": "",
+      "expert_comment": "邮储总行语音智能化大模型辅助客服采购，直接体现核心能力建设，保留为关键证据。"
+    },
+    {
+      "sample_name": "postal",
+      "candidate_id": "c_0043",
+      "expert_final_label": "must_keep",
+      "expert_evidence_group": "",
+      "expert_comment": "邮储总行信用卡智能客服及智能语言语音系统采购，直接体现核心需求，保留为关键证据。"
+    },
+    {
+      "sample_name": "postal",
+      "candidate_id": "c_0028",
+      "expert_final_label": "uncertain",
+      "expert_evidence_group": "",
+      "expert_comment": "无法看到URL内的内容，不过看标题有相关性；无法看原文内容"
+    },
+    {
+      "sample_name": "pacific",
+      "candidate_id": "c_0024",
+      "expert_final_label": "uncertain",
+      "expert_evidence_group": "",
+      "expert_comment": "URL中无关键信息比如用户信息；无关键内容"
+    },
+    {
+      "sample_name": "pacific",
+      "candidate_id": "c_0032",
+      "expert_final_label": "relevant",
+      "expert_evidence_group": "cpic_website_intelligent_recommendation_platform",
+      "expert_comment": "无具体内容描述可能有相关性，如智能应答中的推荐则相关；可能相关"
+    },
+    {
+      "sample_name": "pacific",
+      "candidate_id": "c_0037",
+      "expert_final_label": "must_keep",
+      "expert_evidence_group": "",
+      "expert_comment": "智能排班为客服中心运营软件，也相关"
+    },
+    {
+      "sample_name": "pacific",
+      "candidate_id": "c_0040",
+      "expert_final_label": "relevant",
+      "expert_evidence_group": "cpic_website_recommendation_engineering_2018",
+      "expert_comment": "有相关性，但可能只和客服是合作系统；相关性弱"
+    },
+    {
+      "sample_name": "pacific",
+      "candidate_id": "c_0042",
+      "expert_final_label": "uncertain",
+      "expert_evidence_group": "",
+      "expert_comment": "无法看到详细信息不确定太原局具体是谁，如与太保不相关，则该内容不适用；主体不确定"
+    },
+    {
+      "sample_name": "pacific",
+      "candidate_id": "c_0049",
+      "expert_final_label": "must_keep",
+      "expert_evidence_group": "",
+      "expert_comment": "虽然时间较早，但可作为历史信息参考用户系统建设情况"
+    },
+    {
+      "sample_name": "pacific",
+      "candidate_id": "c_0051",
+      "expert_final_label": "must_keep",
+      "expert_evidence_group": "",
+      "expert_comment": "智能外呼也是call center"
+    },
+    {
+      "sample_name": "pacific",
+      "candidate_id": "c_0055",
+      "expert_final_label": "uncertain",
+      "expert_evidence_group": "",
+      "expert_comment": "无法看到详细信息看标题是和客服中心的运营相关；主体不确定"
+    },
+    {
+      "sample_name": "pacific",
+      "candidate_id": "c_0061",
+      "expert_final_label": "relevant",
+      "expert_evidence_group": "cpic_ecommerce_sales_intelligent_training_2025",
+      "expert_comment": "智能培训也是客服中心运营的一部分；可以作为配套参考"
+    },
+    {
+      "sample_name": "pacific",
+      "candidate_id": "c_0083",
+      "expert_final_label": "irrelevant",
+      "expert_evidence_group": "",
+      "expert_comment": "内容不清晰；与 c_0024 URL 完全相同，且原文信息不足，作为重复候选按规则调整为 irrelevant。"
+    },
+    {
+      "sample_name": "pacific",
+      "candidate_id": "c_0093",
+      "expert_final_label": "acceptable_alternative",
+      "expert_evidence_group": "cpic_website_intelligent_recommendation_platform",
+      "expert_comment": "页面不存在"
+    },
+    {
+      "sample_name": "pacific",
+      "candidate_id": "c_0098",
+      "expert_final_label": "irrelevant",
+      "expert_evidence_group": "",
+      "expert_comment": "智能培训也是客服中心运营的一部分；可以作为配套参考；与 must_keep 候选 c_0037 URL 完全相同，作为重复候选按规则调整为 irrelevant。"
+    },
+    {
+      "sample_name": "pacific",
+      "candidate_id": "c_0100",
+      "expert_final_label": "acceptable_alternative",
+      "expert_evidence_group": "cpic_website_recommendation_engineering_2018",
+      "expert_comment": "有相关性，但可能只和客服是合作系统；相关性弱；与 c_0040 URL 完全相同，属于同一智能推荐系统采购事件，按规则调整为 acceptable_alternative。"
+    },
+    {
+      "sample_name": "pacific",
+      "candidate_id": "c_0105",
+      "expert_final_label": "irrelevant",
+      "expert_evidence_group": "",
+      "expert_comment": "无法看到详细信息不确定太原局具体是谁，如与太保不相关，则该内容不适用；主体不确定；与 c_0042 URL 完全相同，作为重复候选按规则调整为 irrelevant。"
+    },
+    {
+      "sample_name": "pacific",
+      "candidate_id": "c_0114",
+      "expert_final_label": "irrelevant",
+      "expert_evidence_group": "",
+      "expert_comment": "智能外呼也是call center；与 must_keep 候选 c_0051 URL 完全相同，作为重复候选按规则调整为 irrelevant。"
+    },
+    {
+      "sample_name": "pacific",
+      "candidate_id": "c_0118",
+      "expert_final_label": "must_keep",
+      "expert_evidence_group": "",
+      "expert_comment": "智能语言识别是相关系统，该内容可以分析其有智语言能力"
+    },
+    {
+      "sample_name": "pacific",
+      "candidate_id": "c_0120",
+      "expert_final_label": "must_keep",
+      "expert_evidence_group": "",
+      "expert_comment": "智能客服辅助也是智能化系统"
+    },
+    {
+      "sample_name": "pacific",
+      "candidate_id": "c_0121",
+      "expert_final_label": "irrelevant",
+      "expert_evidence_group": "",
+      "expert_comment": "无法看到详细信息看标题是和客服中心的运营相关；主体不确定；与 c_0055 URL 完全相同，作为重复候选按规则调整为 irrelevant。"
+    },
+    {
+      "sample_name": "pacific",
+      "candidate_id": "c_0132",
+      "expert_final_label": "must_keep",
+      "expert_evidence_group": "",
+      "expert_comment": "页面打不开，但看标题是必选信息"
+    },
+    {
+      "sample_name": "pacific",
+      "candidate_id": "c_0022",
+      "expert_final_label": "relevant",
+      "expert_evidence_group": "taikang_qa_dialogue_platform_2020",
+      "expert_comment": "同行业可做参考"
+    },
+    {
+      "sample_name": "pacific",
+      "candidate_id": "c_0027",
+      "expert_final_label": "uncertain",
+      "expert_evidence_group": "",
+      "expert_comment": "看不到页面；无页面"
+    },
+    {
+      "sample_name": "pacific",
+      "candidate_id": "c_0081",
+      "expert_final_label": "acceptable_alternative",
+      "expert_evidence_group": "taikang_qa_dialogue_platform_2020",
+      "expert_comment": "同行业可做参考；与 c_0022 URL 完全相同，属于同一泰康问答对话平台采购事件，按规则调整为 acceptable_alternative。"
+    },
+    {
+      "sample_name": "pacific",
+      "candidate_id": "c_0086",
+      "expert_final_label": "irrelevant",
+      "expert_evidence_group": "",
+      "expert_comment": "看不到页面；无页面；与 c_0027 URL 完全相同，作为重复候选按规则调整为 irrelevant。"
+    },
+    {
+      "sample_name": "pacific",
+      "candidate_id": "c_0113",
+      "expert_final_label": "irrelevant",
+      "expert_evidence_group": "",
+      "expert_comment": "虽然时间较早，但可作为历史信息参考用户系统建设情况；与 must_keep 候选 c_0049 URL 完全相同，作为重复候选按规则调整为 irrelevant。"
+    },
+    {
+      "sample_name": "pacific",
+      "candidate_id": "c_0129",
+      "expert_final_label": "relevant",
+      "expert_evidence_group": "industry_ai_customer_service_whitepaper",
+      "expert_comment": "第三方报道信息可做参考"
+    },
+    {
+      "sample_name": "pacific",
+      "candidate_id": "c_0135",
+      "expert_final_label": "must_keep",
+      "expert_evidence_group": "",
+      "expert_comment": "厂商宣传案例，可以深度了解"
+    }
+  ]
+}

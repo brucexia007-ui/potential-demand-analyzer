@@ -1,0 +1,62 @@
+name: Skill 提案
+description: 提议新的领域 Skill 或现有 Skill 升级
+title: "[Skill]: "
+labels:
+  - enhancement
+body:
+  - type: input
+    id: domain
+    attributes:
+      label: 领域与目标用户
+      placeholder: 例如客服中心 / B2B 客户经理与售前顾问
+    validations:
+      required: true
+  - type: textarea
+    id: decision
+    attributes:
+      label: Skill 要支持的商业决策
+      description: 最终使用者需要基于报告决定什么？
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: 能力范围与非目标
+      description: 列出能力域、生命周期、服务模式及明确不覆盖的内容
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: 证据类型与准入门槛
+      description: 说明事实来源、时间衰减、反证、主体归属和未知项处理
+    validations:
+      required: true
+  - type: textarea
+    id: contract
+    attributes:
+      label: 输入输出契约
+      description: 说明上游输入、结构化输出、枚举、置信度和下游消费者
+    validations:
+      required: true
+  - type: textarea
+    id: execution
+    attributes:
+      label: 执行与工具需求
+      description: 说明搜索、抓取、Field Agent、evaluation、预算和动态剪枝需求
+  - type: textarea
+    id: tests
+    attributes:
+      label: 黄金用例与边缘情况
+      description: 至少包含正向商机、反误判、空证据、时间过期和主体混淆样例
+    validations:
+      required: true
+  - type: checkboxes
+    id: compliance
+    attributes:
+      label: 合规确认
+      options:
+        - label: 提案不要求绕过验证码、登录墙或访问控制
+          required: true
+        - label: 示例数据可以公开且不包含客户私有信息或个人身份信息
+          required: true

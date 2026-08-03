@@ -1,0 +1,117 @@
+# docker-compose.prod.yml —— 生产环境端口覆盖
+#
+# 使用方式（与基础 compose 文件合并）：
+#   docker compose --env-file .env.production \
+#     -f docker-compose.yml -f docker-compose.prod.yml up -d
+#
+# 效果：
+#   仅 nginx (80) 对外暴露端口，其余服务仅容器内网可见
+#   PostgreSQL (5432)、Redis (6379)、Backend (8000)、Frontend (3000)、
+#   Browserless (3000) 一律不暴露到宿主机
+x-production-logging: &production-logging
+  driver: json-file
+  options:
+    max-size: "20m"
+    max-file: "5"
+
+services:
+  postgres:
+    logging: *production-logging
+    ports: !reset []
+    environment:
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:?生产环境必须设置 POSTGRES_PASSWORD}"
+
+  redis:
+    logging: *production-logging
+    image: "${REDIS_IMAGE:?生产环境必须设置固定摘要的 REDIS_IMAGE}"
+    ports: !reset []
+    environment:
+      REDIS_PASSWORD: "${REDIS_PASSWORD:?生产环境必须设置 REDIS_PASSWORD}"
+    command:
+      - redis-server
+      - --requirepass
+      - "${REDIS_PASSWORD:?生产环境必须设置 REDIS_PASSWORD}"
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - redis-cli -a "$$REDIS_PASSWORD" ping | grep -q PONG
+
+  backend:
+    logging: *production-logging
+    image: "${BACKEND_IMAGE:?生产环境必须设置经过验证的 BACKEND_IMAGE 摘要}"
+    build: !reset null
+    ports: !reset []
+    env_file: !override
+      - .env.production
+    environment:
+      ENV: "production"
+      AUTH_COOKIE_SECURE: "true"
+      LOG_FORMAT: "json"
+      METRICS_ENABLED: "true"
+
+  worker:
+    logging: *production-logging
+    image: "${BACKEND_IMAGE:?生产环境必须设置经过验证的 BACKEND_IMAGE 摘要}"
+    build: !reset null
+    env_file: !override
+      - .env.production
+    environment:
+      ENV: "production"
+      LOG_FORMAT: "json"
+
+  crawler:
+    logging: *production-logging
+    image: "${BACKEND_IMAGE:?生产环境必须设置经过验证的 BACKEND_IMAGE 摘要}"
+    build: !reset null
+    env_file: !override
+      - .env.production
+    environment:
+      ENV: "production"
+      LOG_FORMAT: "json"
+
+  beat:
+    logging: *production-logging
+    image: "${BACKEND_IMAGE:?生产环境必须设置经过验证的 BACKEND_IMAGE 摘要}"
+    build: !reset null
+    env_file: !override
+      - .env.production
+    environment:
+      ENV: "production"
+      LOG_FORMAT: "json"
+
+  outbox-relay:
+    logging: *production-logging
+    image: "${BACKEND_IMAGE:?生产环境必须设置经过验证的 BACKEND_IMAGE 摘要}"
+    build: !reset null
+    env_file: !override
+      - .env.production
+    environment:
+      ENV: "production"
+      LOG_FORMAT: "json"
+
+  frontend:
+    logging: *production-logging
+    image: "${FRONTEND_IMAGE:?生产环境必须设置经过验证的 FRONTEND_IMAGE 摘要}"
+    build: !reset null
+    ports: !reset []
+    env_file: !override
+      - .env.production
+    environment:
+      ENV: "production"
+
+  nginx:
+    logging: *production-logging
+    image: "${NGINX_IMAGE:?生产环境必须设置固定摘要的 NGINX_IMAGE}"
+    env_file: !override
+      - .env.production
+    environment:
+      ENV: "production"
+      TLS_ENABLED: "true"
+    ports:
+      - "${APP_HTTPS_PORT:-10443}:443"
+
+  browserless:
+    logging: *production-logging
+    ports: !reset []
+    environment:
+      TOKEN: "${BROWSERLESS_TOKEN:?生产环境必须设置 BROWSERLESS_TOKEN}"

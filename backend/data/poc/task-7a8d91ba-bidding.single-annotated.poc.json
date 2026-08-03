@@ -1,0 +1,137 @@
+{
+  "call_timeout_seconds": 60.0,
+  "candidate_count": 59,
+  "fixture_candidate_source": "evidence_snapshot",
+  "fixture_task_ref": "task_6bb5a627c40b",
+  "gold_label_policy": "gold_priority=critical 为关键金标；未标记时所有金标均视为关键金标",
+  "max_output_tokens": 2400,
+  "max_retries": 0,
+  "requested_model": "deepseek-v4-pro",
+  "schema_version": "task-screening-poc/v1",
+  "screening_context_sha256": "4bfaf0a1bd812a9db5d8d72f736608b9ff65bffeb9d1e79375afbc084f7e4d13",
+  "strategies": {
+    "single": {
+      "average_critical_recall_at_k": 0.933333,
+      "average_ndcg_at_k": 0.762583,
+      "average_overall_recall_at_k": 0.571429,
+      "call_count": 3,
+      "cost": null,
+      "cost_status": "unknown",
+      "finish_reason_counts": {
+        "stop": 3
+      },
+      "min_top_k_jaccard": 0.73913,
+      "models": [
+        "deepseek-v4-pro"
+      ],
+      "p90_latency_seconds": 17.366119,
+      "providers": [
+        "DeepSeek"
+      ],
+      "schema_success_rate": 1.0,
+      "strategy": "single",
+      "token_usage": {
+        "input_tokens": 22632,
+        "output_tokens": 3024,
+        "total_tokens": 25656
+      },
+      "views": [
+        {
+          "critical_recall_at_k": 0.8,
+          "errors": [],
+          "failure_count": 0,
+          "ndcg_at_k": 0.632878,
+          "overall_recall_at_k": 0.571429,
+          "schema_success": true,
+          "top_k_ids": [
+            "c_0001",
+            "c_0024",
+            "c_0044",
+            "c_0037",
+            "c_0033",
+            "c_0009",
+            "c_0014",
+            "c_0004",
+            "c_0008",
+            "c_0042",
+            "c_0045",
+            "c_0050",
+            "c_0018",
+            "c_0019",
+            "c_0017",
+            "c_0025",
+            "c_0021",
+            "c_0022",
+            "c_0047",
+            "c_0046"
+          ],
+          "view": "rotation_0"
+        },
+        {
+          "critical_recall_at_k": 1.0,
+          "errors": [],
+          "failure_count": 0,
+          "ndcg_at_k": 0.830348,
+          "overall_recall_at_k": 0.571429,
+          "schema_success": true,
+          "top_k_ids": [
+            "c_0024",
+            "c_0044",
+            "c_0037",
+            "c_0033",
+            "c_0003",
+            "c_0042",
+            "c_0025",
+            "c_0018",
+            "c_0019",
+            "c_0002",
+            "c_0045",
+            "c_0050",
+            "c_0017",
+            "c_0021",
+            "c_0022",
+            "c_0001",
+            "c_0004",
+            "c_0009",
+            "c_0014",
+            "c_0043"
+          ],
+          "view": "rotation_19"
+        },
+        {
+          "critical_recall_at_k": 1.0,
+          "errors": [],
+          "failure_count": 0,
+          "ndcg_at_k": 0.824522,
+          "overall_recall_at_k": 0.571429,
+          "schema_success": true,
+          "top_k_ids": [
+            "c_0044",
+            "c_0024",
+            "c_0037",
+            "c_0033",
+            "c_0003",
+            "c_0042",
+            "c_0045",
+            "c_0050",
+            "c_0047",
+            "c_0002",
+            "c_0017",
+            "c_0018",
+            "c_0019",
+            "c_0021",
+            "c_0022",
+            "c_0025",
+            "c_0001",
+            "c_0004",
+            "c_0009",
+            "c_0014"
+          ],
+          "view": "rotation_39"
+        }
+      ]
+    }
+  },
+  "thinking_mode": "disabled",
+  "top_k": 20
+}

@@ -1,0 +1,23 @@
+{
+  "default_model": "qwen3.7-plus",
+  "temperature": 0.2,
+  "timeout_seconds": 180,
+  "connect_timeout_seconds": 10,
+  "pool_timeout_seconds": 10,
+  "write_timeout_seconds": 30,
+  "max_output_tokens": 4096,
+  "max_retries": 2,
+  "fallback_providers": [],
+  "fallback_models": [
+    "qwen3.7-plus",
+    "qwen-max",
+    "qwen-turbo"
+  ],
+  "routing": {
+    "default": {
+      "low": "qwen3.7-plus",
+      "medium": "qwen3.7-plus",
+      "high": "qwen3.7-plus"
+    }
+  }
+}

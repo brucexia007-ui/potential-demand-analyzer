@@ -1,0 +1,2388 @@
+{
+  "annotation_policy": "business_label/v1; is_gold_reference仅作来源审计",
+  "annotation_summary": {
+    "evidence_group_count": 18,
+    "irrelevant_count": 92,
+    "must_keep_count": 7,
+    "positive_count": 41,
+    "uncertain_count": 4
+  },
+  "call_timeout_seconds": 60.0,
+  "candidate_count": 137,
+  "fixture_candidate_source": "evidence_snapshot",
+  "fixture_task_ref": "task_eb97f1f2e972",
+  "g1_passed": false,
+  "max_output_tokens": 12000,
+  "max_retries": 0,
+  "output_token_warning_threshold": 4000,
+  "requested_model": "deepseek-v4-pro",
+  "schema_version": "task-screening-poc/v2",
+  "screening_context_sha256": "d33ee1f29d615ec30cea87531a0ce37496fe2ca2fe670f520d5924f6ce5660b1",
+  "screening_protocol": "full_scorecard_deterministic_top_k/v1",
+  "strategies": {
+    "single_scorecard": {
+      "average_evidence_group_recall_at_k": 0.314815,
+      "average_must_keep_recall_at_k": 0.285714,
+      "average_ndcg_at_k": 0.323502,
+      "call_count": 3,
+      "cost": null,
+      "cost_status": "unknown",
+      "finish_reason_counts": {
+        "stop": 2
+      },
+      "g1_gates": {
+        "cost_complete": false,
+        "evidence_group_recall": false,
+        "judged_precision": false,
+        "must_keep_all_views": false,
+        "schema_success": false,
+        "top_k_overlap": false
+      },
+      "g1_passed": false,
+      "min_top_k_jaccard": 0.0,
+      "min_top_k_overlap_at_k": 0.0,
+      "minimum_judged_precision_at_k": 0.736842,
+      "models": [
+        "deepseek-v4-pro"
+      ],
+      "output_token_warning_count": 2,
+      "output_token_warning_threshold": 4000,
+      "p90_latency_seconds": 78.757543,
+      "providers": [
+        "DeepSeek"
+      ],
+      "schema_success_rate": 0.666667,
+      "strategy": "single_scorecard",
+      "token_budget_status": "warning_exceeded",
+      "token_usage": {
+        "input_tokens": 36426,
+        "output_tokens": 18266,
+        "total_tokens": 54692
+      },
+      "views": [
+        {
+          "errors": [],
+          "evidence_group_recall_at_k": 0.555556,
+          "failure_count": 0,
+          "invocation_audit": {
+            "error": null,
+            "finish_reason": "stop",
+            "latency_seconds": 78.757543,
+            "model": "deepseek-v4-pro",
+            "provider": "DeepSeek",
+            "response_content_length": 27419,
+            "token_warning": true,
+            "usage": {
+              "input_tokens": 18213,
+              "output_tokens": 9216,
+              "total_tokens": 27429
+            }
+          },
+          "judged_precision_at_k": 0.736842,
+          "must_keep_recall_at_k": 0.285714,
+          "ndcg_at_k": 0.416709,
+          "schema_success": true,
+          "scorecard_count": 137,
+          "scorecards": [
+            {
+              "candidate_id": "c_0001",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 1,
+              "reason_code": "SECURITY_NOT_CALL_CENTER",
+              "relevance": 1,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0002",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 1,
+              "reason_code": "ELDERLY_CARE_NOT_CALL_CENTER",
+              "relevance": 1,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0003",
+              "evidence_type": "target_adjacent",
+              "novelty": 1,
+              "reason_code": "BI_PLATFORM_ADJACENT",
+              "relevance": 2,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0004",
+              "evidence_type": "target_direct",
+              "novelty": 2,
+              "reason_code": "TARGET_EXACT",
+              "relevance": 4,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0005",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 1,
+              "reason_code": "AUTO_DRIVE_NOT_CALL_CENTER",
+              "relevance": 1,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0006",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "GENERIC_NO_DETAIL",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0007",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 1,
+              "reason_code": "MEETING_SYSTEM_NOT_CALL_CENTER",
+              "relevance": 1,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0008",
+              "evidence_type": "target_direct",
+              "novelty": 2,
+              "reason_code": "TARGET_EXACT",
+              "relevance": 4,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0009",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 1,
+              "reason_code": "DIGITAL_STORE_NOT_CALL_CENTER",
+              "relevance": 1,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0010",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 1,
+              "reason_code": "APP_RN_NOT_CALL_CENTER",
+              "relevance": 1,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0011",
+              "evidence_type": "target_direct",
+              "novelty": 2,
+              "reason_code": "TARGET_EXACT",
+              "relevance": 4,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0012",
+              "evidence_type": "target_direct",
+              "novelty": 2,
+              "reason_code": "TARGET_EXACT",
+              "relevance": 4,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0013",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 1,
+              "reason_code": "MICROSERVICE_NOT_CALL_CENTER",
+              "relevance": 1,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0014",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "FIRE_SAFETY_IRRELEVANT",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0015",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "CABLING_IRRELEVANT",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0016",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "PRINTING_IRRELEVANT",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0017",
+              "evidence_type": "target_direct",
+              "novelty": 2,
+              "reason_code": "TARGET_EXACT",
+              "relevance": 4,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0018",
+              "evidence_type": "target_direct",
+              "novelty": 2,
+              "reason_code": "TARGET_EXACT",
+              "relevance": 4,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0019",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "WRONG_COMPANY",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0020",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "WRONG_COMPANY",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0021",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "WRONG_COMPANY",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0022",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "WRONG_COMPANY",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0023",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "WRONG_COMPANY",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0024",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "WRONG_COMPANY",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0025",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "WRONG_COMPANY",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0026",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "WRONG_COMPANY",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0027",
+              "evidence_type": "target_adjacent",
+              "novelty": 1,
+              "reason_code": "PATENT_DIALOGUE_TECH",
+              "relevance": 3,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0028",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "WRONG_COMPANY",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0029",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "WRONG_COMPANY",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0030",
+              "evidence_type": "target_direct",
+              "novelty": 2,
+              "reason_code": "TARGET_EXACT",
+              "relevance": 4,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0031",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "WRONG_COMPANY",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0032",
+              "evidence_type": "target_adjacent",
+              "novelty": 1,
+              "reason_code": "RECOMMENDATION_ADJACENT",
+              "relevance": 2,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0033",
+              "evidence_type": "target_direct",
+              "novelty": 2,
+              "reason_code": "TARGET_EXACT",
+              "relevance": 4,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0034",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 1,
+              "reason_code": "CONTRACT_REVIEW_NOT_CALL_CENTER",
+              "relevance": 1,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0035",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 1,
+              "reason_code": "CONTRACT_REVIEW_NOT_CALL_CENTER",
+              "relevance": 1,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0036",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 1,
+              "reason_code": "SMART_STORE_NOT_CALL_CENTER",
+              "relevance": 1,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0037",
+              "evidence_type": "target_adjacent",
+              "novelty": 1,
+              "reason_code": "SCHEDULING_ADJACENT",
+              "relevance": 3,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0038",
+              "evidence_type": "target_direct",
+              "novelty": 2,
+              "reason_code": "TARGET_EXACT",
+              "relevance": 4,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0039",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "OFFICE_DECORATION_IRRELEVANT",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0040",
+              "evidence_type": "target_adjacent",
+              "novelty": 1,
+              "reason_code": "RECOMMENDATION_ADJACENT",
+              "relevance": 2,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0041",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 1,
+              "reason_code": "FINANCE_SYSTEM_NOT_CALL_CENTER",
+              "relevance": 1,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0042",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "WRONG_COMPANY",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0043",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "EVENT_IRRELEVANT",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0044",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 1,
+              "reason_code": "FINANCE_SYSTEM_NOT_CALL_CENTER",
+              "relevance": 1,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0045",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "OFFICE_DECORATION_IRRELEVANT",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0046",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "WRONG_COMPANY",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0047",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "DECORATION_IRRELEVANT",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0048",
+              "evidence_type": "target_direct",
+              "novelty": 2,
+              "reason_code": "TARGET_EXACT",
+              "relevance": 4,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0049",
+              "evidence_type": "target_direct",
+              "novelty": 2,
+              "reason_code": "TARGET_EXACT",
+              "relevance": 4,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0050",
+              "evidence_type": "target_direct",
+              "novelty": 2,
+              "reason_code": "TARGET_EXACT",
+              "relevance": 4,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0051",
+              "evidence_type": "target_direct",
+              "novelty": 2,
+              "reason_code": "TARGET_EXACT",
+              "relevance": 4,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0052",
+              "evidence_type": "target_direct",
+              "novelty": 2,
+              "reason_code": "TARGET_EXACT",
+              "relevance": 4,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0053",
+              "evidence_type": "target_adjacent",
+              "novelty": 1,
+              "reason_code": "PATENT_VOICE_INTERACTION",
+              "relevance": 3,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0054",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "GENERIC_NO_DETAIL",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0055",
+              "evidence_type": "target_direct",
+              "novelty": 2,
+              "reason_code": "TARGET_EXACT",
+              "relevance": 4,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0056",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "GENERIC_NO_DETAIL",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0057",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 1,
+              "reason_code": "API_SECURITY_NOT_CALL_CENTER",
+              "relevance": 1,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0058",
+              "evidence_type": "target_adjacent",
+              "novelty": 1,
+              "reason_code": "IT_INNOVATION_ADJACENT",
+              "relevance": 3,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0059",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "COMPUTE_RESOURCE_IRRELEVANT",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0060",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "MARKETING_CONTENT_IRRELEVANT",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0061",
+              "evidence_type": "target_direct",
+              "novelty": 2,
+              "reason_code": "TARGET_EXACT",
+              "relevance": 4,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0062",
+              "evidence_type": "target_direct",
+              "novelty": 2,
+              "reason_code": "TARGET_EXACT",
+              "relevance": 4,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0063",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "HR_TRAINING_IRRELEVANT",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0064",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "CMMI_CERT_IRRELEVANT",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0065",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "WRONG_COMPANY",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0066",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 1,
+              "reason_code": "CLAIM_SYSTEM_NOT_CALL_CENTER",
+              "relevance": 1,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0067",
+              "evidence_type": "target_adjacent",
+              "novelty": 1,
+              "reason_code": "AI_STRATEGY_ADJACENT",
+              "relevance": 3,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0068",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 1,
+              "reason_code": "DIGITAL_STORE_NOT_CALL_CENTER",
+              "relevance": 1,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0069",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 1,
+              "reason_code": "APP_RN_NOT_CALL_CENTER",
+              "relevance": 1,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0070",
+              "evidence_type": "target_direct",
+              "novelty": 2,
+              "reason_code": "TARGET_EXACT",
+              "relevance": 4,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0071",
+              "evidence_type": "target_direct",
+              "novelty": 2,
+              "reason_code": "TARGET_EXACT",
+              "relevance": 4,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0072",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 1,
+              "reason_code": "MICROSERVICE_NOT_CALL_CENTER",
+              "relevance": 1,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0073",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "FIRE_SAFETY_IRRELEVANT",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0074",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "CABLING_IRRELEVANT",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0075",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "PRINTING_IRRELEVANT",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0076",
+              "evidence_type": "target_direct",
+              "novelty": 2,
+              "reason_code": "TARGET_EXACT",
+              "relevance": 4,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0077",
+              "evidence_type": "target_direct",
+              "novelty": 2,
+              "reason_code": "TARGET_EXACT",
+              "relevance": 4,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0078",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "WRONG_COMPANY",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0079",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "WRONG_COMPANY",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0080",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "WRONG_COMPANY",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0081",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "WRONG_COMPANY",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0082",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "WRONG_COMPANY",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0083",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "WRONG_COMPANY",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0084",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "WRONG_COMPANY",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0085",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "WRONG_COMPANY",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0086",
+              "evidence_type": "target_adjacent",
+              "novelty": 1,
+              "reason_code": "PATENT_DIALOGUE_TECH",
+              "relevance": 3,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0087",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "WRONG_COMPANY",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0088",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "WRONG_COMPANY",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0089",
+              "evidence_type": "target_direct",
+              "novelty": 2,
+              "reason_code": "TARGET_EXACT",
+              "relevance": 4,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0090",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "WRONG_COMPANY",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0091",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 1,
+              "reason_code": "SECURITY_NOT_CALL_CENTER",
+              "relevance": 1,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0092",
+              "evidence_type": "target_direct",
+              "novelty": 2,
+              "reason_code": "TARGET_EXACT",
+              "relevance": 4,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0093",
+              "evidence_type": "target_adjacent",
+              "novelty": 1,
+              "reason_code": "RECOMMENDATION_ADJACENT",
+              "relevance": 2,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0094",
+              "evidence_type": "target_direct",
+              "novelty": 2,
+              "reason_code": "TARGET_EXACT",
+              "relevance": 4,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0095",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 1,
+              "reason_code": "CONTRACT_REVIEW_NOT_CALL_CENTER",
+              "relevance": 1,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0096",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 1,
+              "reason_code": "CONTRACT_REVIEW_NOT_CALL_CENTER",
+              "relevance": 1,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0097",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 1,
+              "reason_code": "SMART_STORE_NOT_CALL_CENTER",
+              "relevance": 1,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0098",
+              "evidence_type": "target_adjacent",
+              "novelty": 1,
+              "reason_code": "SCHEDULING_ADJACENT",
+              "relevance": 3,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0099",
+              "evidence_type": "target_direct",
+              "novelty": 2,
+              "reason_code": "TARGET_EXACT",
+              "relevance": 4,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0100",
+              "evidence_type": "target_adjacent",
+              "novelty": 1,
+              "reason_code": "RECOMMENDATION_ADJACENT",
+              "relevance": 2,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0101",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "OFFICE_DECORATION_IRRELEVANT",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0102",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "STOCK_PRICE_IRRELEVANT",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0103",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 1,
+              "reason_code": "FINANCE_SYSTEM_NOT_CALL_CENTER",
+              "relevance": 1,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0104",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "STOCK_PRICE_IRRELEVANT",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0105",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "WRONG_COMPANY",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0106",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "EVENT_IRRELEVANT",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0107",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 1,
+              "reason_code": "FINANCE_SYSTEM_NOT_CALL_CENTER",
+              "relevance": 1,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0108",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "OFFICE_DECORATION_IRRELEVANT",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0109",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "WRONG_COMPANY",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0110",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "DECORATION_IRRELEVANT",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0111",
+              "evidence_type": "target_direct",
+              "novelty": 2,
+              "reason_code": "TARGET_EXACT",
+              "relevance": 4,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0112",
+              "evidence_type": "target_direct",
+              "novelty": 2,
+              "reason_code": "TARGET_EXACT",
+              "relevance": 4,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0113",
+              "evidence_type": "target_direct",
+              "novelty": 2,
+              "reason_code": "TARGET_EXACT",
+              "relevance": 4,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0114",
+              "evidence_type": "target_direct",
+              "novelty": 2,
+              "reason_code": "TARGET_EXACT",
+              "relevance": 4,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0115",
+              "evidence_type": "target_adjacent",
+              "novelty": 1,
+              "reason_code": "BI_PLATFORM_ADJACENT",
+              "relevance": 2,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0116",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 1,
+              "reason_code": "AI_REMOTE_SENSING_NOT_CALL_CENTER",
+              "relevance": 1,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0117",
+              "evidence_type": "target_direct",
+              "novelty": 2,
+              "reason_code": "TARGET_EXACT",
+              "relevance": 4,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0118",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "WRONG_COMPANY",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0119",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "GENERIC_NO_DETAIL",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0120",
+              "evidence_type": "target_direct",
+              "novelty": 2,
+              "reason_code": "TARGET_EXACT",
+              "relevance": 4,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0121",
+              "evidence_type": "target_direct",
+              "novelty": 2,
+              "reason_code": "TARGET_EXACT",
+              "relevance": 4,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0122",
+              "evidence_type": "target_adjacent",
+              "novelty": 1,
+              "reason_code": "IT_INNOVATION_ADJACENT",
+              "relevance": 3,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0123",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "COMPUTE_RESOURCE_IRRELEVANT",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0124",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "MARKETING_CONTENT_IRRELEVANT",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0125",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 1,
+              "reason_code": "SOFTWARE_MAINTENANCE_NOT_CALL_CENTER",
+              "relevance": 1,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0126",
+              "evidence_type": "target_adjacent",
+              "novelty": 1,
+              "reason_code": "AI_STRATEGY_ADJACENT",
+              "relevance": 3,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0127",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "WRONG_COMPANY",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0128",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "WRONG_COMPANY",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0129",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "WHITEPAPER_IRRELEVANT",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0130",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "WRONG_COMPANY",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0131",
+              "evidence_type": "target_adjacent",
+              "novelty": 1,
+              "reason_code": "DIGITAL_LABOR_ADJACENT",
+              "relevance": 3,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0132",
+              "evidence_type": "target_direct",
+              "novelty": 2,
+              "reason_code": "TARGET_EXACT",
+              "relevance": 4,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0133",
+              "evidence_type": "target_adjacent",
+              "novelty": 1,
+              "reason_code": "AI_COOPERATION_ADJACENT",
+              "relevance": 3,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0134",
+              "evidence_type": "target_adjacent",
+              "novelty": 1,
+              "reason_code": "IT_INNOVATION_ADJACENT",
+              "relevance": 3,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0135",
+              "evidence_type": "target_direct",
+              "novelty": 2,
+              "reason_code": "TARGET_EXACT",
+              "relevance": 4,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0136",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 1,
+              "reason_code": "MEETING_SYSTEM_NOT_CALL_CENTER",
+              "relevance": 1,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0137",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "E_PROCUREMENT_IRRELEVANT",
+              "relevance": 0,
+              "source_quality": 1
+            }
+          ],
+          "top_k_ids": [
+            "c_0132",
+            "c_0121",
+            "c_0120",
+            "c_0117",
+            "c_0114",
+            "c_0112",
+            "c_0113",
+            "c_0111",
+            "c_0099",
+            "c_0094",
+            "c_0092",
+            "c_0089",
+            "c_0077",
+            "c_0076",
+            "c_0071",
+            "c_0070",
+            "c_0062",
+            "c_0061",
+            "c_0055",
+            "c_0052"
+          ],
+          "view": "rotation_0"
+        },
+        {
+          "errors": [],
+          "evidence_group_recall_at_k": 0.388889,
+          "failure_count": 0,
+          "invocation_audit": {
+            "error": null,
+            "finish_reason": "stop",
+            "latency_seconds": 75.130117,
+            "model": "deepseek-v4-pro",
+            "provider": "DeepSeek",
+            "response_content_length": 27017,
+            "token_warning": true,
+            "usage": {
+              "input_tokens": 18213,
+              "output_tokens": 9050,
+              "total_tokens": 27263
+            }
+          },
+          "judged_precision_at_k": 0.842105,
+          "must_keep_recall_at_k": 0.571429,
+          "ndcg_at_k": 0.553798,
+          "schema_success": true,
+          "scorecard_count": 137,
+          "scorecards": [
+            {
+              "candidate_id": "c_0001",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 1,
+              "reason_code": "SECURITY_OPERATION",
+              "relevance": 1,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0002",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 1,
+              "reason_code": "SMART_ELDERLY_CARE",
+              "relevance": 1,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0003",
+              "evidence_type": "target_adjacent",
+              "novelty": 1,
+              "reason_code": "BI_PLATFORM",
+              "relevance": 2,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0004",
+              "evidence_type": "target_adjacent",
+              "novelty": 2,
+              "reason_code": "AI_AGENT_PROCUREMENT",
+              "relevance": 3,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0005",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 1,
+              "reason_code": "AUTO_DRIVING_TEST",
+              "relevance": 1,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0006",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 1,
+              "reason_code": "GENERIC_PAGE",
+              "relevance": 1,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0007",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 1,
+              "reason_code": "MEETING_SYSTEM",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0008",
+              "evidence_type": "target_adjacent",
+              "novelty": 2,
+              "reason_code": "SMART_CUSTOMER_MANAGE",
+              "relevance": 3,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0009",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 1,
+              "reason_code": "DIGITAL_STORE",
+              "relevance": 1,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0010",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 1,
+              "reason_code": "APP_RN_REFACTOR",
+              "relevance": 1,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0011",
+              "evidence_type": "target_direct",
+              "novelty": 2,
+              "reason_code": "TARGET_EXACT",
+              "relevance": 4,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0012",
+              "evidence_type": "target_direct",
+              "novelty": 2,
+              "reason_code": "TARGET_EXACT",
+              "relevance": 4,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0013",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 1,
+              "reason_code": "MICROSERVICE_REFACTOR",
+              "relevance": 1,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0014",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 1,
+              "reason_code": "FIRE_SAFETY",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0015",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 1,
+              "reason_code": "CABLING_REFORM",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0016",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 1,
+              "reason_code": "PRINTING_MATERIAL",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0017",
+              "evidence_type": "target_direct",
+              "novelty": 2,
+              "reason_code": "TARGET_EXACT",
+              "relevance": 4,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0018",
+              "evidence_type": "target_direct",
+              "novelty": 2,
+              "reason_code": "TARGET_EXACT",
+              "relevance": 4,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0019",
+              "evidence_type": "industry_analog",
+              "novelty": 1,
+              "reason_code": "OTHER_COMPANY",
+              "relevance": 1,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0020",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 1,
+              "reason_code": "UNIVERSITY_SYSTEM",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0021",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 1,
+              "reason_code": "POLICE_SYSTEM",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0022",
+              "evidence_type": "industry_analog",
+              "novelty": 1,
+              "reason_code": "OTHER_COMPANY",
+              "relevance": 1,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0023",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 1,
+              "reason_code": "HOSPITAL_SYSTEM",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0024",
+              "evidence_type": "industry_analog",
+              "novelty": 1,
+              "reason_code": "OTHER_COMPANY",
+              "relevance": 1,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0025",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 1,
+              "reason_code": "BUILDING_MANAGEMENT",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0026",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 1,
+              "reason_code": "LAB_MANAGEMENT",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0027",
+              "evidence_type": "target_adjacent",
+              "novelty": 1,
+              "reason_code": "PATENT_NOT_PROCUREMENT",
+              "relevance": 2,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0028",
+              "evidence_type": "industry_analog",
+              "novelty": 1,
+              "reason_code": "OTHER_COMPANY",
+              "relevance": 1,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0029",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 1,
+              "reason_code": "MAINTENANCE_PROJECT",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0030",
+              "evidence_type": "target_adjacent",
+              "novelty": 2,
+              "reason_code": "CALL_OUTSOURCING",
+              "relevance": 3,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0031",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 1,
+              "reason_code": "CONSTRUCTION_MATERIAL",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0032",
+              "evidence_type": "target_adjacent",
+              "novelty": 1,
+              "reason_code": "RECOMMENDATION_PLATFORM",
+              "relevance": 2,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0033",
+              "evidence_type": "target_adjacent",
+              "novelty": 2,
+              "reason_code": "AI_AGENT_PROCUREMENT",
+              "relevance": 3,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0034",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 1,
+              "reason_code": "CONTRACT_REVIEW",
+              "relevance": 1,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0035",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 1,
+              "reason_code": "CONTRACT_REVIEW",
+              "relevance": 1,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0036",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 1,
+              "reason_code": "SMART_STORE_DEVICE",
+              "relevance": 1,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0037",
+              "evidence_type": "target_adjacent",
+              "novelty": 2,
+              "reason_code": "SMART_SCHEDULING",
+              "relevance": 3,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0038",
+              "evidence_type": "target_adjacent",
+              "novelty": 2,
+              "reason_code": "AI_AGENT_PROCUREMENT",
+              "relevance": 3,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0039",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 1,
+              "reason_code": "OFFICE_DECORATION",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0040",
+              "evidence_type": "target_adjacent",
+              "novelty": 1,
+              "reason_code": "RECOMMENDATION_SERVICE",
+              "relevance": 2,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0041",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 1,
+              "reason_code": "FINANCIAL_SYSTEM",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0042",
+              "evidence_type": "industry_analog",
+              "novelty": 1,
+              "reason_code": "OTHER_COMPANY",
+              "relevance": 1,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0043",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 1,
+              "reason_code": "ANNIVERSARY_EVENT",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0044",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 1,
+              "reason_code": "FINANCIAL_SYSTEM",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0045",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 1,
+              "reason_code": "OFFICE_DECORATION",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0046",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 1,
+              "reason_code": "OA_SYSTEM_MAINTENANCE",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0047",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 1,
+              "reason_code": "DECORATION_PROJECT",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0048",
+              "evidence_type": "target_direct",
+              "novelty": 2,
+              "reason_code": "TARGET_EXACT",
+              "relevance": 4,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0049",
+              "evidence_type": "target_direct",
+              "novelty": 2,
+              "reason_code": "TARGET_EXACT",
+              "relevance": 4,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0050",
+              "evidence_type": "target_direct",
+              "novelty": 2,
+              "reason_code": "TARGET_EXACT",
+              "relevance": 4,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0051",
+              "evidence_type": "target_direct",
+              "novelty": 2,
+              "reason_code": "TARGET_EXACT",
+              "relevance": 4,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0052",
+              "evidence_type": "target_direct",
+              "novelty": 2,
+              "reason_code": "TARGET_EXACT",
+              "relevance": 4,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0053",
+              "evidence_type": "target_adjacent",
+              "novelty": 1,
+              "reason_code": "PATENT_NOT_PROCUREMENT",
+              "relevance": 2,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0054",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 1,
+              "reason_code": "GENERIC_PAGE",
+              "relevance": 1,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0055",
+              "evidence_type": "target_direct",
+              "novelty": 2,
+              "reason_code": "TARGET_EXACT",
+              "relevance": 4,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0056",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 1,
+              "reason_code": "GENERIC_PAGE",
+              "relevance": 1,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0057",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 1,
+              "reason_code": "API_SECURITY",
+              "relevance": 1,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0058",
+              "evidence_type": "target_adjacent",
+              "novelty": 2,
+              "reason_code": "IT_INNOVATION_REFORM",
+              "relevance": 3,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0059",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 1,
+              "reason_code": "COMPUTING_RESOURCE",
+              "relevance": 1,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0060",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 1,
+              "reason_code": "MARKETING_CONTENT",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0061",
+              "evidence_type": "target_adjacent",
+              "novelty": 2,
+              "reason_code": "AI_TRAINING_MANAGEMENT",
+              "relevance": 3,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0062",
+              "evidence_type": "target_adjacent",
+              "novelty": 2,
+              "reason_code": "AI_TRAINING_SYSTEM",
+              "relevance": 3,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0063",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 1,
+              "reason_code": "HR_CONSULTING",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0064",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 1,
+              "reason_code": "CMMI5_CERTIFICATION",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0065",
+              "evidence_type": "industry_analog",
+              "novelty": 1,
+              "reason_code": "OTHER_COMPANY",
+              "relevance": 1,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0066",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 1,
+              "reason_code": "CLAIM_SYSTEM",
+              "relevance": 1,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0067",
+              "evidence_type": "target_adjacent",
+              "novelty": 2,
+              "reason_code": "AI_STRATEGY_CONSULTING",
+              "relevance": 2,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0068",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 1,
+              "reason_code": "DIGITAL_STORE",
+              "relevance": 1,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0069",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 1,
+              "reason_code": "APP_RN_REFACTOR",
+              "relevance": 1,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0070",
+              "evidence_type": "target_direct",
+              "novelty": 2,
+              "reason_code": "TARGET_EXACT",
+              "relevance": 4,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0071",
+              "evidence_type": "target_direct",
+              "novelty": 2,
+              "reason_code": "TARGET_EXACT",
+              "relevance": 4,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0072",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 1,
+              "reason_code": "MICROSERVICE_REFACTOR",
+              "relevance": 1,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0073",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 1,
+              "reason_code": "FIRE_SAFETY",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0074",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 1,
+              "reason_code": "CABLING_REFORM",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0075",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 1,
+              "reason_code": "PRINTING_MATERIAL",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0076",
+              "evidence_type": "target_direct",
+              "novelty": 2,
+              "reason_code": "TARGET_EXACT",
+              "relevance": 4,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0077",
+              "evidence_type": "target_direct",
+              "novelty": 2,
+              "reason_code": "TARGET_EXACT",
+              "relevance": 4,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0078",
+              "evidence_type": "industry_analog",
+              "novelty": 1,
+              "reason_code": "OTHER_COMPANY",
+              "relevance": 1,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0079",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 1,
+              "reason_code": "UNIVERSITY_SYSTEM",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0080",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 1,
+              "reason_code": "POLICE_SYSTEM",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0081",
+              "evidence_type": "industry_analog",
+              "novelty": 1,
+              "reason_code": "OTHER_COMPANY",
+              "relevance": 1,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0082",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 1,
+              "reason_code": "HOSPITAL_SYSTEM",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0083",
+              "evidence_type": "industry_analog",
+              "novelty": 1,
+              "reason_code": "OTHER_COMPANY",
+              "relevance": 1,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0084",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 1,
+              "reason_code": "BUILDING_MANAGEMENT",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0085",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 1,
+              "reason_code": "LAB_MANAGEMENT",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0086",
+              "evidence_type": "target_adjacent",
+              "novelty": 1,
+              "reason_code": "PATENT_NOT_PROCUREMENT",
+              "relevance": 2,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0087",
+              "evidence_type": "industry_analog",
+              "novelty": 1,
+              "reason_code": "OTHER_COMPANY",
+              "relevance": 1,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0088",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 1,
+              "reason_code": "MAINTENANCE_PROJECT",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0089",
+              "evidence_type": "target_adjacent",
+              "novelty": 2,
+              "reason_code": "CALL_OUTSOURCING",
+              "relevance": 3,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0090",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 1,
+              "reason_code": "CONSTRUCTION_MATERIAL",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0091",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 1,
+              "reason_code": "SECURITY_OPERATION",
+              "relevance": 1,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0092",
+              "evidence_type": "target_adjacent",
+              "novelty": 2,
+              "reason_code": "AI_AGENT_PROCUREMENT",
+              "relevance": 3,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0093",
+              "evidence_type": "target_adjacent",
+              "novelty": 1,
+              "reason_code": "RECOMMENDATION_PLATFORM",
+              "relevance": 2,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0094",
+              "evidence_type": "target_adjacent",
+              "novelty": 2,
+              "reason_code": "AI_AGENT_PROCUREMENT",
+              "relevance": 3,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0095",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 1,
+              "reason_code": "CONTRACT_REVIEW",
+              "relevance": 1,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0096",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 1,
+              "reason_code": "CONTRACT_REVIEW",
+              "relevance": 1,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0097",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 1,
+              "reason_code": "SMART_STORE_DEVICE",
+              "relevance": 1,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0098",
+              "evidence_type": "target_adjacent",
+              "novelty": 2,
+              "reason_code": "SMART_SCHEDULING",
+              "relevance": 3,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0099",
+              "evidence_type": "target_adjacent",
+              "novelty": 2,
+              "reason_code": "AI_AGENT_PROCUREMENT",
+              "relevance": 3,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0100",
+              "evidence_type": "target_adjacent",
+              "novelty": 1,
+              "reason_code": "RECOMMENDATION_SERVICE",
+              "relevance": 2,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0101",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 1,
+              "reason_code": "OFFICE_DECORATION",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0102",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 1,
+              "reason_code": "STOCK_PRICE",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0103",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 1,
+              "reason_code": "FINANCIAL_SYSTEM",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0104",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 1,
+              "reason_code": "STOCK_PRICE",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0105",
+              "evidence_type": "industry_analog",
+              "novelty": 1,
+              "reason_code": "OTHER_COMPANY",
+              "relevance": 1,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0106",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 1,
+              "reason_code": "ANNIVERSARY_EVENT",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0107",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 1,
+              "reason_code": "FINANCIAL_SYSTEM",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0108",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 1,
+              "reason_code": "OFFICE_DECORATION",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0109",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 1,
+              "reason_code": "OA_SYSTEM_MAINTENANCE",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0110",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 1,
+              "reason_code": "DECORATION_PROJECT",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0111",
+              "evidence_type": "target_direct",
+              "novelty": 2,
+              "reason_code": "TARGET_EXACT",
+              "relevance": 4,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0112",
+              "evidence_type": "target_direct",
+              "novelty": 2,
+              "reason_code": "TARGET_EXACT",
+              "relevance": 4,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0113",
+              "evidence_type": "target_direct",
+              "novelty": 2,
+              "reason_code": "TARGET_EXACT",
+              "relevance": 4,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0114",
+              "evidence_type": "target_direct",
+              "novelty": 2,
+              "reason_code": "TARGET_EXACT",
+              "relevance": 4,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0115",
+              "evidence_type": "target_adjacent",
+              "novelty": 1,
+              "reason_code": "BI_PLATFORM",
+              "relevance": 2,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0116",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 1,
+              "reason_code": "AI_REMOTE_SENSING",
+              "relevance": 1,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0117",
+              "evidence_type": "target_direct",
+              "novelty": 2,
+              "reason_code": "TARGET_EXACT",
+              "relevance": 4,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0118",
+              "evidence_type": "industry_analog",
+              "novelty": 1,
+              "reason_code": "OTHER_COMPANY",
+              "relevance": 1,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0119",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 1,
+              "reason_code": "GENERIC_PAGE",
+              "relevance": 1,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0120",
+              "evidence_type": "target_direct",
+              "novelty": 2,
+              "reason_code": "TARGET_EXACT",
+              "relevance": 4,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0121",
+              "evidence_type": "target_direct",
+              "novelty": 2,
+              "reason_code": "TARGET_EXACT",
+              "relevance": 4,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0122",
+              "evidence_type": "target_adjacent",
+              "novelty": 2,
+              "reason_code": "IT_INNOVATION_REFORM",
+              "relevance": 3,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0123",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 1,
+              "reason_code": "COMPUTING_RESOURCE",
+              "relevance": 1,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0124",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 1,
+              "reason_code": "MARKETING_CONTENT",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0125",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 1,
+              "reason_code": "SOFTWARE_MAINTENANCE",
+              "relevance": 1,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0126",
+              "evidence_type": "target_adjacent",
+              "novelty": 1,
+              "reason_code": "AI_STRATEGY_NEWS",
+              "relevance": 2,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0127",
+              "evidence_type": "industry_analog",
+              "novelty": 1,
+              "reason_code": "OTHER_COMPANY",
+              "relevance": 1,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0128",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 1,
+              "reason_code": "TELECOM_PROJECT",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0129",
+              "evidence_type": "industry_analog",
+              "novelty": 1,
+              "reason_code": "INDUSTRY_REPORT",
+              "relevance": 1,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0130",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 1,
+              "reason_code": "OTHER_COMPANY",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0131",
+              "evidence_type": "target_adjacent",
+              "novelty": 1,
+              "reason_code": "DIGITAL_LABOR_NEWS",
+              "relevance": 2,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0132",
+              "evidence_type": "target_direct",
+              "novelty": 2,
+              "reason_code": "TARGET_EXACT",
+              "relevance": 4,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0133",
+              "evidence_type": "target_adjacent",
+              "novelty": 1,
+              "reason_code": "AI_COOPERATION_NEWS",
+              "relevance": 2,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0134",
+              "evidence_type": "target_adjacent",
+              "novelty": 2,
+              "reason_code": "IT_INNOVATION_HARDWARE",
+              "relevance": 3,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0135",
+              "evidence_type": "target_adjacent",
+              "novelty": 1,
+              "reason_code": "CALL_CENTER_SOLUTION",
+              "relevance": 2,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0136",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 1,
+              "reason_code": "MEETING_SYSTEM",
+              "relevance": 0,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0137",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 1,
+              "reason_code": "E_PROCUREMENT_PLATFORM",
+              "relevance": 0,
+              "source_quality": 1
+            }
+          ],
+          "top_k_ids": [
+            "c_0132",
+            "c_0121",
+            "c_0120",
+            "c_0117",
+            "c_0114",
+            "c_0112",
+            "c_0113",
+            "c_0111",
+            "c_0077",
+            "c_0076",
+            "c_0071",
+            "c_0070",
+            "c_0055",
+            "c_0052",
+            "c_0051",
+            "c_0050",
+            "c_0049",
+            "c_0048",
+            "c_0018",
+            "c_0017"
+          ],
+          "view": "rotation_45"
+        },
+        {
+          "errors": [
+            "APITimeoutError"
+          ],
+          "evidence_group_recall_at_k": 0.0,
+          "failure_count": 1,
+          "invocation_audit": {
+            "error": "APITimeoutError: Request timed out.",
+            "finish_reason": null,
+            "latency_seconds": 60.288688,
+            "model": null,
+            "provider": null,
+            "response_content_length": 0,
+            "token_warning": false,
+            "usage": {
+              "input_tokens": 0,
+              "output_tokens": 0,
+              "total_tokens": 0
+            }
+          },
+          "judged_precision_at_k": null,
+          "must_keep_recall_at_k": 0.0,
+          "ndcg_at_k": 0.0,
+          "schema_success": false,
+          "scorecard_count": 0,
+          "scorecards": [],
+          "top_k_ids": [],
+          "view": "rotation_91"
+        }
+      ]
+    }
+  },
+  "thinking_mode": "disabled",
+  "token_policy": "quality_first_soft_warning/v1",
+  "top_k": 20
+}

@@ -1,0 +1,4 @@
+interface:
+  display_name: "客服服务体验审计"
+  short_description: "审计公开客服入口、用户反馈、体验缺口、官方回应与验证边界"
+  default_prompt: "使用 $auditing-contact-center-service-experience 审计目标企业公开客服体验与用户反馈。"

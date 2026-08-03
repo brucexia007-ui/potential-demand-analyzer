@@ -1,0 +1,4316 @@
+{
+  "annotation_status": "completed",
+  "candidate_count": 57,
+  "candidate_identity_clusters": [
+    {
+      "annotation_resolution": {
+        "active_until": "",
+        "business_label": "uncertain",
+        "chosen_from_candidate_id": "c_0001",
+        "demand_relation": "core_customer_service",
+        "evidence_group": "",
+        "evidence_role": "uncertain",
+        "prior_annotations": [
+          {
+            "active_until": "",
+            "business_label": "uncertain",
+            "candidate_id": "c_0001",
+            "evidence_group": "",
+            "evidence_role": "uncertain",
+            "procurement_lifecycle": "not_applicable"
+          }
+        ],
+        "procurement_lifecycle": "not_applicable",
+        "resolution_rule": "label_priority_then_scope_reclassification/v1",
+        "source_candidate_ids": [
+          "c_0001"
+        ],
+        "status": "resolved",
+        "subject_relation": "external"
+      },
+      "identity_key": "identity_7f3106cd74de110a",
+      "match_basis": [
+        "singleton"
+      ],
+      "member_ids": [
+        "c_0001"
+      ],
+      "representative_id": "c_0001"
+    },
+    {
+      "annotation_resolution": {
+        "active_until": "",
+        "business_label": "relevant",
+        "chosen_from_candidate_id": "c_0002",
+        "demand_relation": "core_customer_service",
+        "evidence_group": "evidence_3125127c42",
+        "evidence_role": "industry_capability_intelligence",
+        "prior_annotations": [
+          {
+            "active_until": "",
+            "business_label": "relevant",
+            "candidate_id": "c_0002",
+            "evidence_group": "evidence_3125127c42",
+            "evidence_role": "industry_capability_intelligence",
+            "procurement_lifecycle": "closed_or_failed"
+          }
+        ],
+        "procurement_lifecycle": "closed_or_failed",
+        "resolution_rule": "label_priority_then_scope_reclassification/v1",
+        "source_candidate_ids": [
+          "c_0002"
+        ],
+        "status": "resolved",
+        "subject_relation": "external"
+      },
+      "identity_key": "identity_53bb984c0a526a67",
+      "match_basis": [
+        "singleton"
+      ],
+      "member_ids": [
+        "c_0002"
+      ],
+      "representative_id": "c_0002"
+    },
+    {
+      "annotation_resolution": {
+        "active_until": "",
+        "business_label": "relevant",
+        "chosen_from_candidate_id": "c_0003",
+        "demand_relation": "core_customer_service",
+        "evidence_group": "evidence_113a49fd6f",
+        "evidence_role": "industry_capability_intelligence",
+        "prior_annotations": [
+          {
+            "active_until": "",
+            "business_label": "relevant",
+            "candidate_id": "c_0003",
+            "evidence_group": "evidence_113a49fd6f",
+            "evidence_role": "industry_capability_intelligence",
+            "procurement_lifecycle": "closed_or_failed"
+          }
+        ],
+        "procurement_lifecycle": "closed_or_failed",
+        "resolution_rule": "label_priority_then_scope_reclassification/v1",
+        "source_candidate_ids": [
+          "c_0003"
+        ],
+        "status": "resolved",
+        "subject_relation": "external"
+      },
+      "identity_key": "identity_397da07327dad59f",
+      "match_basis": [
+        "singleton"
+      ],
+      "member_ids": [
+        "c_0003"
+      ],
+      "representative_id": "c_0003"
+    },
+    {
+      "annotation_resolution": {
+        "active_until": "",
+        "business_label": "irrelevant",
+        "chosen_from_candidate_id": "c_0004",
+        "demand_relation": "unrelated",
+        "evidence_group": "",
+        "evidence_role": "out_of_scope",
+        "prior_annotations": [
+          {
+            "active_until": "",
+            "business_label": "irrelevant",
+            "candidate_id": "c_0004",
+            "evidence_group": "",
+            "evidence_role": "out_of_scope",
+            "procurement_lifecycle": "not_applicable"
+          }
+        ],
+        "procurement_lifecycle": "closed_or_failed",
+        "resolution_rule": "label_priority_then_scope_reclassification/v1",
+        "source_candidate_ids": [
+          "c_0004"
+        ],
+        "status": "resolved",
+        "subject_relation": "exact_target"
+      },
+      "identity_key": "identity_297ccb1fb53510dc",
+      "match_basis": [
+        "singleton"
+      ],
+      "member_ids": [
+        "c_0004"
+      ],
+      "representative_id": "c_0004"
+    },
+    {
+      "annotation_resolution": {
+        "active_until": "",
+        "business_label": "irrelevant",
+        "chosen_from_candidate_id": "c_0005",
+        "demand_relation": "unrelated",
+        "evidence_group": "",
+        "evidence_role": "out_of_scope",
+        "prior_annotations": [
+          {
+            "active_until": "",
+            "business_label": "irrelevant",
+            "candidate_id": "c_0005",
+            "evidence_group": "",
+            "evidence_role": "out_of_scope",
+            "procurement_lifecycle": "not_applicable"
+          }
+        ],
+        "procurement_lifecycle": "closed_or_failed",
+        "resolution_rule": "label_priority_then_scope_reclassification/v1",
+        "source_candidate_ids": [
+          "c_0005"
+        ],
+        "status": "resolved",
+        "subject_relation": "other_branch_or_subsidiary"
+      },
+      "identity_key": "identity_2d9af3ab7681025e",
+      "match_basis": [
+        "singleton"
+      ],
+      "member_ids": [
+        "c_0005"
+      ],
+      "representative_id": "c_0005"
+    },
+    {
+      "annotation_resolution": {
+        "active_until": "",
+        "business_label": "irrelevant",
+        "chosen_from_candidate_id": "c_0006",
+        "demand_relation": "unrelated",
+        "evidence_group": "",
+        "evidence_role": "out_of_scope",
+        "prior_annotations": [
+          {
+            "active_until": "",
+            "business_label": "irrelevant",
+            "candidate_id": "c_0006",
+            "evidence_group": "",
+            "evidence_role": "out_of_scope",
+            "procurement_lifecycle": "not_applicable"
+          }
+        ],
+        "procurement_lifecycle": "closed_or_failed",
+        "resolution_rule": "label_priority_then_scope_reclassification/v1",
+        "source_candidate_ids": [
+          "c_0006"
+        ],
+        "status": "resolved",
+        "subject_relation": "external"
+      },
+      "identity_key": "identity_2659ad1cd02cc90a",
+      "match_basis": [
+        "singleton"
+      ],
+      "member_ids": [
+        "c_0006"
+      ],
+      "representative_id": "c_0006"
+    },
+    {
+      "annotation_resolution": {
+        "active_until": "",
+        "business_label": "irrelevant",
+        "chosen_from_candidate_id": "c_0007",
+        "demand_relation": "unrelated",
+        "evidence_group": "",
+        "evidence_role": "out_of_scope",
+        "prior_annotations": [
+          {
+            "active_until": "",
+            "business_label": "irrelevant",
+            "candidate_id": "c_0007",
+            "evidence_group": "",
+            "evidence_role": "out_of_scope",
+            "procurement_lifecycle": "not_applicable"
+          }
+        ],
+        "procurement_lifecycle": "closed_or_failed",
+        "resolution_rule": "label_priority_then_scope_reclassification/v1",
+        "source_candidate_ids": [
+          "c_0007"
+        ],
+        "status": "resolved",
+        "subject_relation": "external"
+      },
+      "identity_key": "identity_d2e36b99431db342",
+      "match_basis": [
+        "singleton"
+      ],
+      "member_ids": [
+        "c_0007"
+      ],
+      "representative_id": "c_0007"
+    },
+    {
+      "annotation_resolution": {
+        "active_until": "",
+        "business_label": "irrelevant",
+        "chosen_from_candidate_id": "c_0008",
+        "demand_relation": "unrelated",
+        "evidence_group": "",
+        "evidence_role": "out_of_scope",
+        "prior_annotations": [
+          {
+            "active_until": "",
+            "business_label": "irrelevant",
+            "candidate_id": "c_0008",
+            "evidence_group": "",
+            "evidence_role": "out_of_scope",
+            "procurement_lifecycle": "not_applicable"
+          }
+        ],
+        "procurement_lifecycle": "historical_or_unknown",
+        "resolution_rule": "label_priority_then_scope_reclassification/v1",
+        "source_candidate_ids": [
+          "c_0008"
+        ],
+        "status": "resolved",
+        "subject_relation": "exact_target"
+      },
+      "identity_key": "identity_6b31a90e2ca040bb",
+      "match_basis": [
+        "singleton"
+      ],
+      "member_ids": [
+        "c_0008"
+      ],
+      "representative_id": "c_0008"
+    },
+    {
+      "annotation_resolution": {
+        "active_until": "",
+        "business_label": "irrelevant",
+        "chosen_from_candidate_id": "c_0009",
+        "demand_relation": "unrelated",
+        "evidence_group": "",
+        "evidence_role": "out_of_scope",
+        "prior_annotations": [
+          {
+            "active_until": "",
+            "business_label": "irrelevant",
+            "candidate_id": "c_0009",
+            "evidence_group": "",
+            "evidence_role": "out_of_scope",
+            "procurement_lifecycle": "not_applicable"
+          }
+        ],
+        "procurement_lifecycle": "closed_or_failed",
+        "resolution_rule": "label_priority_then_scope_reclassification/v1",
+        "source_candidate_ids": [
+          "c_0009"
+        ],
+        "status": "resolved",
+        "subject_relation": "exact_target"
+      },
+      "identity_key": "identity_f4c233744aa1b59c",
+      "match_basis": [
+        "singleton"
+      ],
+      "member_ids": [
+        "c_0009"
+      ],
+      "representative_id": "c_0009"
+    },
+    {
+      "annotation_resolution": {
+        "active_until": "",
+        "business_label": "irrelevant",
+        "chosen_from_candidate_id": "c_0010",
+        "demand_relation": "unrelated",
+        "evidence_group": "",
+        "evidence_role": "out_of_scope",
+        "prior_annotations": [
+          {
+            "active_until": "",
+            "business_label": "irrelevant",
+            "candidate_id": "c_0010",
+            "evidence_group": "",
+            "evidence_role": "out_of_scope",
+            "procurement_lifecycle": "not_applicable"
+          }
+        ],
+        "procurement_lifecycle": "historical_or_unknown",
+        "resolution_rule": "label_priority_then_scope_reclassification/v1",
+        "source_candidate_ids": [
+          "c_0010"
+        ],
+        "status": "resolved",
+        "subject_relation": "external"
+      },
+      "identity_key": "identity_e46ec637122f5c52",
+      "match_basis": [
+        "singleton"
+      ],
+      "member_ids": [
+        "c_0010"
+      ],
+      "representative_id": "c_0010"
+    },
+    {
+      "annotation_resolution": {
+        "active_until": "",
+        "business_label": "irrelevant",
+        "chosen_from_candidate_id": "c_0011",
+        "demand_relation": "unrelated",
+        "evidence_group": "",
+        "evidence_role": "out_of_scope",
+        "prior_annotations": [
+          {
+            "active_until": "",
+            "business_label": "irrelevant",
+            "candidate_id": "c_0011",
+            "evidence_group": "",
+            "evidence_role": "out_of_scope",
+            "procurement_lifecycle": "not_applicable"
+          }
+        ],
+        "procurement_lifecycle": "closed_or_failed",
+        "resolution_rule": "label_priority_then_scope_reclassification/v1",
+        "source_candidate_ids": [
+          "c_0011"
+        ],
+        "status": "resolved",
+        "subject_relation": "external"
+      },
+      "identity_key": "identity_f500344ff4d8d050",
+      "match_basis": [
+        "singleton"
+      ],
+      "member_ids": [
+        "c_0011"
+      ],
+      "representative_id": "c_0011"
+    },
+    {
+      "annotation_resolution": {
+        "active_until": "",
+        "business_label": "irrelevant",
+        "chosen_from_candidate_id": "c_0012",
+        "demand_relation": "unrelated",
+        "evidence_group": "",
+        "evidence_role": "out_of_scope",
+        "prior_annotations": [
+          {
+            "active_until": "",
+            "business_label": "irrelevant",
+            "candidate_id": "c_0012",
+            "evidence_group": "",
+            "evidence_role": "out_of_scope",
+            "procurement_lifecycle": "not_applicable"
+          }
+        ],
+        "procurement_lifecycle": "historical_or_unknown",
+        "resolution_rule": "label_priority_then_scope_reclassification/v1",
+        "source_candidate_ids": [
+          "c_0012"
+        ],
+        "status": "resolved",
+        "subject_relation": "exact_target"
+      },
+      "identity_key": "identity_de8ff838b1474aa5",
+      "match_basis": [
+        "singleton"
+      ],
+      "member_ids": [
+        "c_0012"
+      ],
+      "representative_id": "c_0012"
+    },
+    {
+      "annotation_resolution": {
+        "active_until": "",
+        "business_label": "irrelevant",
+        "chosen_from_candidate_id": "c_0013",
+        "demand_relation": "unrelated",
+        "evidence_group": "",
+        "evidence_role": "out_of_scope",
+        "prior_annotations": [
+          {
+            "active_until": "",
+            "business_label": "irrelevant",
+            "candidate_id": "c_0013",
+            "evidence_group": "",
+            "evidence_role": "out_of_scope",
+            "procurement_lifecycle": "not_applicable"
+          }
+        ],
+        "procurement_lifecycle": "historical_or_unknown",
+        "resolution_rule": "label_priority_then_scope_reclassification/v1",
+        "source_candidate_ids": [
+          "c_0013"
+        ],
+        "status": "resolved",
+        "subject_relation": "external"
+      },
+      "identity_key": "identity_2100aebf9fb15d3b",
+      "match_basis": [
+        "singleton"
+      ],
+      "member_ids": [
+        "c_0013"
+      ],
+      "representative_id": "c_0013"
+    },
+    {
+      "annotation_resolution": {
+        "active_until": "",
+        "business_label": "irrelevant",
+        "chosen_from_candidate_id": "c_0014",
+        "demand_relation": "unrelated",
+        "evidence_group": "",
+        "evidence_role": "out_of_scope",
+        "prior_annotations": [
+          {
+            "active_until": "",
+            "business_label": "irrelevant",
+            "candidate_id": "c_0014",
+            "evidence_group": "",
+            "evidence_role": "out_of_scope",
+            "procurement_lifecycle": "not_applicable"
+          }
+        ],
+        "procurement_lifecycle": "historical_or_unknown",
+        "resolution_rule": "label_priority_then_scope_reclassification/v1",
+        "source_candidate_ids": [
+          "c_0014"
+        ],
+        "status": "resolved",
+        "subject_relation": "exact_target"
+      },
+      "identity_key": "identity_5460285d1e18fd02",
+      "match_basis": [
+        "singleton"
+      ],
+      "member_ids": [
+        "c_0014"
+      ],
+      "representative_id": "c_0014"
+    },
+    {
+      "annotation_resolution": {
+        "active_until": "",
+        "business_label": "irrelevant",
+        "chosen_from_candidate_id": "c_0015",
+        "demand_relation": "unrelated",
+        "evidence_group": "",
+        "evidence_role": "out_of_scope",
+        "prior_annotations": [
+          {
+            "active_until": "",
+            "business_label": "irrelevant",
+            "candidate_id": "c_0015",
+            "evidence_group": "",
+            "evidence_role": "out_of_scope",
+            "procurement_lifecycle": "not_applicable"
+          }
+        ],
+        "procurement_lifecycle": "historical_or_unknown",
+        "resolution_rule": "label_priority_then_scope_reclassification/v1",
+        "source_candidate_ids": [
+          "c_0015"
+        ],
+        "status": "resolved",
+        "subject_relation": "external"
+      },
+      "identity_key": "identity_ab633095f7650ea7",
+      "match_basis": [
+        "singleton"
+      ],
+      "member_ids": [
+        "c_0015"
+      ],
+      "representative_id": "c_0015"
+    },
+    {
+      "annotation_resolution": {
+        "active_until": "",
+        "business_label": "irrelevant",
+        "chosen_from_candidate_id": "c_0016",
+        "demand_relation": "unrelated",
+        "evidence_group": "",
+        "evidence_role": "out_of_scope",
+        "prior_annotations": [
+          {
+            "active_until": "",
+            "business_label": "irrelevant",
+            "candidate_id": "c_0016",
+            "evidence_group": "",
+            "evidence_role": "out_of_scope",
+            "procurement_lifecycle": "not_applicable"
+          }
+        ],
+        "procurement_lifecycle": "historical_or_unknown",
+        "resolution_rule": "label_priority_then_scope_reclassification/v1",
+        "source_candidate_ids": [
+          "c_0016"
+        ],
+        "status": "resolved",
+        "subject_relation": "external"
+      },
+      "identity_key": "identity_b7f1f2afee7a441b",
+      "match_basis": [
+        "singleton"
+      ],
+      "member_ids": [
+        "c_0016"
+      ],
+      "representative_id": "c_0016"
+    },
+    {
+      "annotation_resolution": {
+        "active_until": "",
+        "business_label": "relevant",
+        "chosen_from_candidate_id": "c_0017",
+        "demand_relation": "core_customer_service",
+        "evidence_group": "evidence_0f16ca7714",
+        "evidence_role": "industry_capability_intelligence",
+        "prior_annotations": [
+          {
+            "active_until": "",
+            "business_label": "relevant",
+            "candidate_id": "c_0017",
+            "evidence_group": "evidence_0f16ca7714",
+            "evidence_role": "industry_capability_intelligence",
+            "procurement_lifecycle": "closed_or_failed"
+          }
+        ],
+        "procurement_lifecycle": "closed_or_failed",
+        "resolution_rule": "label_priority_then_scope_reclassification/v1",
+        "source_candidate_ids": [
+          "c_0017"
+        ],
+        "status": "resolved",
+        "subject_relation": "external"
+      },
+      "identity_key": "identity_a79894b56714a877",
+      "match_basis": [
+        "singleton"
+      ],
+      "member_ids": [
+        "c_0017"
+      ],
+      "representative_id": "c_0017"
+    },
+    {
+      "annotation_resolution": {
+        "active_until": "",
+        "business_label": "relevant",
+        "chosen_from_candidate_id": "c_0018",
+        "demand_relation": "core_customer_service",
+        "evidence_group": "evidence_8e1b541cee",
+        "evidence_role": "industry_capability_intelligence",
+        "prior_annotations": [
+          {
+            "active_until": "",
+            "business_label": "relevant",
+            "candidate_id": "c_0018",
+            "evidence_group": "evidence_8e1b541cee",
+            "evidence_role": "industry_capability_intelligence",
+            "procurement_lifecycle": "historical_or_unknown"
+          }
+        ],
+        "procurement_lifecycle": "historical_or_unknown",
+        "resolution_rule": "label_priority_then_scope_reclassification/v1",
+        "source_candidate_ids": [
+          "c_0018"
+        ],
+        "status": "resolved",
+        "subject_relation": "external"
+      },
+      "identity_key": "identity_f071de5fb25a697d",
+      "match_basis": [
+        "singleton"
+      ],
+      "member_ids": [
+        "c_0018"
+      ],
+      "representative_id": "c_0018"
+    },
+    {
+      "annotation_resolution": {
+        "active_until": "",
+        "business_label": "relevant",
+        "chosen_from_candidate_id": "c_0019",
+        "demand_relation": "core_customer_service",
+        "evidence_group": "shanghai_mobile_virtual_call_center_2014",
+        "evidence_role": "industry_capability_intelligence",
+        "prior_annotations": [
+          {
+            "active_until": "",
+            "business_label": "relevant",
+            "candidate_id": "c_0019",
+            "evidence_group": "shanghai_mobile_virtual_call_center_2014",
+            "evidence_role": "industry_capability_intelligence",
+            "procurement_lifecycle": "not_applicable"
+          }
+        ],
+        "procurement_lifecycle": "historical_or_unknown",
+        "resolution_rule": "label_priority_then_scope_reclassification/v1",
+        "source_candidate_ids": [
+          "c_0019"
+        ],
+        "status": "resolved",
+        "subject_relation": "external"
+      },
+      "identity_key": "identity_d023d68356c1697d",
+      "match_basis": [
+        "singleton"
+      ],
+      "member_ids": [
+        "c_0019"
+      ],
+      "representative_id": "c_0019"
+    },
+    {
+      "annotation_resolution": {
+        "active_until": "",
+        "business_label": "irrelevant",
+        "chosen_from_candidate_id": "c_0020",
+        "demand_relation": "unrelated",
+        "evidence_group": "",
+        "evidence_role": "out_of_scope",
+        "prior_annotations": [
+          {
+            "active_until": "",
+            "business_label": "irrelevant",
+            "candidate_id": "c_0020",
+            "evidence_group": "",
+            "evidence_role": "out_of_scope",
+            "procurement_lifecycle": "not_applicable"
+          }
+        ],
+        "procurement_lifecycle": "closed_or_failed",
+        "resolution_rule": "label_priority_then_scope_reclassification/v1",
+        "source_candidate_ids": [
+          "c_0020"
+        ],
+        "status": "resolved",
+        "subject_relation": "external"
+      },
+      "identity_key": "identity_e17fbf13cb128927",
+      "match_basis": [
+        "singleton"
+      ],
+      "member_ids": [
+        "c_0020"
+      ],
+      "representative_id": "c_0020"
+    },
+    {
+      "annotation_resolution": {
+        "active_until": "",
+        "business_label": "relevant",
+        "chosen_from_candidate_id": "c_0021",
+        "demand_relation": "core_customer_service",
+        "evidence_group": "evidence_e503c8010d",
+        "evidence_role": "industry_capability_intelligence",
+        "prior_annotations": [
+          {
+            "active_until": "",
+            "business_label": "relevant",
+            "candidate_id": "c_0021",
+            "evidence_group": "evidence_e503c8010d",
+            "evidence_role": "industry_capability_intelligence",
+            "procurement_lifecycle": "closed_or_failed"
+          }
+        ],
+        "procurement_lifecycle": "closed_or_failed",
+        "resolution_rule": "label_priority_then_scope_reclassification/v1",
+        "source_candidate_ids": [
+          "c_0021"
+        ],
+        "status": "resolved",
+        "subject_relation": "external"
+      },
+      "identity_key": "identity_fc1927b9d854c790",
+      "match_basis": [
+        "singleton"
+      ],
+      "member_ids": [
+        "c_0021"
+      ],
+      "representative_id": "c_0021"
+    },
+    {
+      "annotation_resolution": {
+        "active_until": "",
+        "business_label": "irrelevant",
+        "chosen_from_candidate_id": "c_0022",
+        "demand_relation": "unrelated",
+        "evidence_group": "",
+        "evidence_role": "out_of_scope",
+        "prior_annotations": [
+          {
+            "active_until": "",
+            "business_label": "irrelevant",
+            "candidate_id": "c_0022",
+            "evidence_group": "",
+            "evidence_role": "out_of_scope",
+            "procurement_lifecycle": "not_applicable"
+          }
+        ],
+        "procurement_lifecycle": "closed_or_failed",
+        "resolution_rule": "label_priority_then_scope_reclassification/v1",
+        "source_candidate_ids": [
+          "c_0022"
+        ],
+        "status": "resolved",
+        "subject_relation": "external"
+      },
+      "identity_key": "identity_50811167b9ac5d55",
+      "match_basis": [
+        "singleton"
+      ],
+      "member_ids": [
+        "c_0022"
+      ],
+      "representative_id": "c_0022"
+    },
+    {
+      "annotation_resolution": {
+        "active_until": "",
+        "business_label": "irrelevant",
+        "chosen_from_candidate_id": "c_0023",
+        "demand_relation": "unrelated",
+        "evidence_group": "",
+        "evidence_role": "out_of_scope",
+        "prior_annotations": [
+          {
+            "active_until": "",
+            "business_label": "irrelevant",
+            "candidate_id": "c_0023",
+            "evidence_group": "",
+            "evidence_role": "out_of_scope",
+            "procurement_lifecycle": "not_applicable"
+          }
+        ],
+        "procurement_lifecycle": "historical_or_unknown",
+        "resolution_rule": "label_priority_then_scope_reclassification/v1",
+        "source_candidate_ids": [
+          "c_0023"
+        ],
+        "status": "resolved",
+        "subject_relation": "external"
+      },
+      "identity_key": "identity_a6ffba00e37e5f32",
+      "match_basis": [
+        "singleton"
+      ],
+      "member_ids": [
+        "c_0023"
+      ],
+      "representative_id": "c_0023"
+    },
+    {
+      "annotation_resolution": {
+        "active_until": "",
+        "business_label": "irrelevant",
+        "chosen_from_candidate_id": "c_0024",
+        "demand_relation": "unrelated",
+        "evidence_group": "",
+        "evidence_role": "out_of_scope",
+        "prior_annotations": [
+          {
+            "active_until": "",
+            "business_label": "relevant",
+            "candidate_id": "c_0024",
+            "evidence_group": "shanghai_bank_ephone_procurement",
+            "evidence_role": "target_procurement",
+            "procurement_lifecycle": "historical_or_unknown"
+          }
+        ],
+        "procurement_lifecycle": "historical_or_unknown",
+        "resolution_rule": "label_priority_then_scope_reclassification/v1",
+        "source_candidate_ids": [
+          "c_0024"
+        ],
+        "status": "resolved",
+        "subject_relation": "exact_target"
+      },
+      "identity_key": "identity_f545a0b3618814f6",
+      "match_basis": [
+        "singleton"
+      ],
+      "member_ids": [
+        "c_0024"
+      ],
+      "representative_id": "c_0024"
+    },
+    {
+      "annotation_resolution": {
+        "active_until": "",
+        "business_label": "irrelevant",
+        "chosen_from_candidate_id": "c_0025",
+        "demand_relation": "unrelated",
+        "evidence_group": "",
+        "evidence_role": "out_of_scope",
+        "prior_annotations": [
+          {
+            "active_until": "",
+            "business_label": "relevant",
+            "candidate_id": "c_0025",
+            "evidence_group": "evidence_45f30df401",
+            "evidence_role": "industry_capability_intelligence",
+            "procurement_lifecycle": "historical_or_unknown"
+          }
+        ],
+        "procurement_lifecycle": "not_applicable",
+        "resolution_rule": "label_priority_then_scope_reclassification/v1",
+        "source_candidate_ids": [
+          "c_0025"
+        ],
+        "status": "resolved",
+        "subject_relation": "external"
+      },
+      "identity_key": "identity_ad669766380b5ab6",
+      "match_basis": [
+        "singleton"
+      ],
+      "member_ids": [
+        "c_0025"
+      ],
+      "representative_id": "c_0025"
+    },
+    {
+      "annotation_resolution": {
+        "active_until": "",
+        "business_label": "irrelevant",
+        "chosen_from_candidate_id": "c_0026",
+        "demand_relation": "unrelated",
+        "evidence_group": "",
+        "evidence_role": "out_of_scope",
+        "prior_annotations": [
+          {
+            "active_until": "",
+            "business_label": "irrelevant",
+            "candidate_id": "c_0026",
+            "evidence_group": "",
+            "evidence_role": "out_of_scope",
+            "procurement_lifecycle": "not_applicable"
+          }
+        ],
+        "procurement_lifecycle": "closed_or_failed",
+        "resolution_rule": "label_priority_then_scope_reclassification/v1",
+        "source_candidate_ids": [
+          "c_0026"
+        ],
+        "status": "resolved",
+        "subject_relation": "external"
+      },
+      "identity_key": "identity_f5f1f9b5b497cbca",
+      "match_basis": [
+        "singleton"
+      ],
+      "member_ids": [
+        "c_0026"
+      ],
+      "representative_id": "c_0026"
+    },
+    {
+      "annotation_resolution": {
+        "active_until": "",
+        "business_label": "irrelevant",
+        "chosen_from_candidate_id": "c_0027",
+        "demand_relation": "unrelated",
+        "evidence_group": "",
+        "evidence_role": "out_of_scope",
+        "prior_annotations": [
+          {
+            "active_until": "",
+            "business_label": "irrelevant",
+            "candidate_id": "c_0027",
+            "evidence_group": "",
+            "evidence_role": "out_of_scope",
+            "procurement_lifecycle": "not_applicable"
+          }
+        ],
+        "procurement_lifecycle": "historical_or_unknown",
+        "resolution_rule": "label_priority_then_scope_reclassification/v1",
+        "source_candidate_ids": [
+          "c_0027"
+        ],
+        "status": "resolved",
+        "subject_relation": "other_branch_or_subsidiary"
+      },
+      "identity_key": "identity_5d52b45e6add3e99",
+      "match_basis": [
+        "singleton"
+      ],
+      "member_ids": [
+        "c_0027"
+      ],
+      "representative_id": "c_0027"
+    },
+    {
+      "annotation_resolution": {
+        "active_until": "",
+        "business_label": "irrelevant",
+        "chosen_from_candidate_id": "c_0028",
+        "demand_relation": "unrelated",
+        "evidence_group": "",
+        "evidence_role": "out_of_scope",
+        "prior_annotations": [
+          {
+            "active_until": "",
+            "business_label": "irrelevant",
+            "candidate_id": "c_0028",
+            "evidence_group": "",
+            "evidence_role": "out_of_scope",
+            "procurement_lifecycle": "not_applicable"
+          }
+        ],
+        "procurement_lifecycle": "historical_or_unknown",
+        "resolution_rule": "label_priority_then_scope_reclassification/v1",
+        "source_candidate_ids": [
+          "c_0028"
+        ],
+        "status": "resolved",
+        "subject_relation": "external"
+      },
+      "identity_key": "identity_2b88ec3c07e6fc91",
+      "match_basis": [
+        "singleton"
+      ],
+      "member_ids": [
+        "c_0028"
+      ],
+      "representative_id": "c_0028"
+    },
+    {
+      "annotation_resolution": {
+        "active_until": "",
+        "business_label": "irrelevant",
+        "chosen_from_candidate_id": "c_0029",
+        "demand_relation": "unrelated",
+        "evidence_group": "",
+        "evidence_role": "out_of_scope",
+        "prior_annotations": [
+          {
+            "active_until": "",
+            "business_label": "irrelevant",
+            "candidate_id": "c_0029",
+            "evidence_group": "",
+            "evidence_role": "out_of_scope",
+            "procurement_lifecycle": "not_applicable"
+          }
+        ],
+        "procurement_lifecycle": "historical_or_unknown",
+        "resolution_rule": "label_priority_then_scope_reclassification/v1",
+        "source_candidate_ids": [
+          "c_0029"
+        ],
+        "status": "resolved",
+        "subject_relation": "exact_target"
+      },
+      "identity_key": "identity_65bfef4506af2b04",
+      "match_basis": [
+        "singleton"
+      ],
+      "member_ids": [
+        "c_0029"
+      ],
+      "representative_id": "c_0029"
+    },
+    {
+      "annotation_resolution": {
+        "active_until": "",
+        "business_label": "irrelevant",
+        "chosen_from_candidate_id": "c_0030",
+        "demand_relation": "unrelated",
+        "evidence_group": "",
+        "evidence_role": "out_of_scope",
+        "prior_annotations": [
+          {
+            "active_until": "",
+            "business_label": "irrelevant",
+            "candidate_id": "c_0030",
+            "evidence_group": "",
+            "evidence_role": "out_of_scope",
+            "procurement_lifecycle": "not_applicable"
+          }
+        ],
+        "procurement_lifecycle": "historical_or_unknown",
+        "resolution_rule": "label_priority_then_scope_reclassification/v1",
+        "source_candidate_ids": [
+          "c_0030"
+        ],
+        "status": "resolved",
+        "subject_relation": "external"
+      },
+      "identity_key": "identity_549cd207f9d38b6c",
+      "match_basis": [
+        "singleton"
+      ],
+      "member_ids": [
+        "c_0030"
+      ],
+      "representative_id": "c_0030"
+    },
+    {
+      "annotation_resolution": {
+        "active_until": "",
+        "business_label": "irrelevant",
+        "chosen_from_candidate_id": "c_0031",
+        "demand_relation": "unrelated",
+        "evidence_group": "",
+        "evidence_role": "out_of_scope",
+        "prior_annotations": [
+          {
+            "active_until": "",
+            "business_label": "irrelevant",
+            "candidate_id": "c_0031",
+            "evidence_group": "",
+            "evidence_role": "out_of_scope",
+            "procurement_lifecycle": "not_applicable"
+          }
+        ],
+        "procurement_lifecycle": "historical_or_unknown",
+        "resolution_rule": "label_priority_then_scope_reclassification/v1",
+        "source_candidate_ids": [
+          "c_0031"
+        ],
+        "status": "resolved",
+        "subject_relation": "exact_target"
+      },
+      "identity_key": "identity_b4f5f1408a5460ff",
+      "match_basis": [
+        "singleton"
+      ],
+      "member_ids": [
+        "c_0031"
+      ],
+      "representative_id": "c_0031"
+    },
+    {
+      "annotation_resolution": {
+        "active_until": "",
+        "business_label": "irrelevant",
+        "chosen_from_candidate_id": "c_0032",
+        "demand_relation": "unrelated",
+        "evidence_group": "",
+        "evidence_role": "out_of_scope",
+        "prior_annotations": [
+          {
+            "active_until": "",
+            "business_label": "irrelevant",
+            "candidate_id": "c_0032",
+            "evidence_group": "",
+            "evidence_role": "out_of_scope",
+            "procurement_lifecycle": "not_applicable"
+          }
+        ],
+        "procurement_lifecycle": "historical_or_unknown",
+        "resolution_rule": "label_priority_then_scope_reclassification/v1",
+        "source_candidate_ids": [
+          "c_0032"
+        ],
+        "status": "resolved",
+        "subject_relation": "external"
+      },
+      "identity_key": "identity_d6970dba8ab7aeca",
+      "match_basis": [
+        "singleton"
+      ],
+      "member_ids": [
+        "c_0032"
+      ],
+      "representative_id": "c_0032"
+    },
+    {
+      "annotation_resolution": {
+        "active_until": "",
+        "business_label": "irrelevant",
+        "chosen_from_candidate_id": "c_0033",
+        "demand_relation": "unrelated",
+        "evidence_group": "",
+        "evidence_role": "out_of_scope",
+        "prior_annotations": [
+          {
+            "active_until": "",
+            "business_label": "uncertain",
+            "candidate_id": "c_0033",
+            "evidence_group": "",
+            "evidence_role": "target_operation_signal",
+            "procurement_lifecycle": "not_applicable"
+          }
+        ],
+        "procurement_lifecycle": "not_applicable",
+        "resolution_rule": "label_priority_then_scope_reclassification/v1",
+        "source_candidate_ids": [
+          "c_0033"
+        ],
+        "status": "resolved",
+        "subject_relation": "exact_target"
+      },
+      "identity_key": "identity_9fb56021a44085f6",
+      "match_basis": [
+        "singleton"
+      ],
+      "member_ids": [
+        "c_0033"
+      ],
+      "representative_id": "c_0033"
+    },
+    {
+      "annotation_resolution": {
+        "active_until": "",
+        "business_label": "irrelevant",
+        "chosen_from_candidate_id": "c_0034",
+        "demand_relation": "unrelated",
+        "evidence_group": "",
+        "evidence_role": "out_of_scope",
+        "prior_annotations": [
+          {
+            "active_until": "",
+            "business_label": "irrelevant",
+            "candidate_id": "c_0034",
+            "evidence_group": "",
+            "evidence_role": "out_of_scope",
+            "procurement_lifecycle": "not_applicable"
+          }
+        ],
+        "procurement_lifecycle": "historical_or_unknown",
+        "resolution_rule": "label_priority_then_scope_reclassification/v1",
+        "source_candidate_ids": [
+          "c_0034"
+        ],
+        "status": "resolved",
+        "subject_relation": "exact_target"
+      },
+      "identity_key": "identity_a700150d89255633",
+      "match_basis": [
+        "singleton"
+      ],
+      "member_ids": [
+        "c_0034"
+      ],
+      "representative_id": "c_0034"
+    },
+    {
+      "annotation_resolution": {
+        "active_until": "",
+        "business_label": "irrelevant",
+        "chosen_from_candidate_id": "c_0035",
+        "demand_relation": "unrelated",
+        "evidence_group": "",
+        "evidence_role": "out_of_scope",
+        "prior_annotations": [
+          {
+            "active_until": "",
+            "business_label": "irrelevant",
+            "candidate_id": "c_0035",
+            "evidence_group": "",
+            "evidence_role": "out_of_scope",
+            "procurement_lifecycle": "not_applicable"
+          }
+        ],
+        "procurement_lifecycle": "not_applicable",
+        "resolution_rule": "label_priority_then_scope_reclassification/v1",
+        "source_candidate_ids": [
+          "c_0035"
+        ],
+        "status": "resolved",
+        "subject_relation": "other_branch_or_subsidiary"
+      },
+      "identity_key": "identity_58f0bd89400f4bdc",
+      "match_basis": [
+        "singleton"
+      ],
+      "member_ids": [
+        "c_0035"
+      ],
+      "representative_id": "c_0035"
+    },
+    {
+      "annotation_resolution": {
+        "active_until": "",
+        "business_label": "irrelevant",
+        "chosen_from_candidate_id": "c_0036",
+        "demand_relation": "unrelated",
+        "evidence_group": "",
+        "evidence_role": "out_of_scope",
+        "prior_annotations": [
+          {
+            "active_until": "",
+            "business_label": "irrelevant",
+            "candidate_id": "c_0036",
+            "evidence_group": "",
+            "evidence_role": "out_of_scope",
+            "procurement_lifecycle": "not_applicable"
+          }
+        ],
+        "procurement_lifecycle": "historical_or_unknown",
+        "resolution_rule": "label_priority_then_scope_reclassification/v1",
+        "source_candidate_ids": [
+          "c_0036"
+        ],
+        "status": "resolved",
+        "subject_relation": "exact_target"
+      },
+      "identity_key": "identity_079f15eb2944fc75",
+      "match_basis": [
+        "singleton"
+      ],
+      "member_ids": [
+        "c_0036"
+      ],
+      "representative_id": "c_0036"
+    },
+    {
+      "annotation_resolution": {
+        "active_until": "",
+        "business_label": "uncertain",
+        "chosen_from_candidate_id": "c_0037",
+        "demand_relation": "core_customer_service",
+        "evidence_group": "",
+        "evidence_role": "uncertain",
+        "prior_annotations": [
+          {
+            "active_until": "",
+            "business_label": "uncertain",
+            "candidate_id": "c_0037",
+            "evidence_group": "",
+            "evidence_role": "target_operation_signal",
+            "procurement_lifecycle": "not_applicable"
+          }
+        ],
+        "procurement_lifecycle": "not_applicable",
+        "resolution_rule": "label_priority_then_scope_reclassification/v1",
+        "source_candidate_ids": [
+          "c_0037"
+        ],
+        "status": "resolved",
+        "subject_relation": "external"
+      },
+      "identity_key": "identity_f134121b2d96bd38",
+      "match_basis": [
+        "singleton"
+      ],
+      "member_ids": [
+        "c_0037"
+      ],
+      "representative_id": "c_0037"
+    },
+    {
+      "annotation_resolution": {
+        "active_until": "",
+        "business_label": "irrelevant",
+        "chosen_from_candidate_id": "c_0038",
+        "demand_relation": "unrelated",
+        "evidence_group": "",
+        "evidence_role": "out_of_scope",
+        "prior_annotations": [
+          {
+            "active_until": "",
+            "business_label": "irrelevant",
+            "candidate_id": "c_0038",
+            "evidence_group": "",
+            "evidence_role": "out_of_scope",
+            "procurement_lifecycle": "not_applicable"
+          },
+          {
+            "active_until": "",
+            "business_label": "irrelevant",
+            "candidate_id": "c_0039",
+            "evidence_group": "",
+            "evidence_role": "out_of_scope",
+            "procurement_lifecycle": "not_applicable"
+          }
+        ],
+        "procurement_lifecycle": "not_applicable",
+        "resolution_rule": "label_priority_then_scope_reclassification/v1",
+        "source_candidate_ids": [
+          "c_0038",
+          "c_0039"
+        ],
+        "status": "resolved",
+        "subject_relation": "exact_target"
+      },
+      "identity_key": "identity_2131243a2072bec2",
+      "match_basis": [
+        "exact_title",
+        "singleton"
+      ],
+      "member_ids": [
+        "c_0038",
+        "c_0039"
+      ],
+      "representative_id": "c_0038"
+    },
+    {
+      "annotation_resolution": {
+        "active_until": "",
+        "business_label": "irrelevant",
+        "chosen_from_candidate_id": "c_0040",
+        "demand_relation": "unrelated",
+        "evidence_group": "",
+        "evidence_role": "out_of_scope",
+        "prior_annotations": [
+          {
+            "active_until": "",
+            "business_label": "irrelevant",
+            "candidate_id": "c_0040",
+            "evidence_group": "",
+            "evidence_role": "out_of_scope",
+            "procurement_lifecycle": "not_applicable"
+          }
+        ],
+        "procurement_lifecycle": "not_applicable",
+        "resolution_rule": "label_priority_then_scope_reclassification/v1",
+        "source_candidate_ids": [
+          "c_0040"
+        ],
+        "status": "resolved",
+        "subject_relation": "other_branch_or_subsidiary"
+      },
+      "identity_key": "identity_1b460cbdddfba131",
+      "match_basis": [
+        "singleton"
+      ],
+      "member_ids": [
+        "c_0040"
+      ],
+      "representative_id": "c_0040"
+    },
+    {
+      "annotation_resolution": {
+        "active_until": "",
+        "business_label": "irrelevant",
+        "chosen_from_candidate_id": "c_0041",
+        "demand_relation": "unrelated",
+        "evidence_group": "",
+        "evidence_role": "out_of_scope",
+        "prior_annotations": [
+          {
+            "active_until": "",
+            "business_label": "irrelevant",
+            "candidate_id": "c_0041",
+            "evidence_group": "",
+            "evidence_role": "out_of_scope",
+            "procurement_lifecycle": "not_applicable"
+          }
+        ],
+        "procurement_lifecycle": "not_applicable",
+        "resolution_rule": "label_priority_then_scope_reclassification/v1",
+        "source_candidate_ids": [
+          "c_0041"
+        ],
+        "status": "resolved",
+        "subject_relation": "exact_target"
+      },
+      "identity_key": "identity_4cb7004bc32ee962",
+      "match_basis": [
+        "singleton"
+      ],
+      "member_ids": [
+        "c_0041"
+      ],
+      "representative_id": "c_0041"
+    },
+    {
+      "annotation_resolution": {
+        "active_until": "",
+        "business_label": "relevant",
+        "chosen_from_candidate_id": "c_0042",
+        "demand_relation": "core_customer_service",
+        "evidence_group": "evidence_13c9d55468",
+        "evidence_role": "industry_capability_intelligence",
+        "prior_annotations": [
+          {
+            "active_until": "",
+            "business_label": "relevant",
+            "candidate_id": "c_0042",
+            "evidence_group": "evidence_13c9d55468",
+            "evidence_role": "industry_capability_intelligence",
+            "procurement_lifecycle": "closed_or_failed"
+          }
+        ],
+        "procurement_lifecycle": "closed_or_failed",
+        "resolution_rule": "label_priority_then_scope_reclassification/v1",
+        "source_candidate_ids": [
+          "c_0042"
+        ],
+        "status": "resolved",
+        "subject_relation": "external"
+      },
+      "identity_key": "identity_50788ba3e02fbb4c",
+      "match_basis": [
+        "singleton"
+      ],
+      "member_ids": [
+        "c_0042"
+      ],
+      "representative_id": "c_0042"
+    },
+    {
+      "annotation_resolution": {
+        "active_until": "",
+        "business_label": "irrelevant",
+        "chosen_from_candidate_id": "c_0043",
+        "demand_relation": "unrelated",
+        "evidence_group": "",
+        "evidence_role": "out_of_scope",
+        "prior_annotations": [
+          {
+            "active_until": "",
+            "business_label": "irrelevant",
+            "candidate_id": "c_0043",
+            "evidence_group": "",
+            "evidence_role": "out_of_scope",
+            "procurement_lifecycle": "not_applicable"
+          }
+        ],
+        "procurement_lifecycle": "closed_or_failed",
+        "resolution_rule": "label_priority_then_scope_reclassification/v1",
+        "source_candidate_ids": [
+          "c_0043"
+        ],
+        "status": "resolved",
+        "subject_relation": "other_branch_or_subsidiary"
+      },
+      "identity_key": "identity_c2dcc08c0915194d",
+      "match_basis": [
+        "singleton"
+      ],
+      "member_ids": [
+        "c_0043"
+      ],
+      "representative_id": "c_0043"
+    },
+    {
+      "annotation_resolution": {
+        "active_until": "",
+        "business_label": "must_keep",
+        "chosen_from_candidate_id": "c_0044",
+        "demand_relation": "core_customer_service",
+        "evidence_group": "",
+        "evidence_role": "target_procurement",
+        "prior_annotations": [
+          {
+            "active_until": "",
+            "business_label": "must_keep",
+            "candidate_id": "c_0044",
+            "evidence_group": "",
+            "evidence_role": "target_procurement",
+            "procurement_lifecycle": "closed_or_failed"
+          }
+        ],
+        "procurement_lifecycle": "closed_or_failed",
+        "resolution_rule": "label_priority_then_scope_reclassification/v1",
+        "source_candidate_ids": [
+          "c_0044"
+        ],
+        "status": "resolved",
+        "subject_relation": "exact_target"
+      },
+      "identity_key": "identity_94c81e023a72f98e",
+      "match_basis": [
+        "singleton"
+      ],
+      "member_ids": [
+        "c_0044"
+      ],
+      "representative_id": "c_0044"
+    },
+    {
+      "annotation_resolution": {
+        "active_until": "",
+        "business_label": "relevant",
+        "chosen_from_candidate_id": "c_0045",
+        "demand_relation": "core_customer_service",
+        "evidence_group": "unionpay_video_customer_service_upgrade_2023",
+        "evidence_role": "industry_capability_intelligence",
+        "prior_annotations": [
+          {
+            "active_until": "",
+            "business_label": "relevant",
+            "candidate_id": "c_0045",
+            "evidence_group": "unionpay_video_customer_service_upgrade_2023",
+            "evidence_role": "industry_capability_intelligence",
+            "procurement_lifecycle": "closed_or_failed"
+          }
+        ],
+        "procurement_lifecycle": "closed_or_failed",
+        "resolution_rule": "label_priority_then_scope_reclassification/v1",
+        "source_candidate_ids": [
+          "c_0045"
+        ],
+        "status": "resolved",
+        "subject_relation": "external"
+      },
+      "identity_key": "identity_ff6490e7d4e68b7c",
+      "match_basis": [
+        "singleton"
+      ],
+      "member_ids": [
+        "c_0045"
+      ],
+      "representative_id": "c_0045"
+    },
+    {
+      "annotation_resolution": {
+        "active_until": "",
+        "business_label": "irrelevant",
+        "chosen_from_candidate_id": "c_0046",
+        "demand_relation": "unrelated",
+        "evidence_group": "",
+        "evidence_role": "out_of_scope",
+        "prior_annotations": [
+          {
+            "active_until": "",
+            "business_label": "irrelevant",
+            "candidate_id": "c_0046",
+            "evidence_group": "",
+            "evidence_role": "out_of_scope",
+            "procurement_lifecycle": "not_applicable"
+          }
+        ],
+        "procurement_lifecycle": "closed_or_failed",
+        "resolution_rule": "label_priority_then_scope_reclassification/v1",
+        "source_candidate_ids": [
+          "c_0046"
+        ],
+        "status": "resolved",
+        "subject_relation": "external"
+      },
+      "identity_key": "identity_468ed8acaa872c50",
+      "match_basis": [
+        "singleton"
+      ],
+      "member_ids": [
+        "c_0046"
+      ],
+      "representative_id": "c_0046"
+    },
+    {
+      "annotation_resolution": {
+        "active_until": "",
+        "business_label": "relevant",
+        "chosen_from_candidate_id": "c_0047",
+        "demand_relation": "core_customer_service",
+        "evidence_group": "research_identity_00fc3f6d3ba2c530",
+        "evidence_role": "industry_capability_intelligence",
+        "prior_annotations": [
+          {
+            "active_until": "",
+            "business_label": "irrelevant",
+            "candidate_id": "c_0047",
+            "evidence_group": "",
+            "evidence_role": "out_of_scope",
+            "procurement_lifecycle": "not_applicable"
+          }
+        ],
+        "procurement_lifecycle": "closed_or_failed",
+        "resolution_rule": "label_priority_then_scope_reclassification/v1",
+        "source_candidate_ids": [
+          "c_0047"
+        ],
+        "status": "resolved",
+        "subject_relation": "external"
+      },
+      "identity_key": "identity_00fc3f6d3ba2c530",
+      "match_basis": [
+        "singleton"
+      ],
+      "member_ids": [
+        "c_0047"
+      ],
+      "representative_id": "c_0047"
+    },
+    {
+      "annotation_resolution": {
+        "active_until": "",
+        "business_label": "irrelevant",
+        "chosen_from_candidate_id": "c_0048",
+        "demand_relation": "unrelated",
+        "evidence_group": "",
+        "evidence_role": "out_of_scope",
+        "prior_annotations": [
+          {
+            "active_until": "",
+            "business_label": "irrelevant",
+            "candidate_id": "c_0048",
+            "evidence_group": "",
+            "evidence_role": "out_of_scope",
+            "procurement_lifecycle": "not_applicable"
+          }
+        ],
+        "procurement_lifecycle": "closed_or_failed",
+        "resolution_rule": "label_priority_then_scope_reclassification/v1",
+        "source_candidate_ids": [
+          "c_0048"
+        ],
+        "status": "resolved",
+        "subject_relation": "external"
+      },
+      "identity_key": "identity_55a9cae7389f5097",
+      "match_basis": [
+        "singleton"
+      ],
+      "member_ids": [
+        "c_0048"
+      ],
+      "representative_id": "c_0048"
+    },
+    {
+      "annotation_resolution": {
+        "active_until": "",
+        "business_label": "irrelevant",
+        "chosen_from_candidate_id": "c_0049",
+        "demand_relation": "unrelated",
+        "evidence_group": "",
+        "evidence_role": "out_of_scope",
+        "prior_annotations": [
+          {
+            "active_until": "",
+            "business_label": "irrelevant",
+            "candidate_id": "c_0049",
+            "evidence_group": "",
+            "evidence_role": "out_of_scope",
+            "procurement_lifecycle": "not_applicable"
+          }
+        ],
+        "procurement_lifecycle": "closed_or_failed",
+        "resolution_rule": "label_priority_then_scope_reclassification/v1",
+        "source_candidate_ids": [
+          "c_0049"
+        ],
+        "status": "resolved",
+        "subject_relation": "external"
+      },
+      "identity_key": "identity_4405739e6a0d194d",
+      "match_basis": [
+        "singleton"
+      ],
+      "member_ids": [
+        "c_0049"
+      ],
+      "representative_id": "c_0049"
+    },
+    {
+      "annotation_resolution": {
+        "active_until": "",
+        "business_label": "acceptable_alternative",
+        "chosen_from_candidate_id": "c_0050",
+        "demand_relation": "core_customer_service",
+        "evidence_group": "unionpay_video_customer_service_upgrade_2023",
+        "evidence_role": "industry_capability_intelligence",
+        "prior_annotations": [
+          {
+            "active_until": "",
+            "business_label": "acceptable_alternative",
+            "candidate_id": "c_0050",
+            "evidence_group": "unionpay_video_customer_service_upgrade_2023",
+            "evidence_role": "industry_capability_intelligence",
+            "procurement_lifecycle": "closed_or_failed"
+          }
+        ],
+        "procurement_lifecycle": "closed_or_failed",
+        "resolution_rule": "label_priority_then_scope_reclassification/v1",
+        "source_candidate_ids": [
+          "c_0050"
+        ],
+        "status": "resolved",
+        "subject_relation": "external"
+      },
+      "identity_key": "identity_81b7e2bc0e3fbbea",
+      "match_basis": [
+        "singleton"
+      ],
+      "member_ids": [
+        "c_0050"
+      ],
+      "representative_id": "c_0050"
+    },
+    {
+      "annotation_resolution": {
+        "active_until": "",
+        "business_label": "irrelevant",
+        "chosen_from_candidate_id": "c_0051",
+        "demand_relation": "unrelated",
+        "evidence_group": "",
+        "evidence_role": "out_of_scope",
+        "prior_annotations": [
+          {
+            "active_until": "",
+            "business_label": "irrelevant",
+            "candidate_id": "c_0051",
+            "evidence_group": "",
+            "evidence_role": "out_of_scope",
+            "procurement_lifecycle": "not_applicable"
+          }
+        ],
+        "procurement_lifecycle": "historical_or_unknown",
+        "resolution_rule": "label_priority_then_scope_reclassification/v1",
+        "source_candidate_ids": [
+          "c_0051"
+        ],
+        "status": "resolved",
+        "subject_relation": "external"
+      },
+      "identity_key": "identity_3fe1487efeca5e2b",
+      "match_basis": [
+        "singleton"
+      ],
+      "member_ids": [
+        "c_0051"
+      ],
+      "representative_id": "c_0051"
+    },
+    {
+      "annotation_resolution": {
+        "active_until": "",
+        "business_label": "irrelevant",
+        "chosen_from_candidate_id": "c_0052",
+        "demand_relation": "unrelated",
+        "evidence_group": "",
+        "evidence_role": "out_of_scope",
+        "prior_annotations": [
+          {
+            "active_until": "",
+            "business_label": "irrelevant",
+            "candidate_id": "c_0052",
+            "evidence_group": "",
+            "evidence_role": "out_of_scope",
+            "procurement_lifecycle": "not_applicable"
+          }
+        ],
+        "procurement_lifecycle": "closed_or_failed",
+        "resolution_rule": "label_priority_then_scope_reclassification/v1",
+        "source_candidate_ids": [
+          "c_0052"
+        ],
+        "status": "resolved",
+        "subject_relation": "external"
+      },
+      "identity_key": "identity_fa7b2024e8baf50b",
+      "match_basis": [
+        "singleton"
+      ],
+      "member_ids": [
+        "c_0052"
+      ],
+      "representative_id": "c_0052"
+    },
+    {
+      "annotation_resolution": {
+        "active_until": "",
+        "business_label": "irrelevant",
+        "chosen_from_candidate_id": "c_0053",
+        "demand_relation": "unrelated",
+        "evidence_group": "",
+        "evidence_role": "out_of_scope",
+        "prior_annotations": [
+          {
+            "active_until": "",
+            "business_label": "irrelevant",
+            "candidate_id": "c_0053",
+            "evidence_group": "",
+            "evidence_role": "out_of_scope",
+            "procurement_lifecycle": "not_applicable"
+          },
+          {
+            "active_until": "",
+            "business_label": "irrelevant",
+            "candidate_id": "c_0054",
+            "evidence_group": "",
+            "evidence_role": "out_of_scope",
+            "procurement_lifecycle": "not_applicable"
+          }
+        ],
+        "procurement_lifecycle": "historical_or_unknown",
+        "resolution_rule": "label_priority_then_scope_reclassification/v1",
+        "source_candidate_ids": [
+          "c_0053",
+          "c_0054"
+        ],
+        "status": "resolved",
+        "subject_relation": "external"
+      },
+      "identity_key": "identity_22314e78609774f9",
+      "match_basis": [
+        "exact_title",
+        "singleton"
+      ],
+      "member_ids": [
+        "c_0053",
+        "c_0054"
+      ],
+      "representative_id": "c_0053"
+    },
+    {
+      "annotation_resolution": {
+        "active_until": "",
+        "business_label": "irrelevant",
+        "chosen_from_candidate_id": "c_0055",
+        "demand_relation": "unrelated",
+        "evidence_group": "",
+        "evidence_role": "out_of_scope",
+        "prior_annotations": [
+          {
+            "active_until": "",
+            "business_label": "irrelevant",
+            "candidate_id": "c_0055",
+            "evidence_group": "",
+            "evidence_role": "out_of_scope",
+            "procurement_lifecycle": "not_applicable"
+          }
+        ],
+        "procurement_lifecycle": "historical_or_unknown",
+        "resolution_rule": "label_priority_then_scope_reclassification/v1",
+        "source_candidate_ids": [
+          "c_0055"
+        ],
+        "status": "resolved",
+        "subject_relation": "external"
+      },
+      "identity_key": "identity_e249f99db9845b20",
+      "match_basis": [
+        "singleton"
+      ],
+      "member_ids": [
+        "c_0055"
+      ],
+      "representative_id": "c_0055"
+    },
+    {
+      "annotation_resolution": {
+        "active_until": "",
+        "business_label": "irrelevant",
+        "chosen_from_candidate_id": "c_0056",
+        "demand_relation": "unrelated",
+        "evidence_group": "",
+        "evidence_role": "out_of_scope",
+        "prior_annotations": [
+          {
+            "active_until": "",
+            "business_label": "irrelevant",
+            "candidate_id": "c_0056",
+            "evidence_group": "",
+            "evidence_role": "out_of_scope",
+            "procurement_lifecycle": "not_applicable"
+          }
+        ],
+        "procurement_lifecycle": "historical_or_unknown",
+        "resolution_rule": "label_priority_then_scope_reclassification/v1",
+        "source_candidate_ids": [
+          "c_0056"
+        ],
+        "status": "resolved",
+        "subject_relation": "other_branch_or_subsidiary"
+      },
+      "identity_key": "identity_4dabc49e9530fbf2",
+      "match_basis": [
+        "singleton"
+      ],
+      "member_ids": [
+        "c_0056"
+      ],
+      "representative_id": "c_0056"
+    },
+    {
+      "annotation_resolution": {
+        "active_until": "",
+        "business_label": "irrelevant",
+        "chosen_from_candidate_id": "c_0057",
+        "demand_relation": "unrelated",
+        "evidence_group": "",
+        "evidence_role": "out_of_scope",
+        "prior_annotations": [
+          {
+            "active_until": "",
+            "business_label": "irrelevant",
+            "candidate_id": "c_0057",
+            "evidence_group": "",
+            "evidence_role": "out_of_scope",
+            "procurement_lifecycle": "not_applicable"
+          }
+        ],
+        "procurement_lifecycle": "historical_or_unknown",
+        "resolution_rule": "label_priority_then_scope_reclassification/v1",
+        "source_candidate_ids": [
+          "c_0057"
+        ],
+        "status": "resolved",
+        "subject_relation": "external"
+      },
+      "identity_key": "identity_40eab883f7ed9285",
+      "match_basis": [
+        "singleton"
+      ],
+      "member_ids": [
+        "c_0057"
+      ],
+      "representative_id": "c_0057"
+    },
+    {
+      "annotation_resolution": {
+        "active_until": "",
+        "business_label": "irrelevant",
+        "chosen_from_candidate_id": "c_0058",
+        "demand_relation": "unrelated",
+        "evidence_group": "",
+        "evidence_role": "out_of_scope",
+        "prior_annotations": [
+          {
+            "active_until": "",
+            "business_label": "irrelevant",
+            "candidate_id": "c_0058",
+            "evidence_group": "",
+            "evidence_role": "out_of_scope",
+            "procurement_lifecycle": "not_applicable"
+          }
+        ],
+        "procurement_lifecycle": "historical_or_unknown",
+        "resolution_rule": "label_priority_then_scope_reclassification/v1",
+        "source_candidate_ids": [
+          "c_0058"
+        ],
+        "status": "resolved",
+        "subject_relation": "external"
+      },
+      "identity_key": "identity_208f622bf617cd93",
+      "match_basis": [
+        "singleton"
+      ],
+      "member_ids": [
+        "c_0058"
+      ],
+      "representative_id": "c_0058"
+    },
+    {
+      "annotation_resolution": {
+        "active_until": "",
+        "business_label": "irrelevant",
+        "chosen_from_candidate_id": "c_0059",
+        "demand_relation": "unrelated",
+        "evidence_group": "",
+        "evidence_role": "out_of_scope",
+        "prior_annotations": [
+          {
+            "active_until": "",
+            "business_label": "irrelevant",
+            "candidate_id": "c_0059",
+            "evidence_group": "",
+            "evidence_role": "out_of_scope",
+            "procurement_lifecycle": "not_applicable"
+          }
+        ],
+        "procurement_lifecycle": "historical_or_unknown",
+        "resolution_rule": "label_priority_then_scope_reclassification/v1",
+        "source_candidate_ids": [
+          "c_0059"
+        ],
+        "status": "resolved",
+        "subject_relation": "external"
+      },
+      "identity_key": "identity_7404c1b82f3ddc02",
+      "match_basis": [
+        "singleton"
+      ],
+      "member_ids": [
+        "c_0059"
+      ],
+      "representative_id": "c_0059"
+    }
+  ],
+  "candidate_source": "evidence_snapshot",
+  "candidates": [
+    {
+      "annotation_audit": {
+        "claude": {
+          "business_label": "uncertain",
+          "confidence": "low",
+          "evidence_group": "",
+          "reason_code": "INSUFFICIENT_CONTEXT"
+        },
+        "codex": {
+          "business_label": "relevant",
+          "confidence": "medium",
+          "evidence_group": "evidence_a11e60b3c0",
+          "reason_code": "INDUSTRY_ADJACENT_BIDDING"
+        },
+        "expert": {
+          "business_label": "uncertain",
+          "comment": "无法核查到原文信息；无法核查",
+          "evidence_group": ""
+        },
+        "role_annotation": {
+          "active_until": "",
+          "annotator": "codex",
+          "comment": "Codex最终标注：候选文本不足以稳定判断研究角色。",
+          "evidence_role": "uncertain",
+          "procurement_lifecycle": "not_applicable"
+        }
+      },
+      "business_label": "uncertain",
+      "candidate_id": "c_0001",
+      "domain": "www.qianlima.com",
+      "evidence_role": "uncertain",
+      "gold_references": [],
+      "identity_key": "identity_7f3106cd74de110a",
+      "is_gold_reference": false,
+      "procurement_lifecycle": "not_applicable",
+      "published_at": "2026-06-30T16:24:44.216299+00:00",
+      "snippet": "直接采购公示",
+      "source": "web_scrape",
+      "source_kind": "evidence_snapshot",
+      "title": "客服电话系统项目直接采购公示",
+      "url": "http://www.qianlima.com/gjxx/236503/index_24_3.html"
+    },
+    {
+      "annotation_audit": {
+        "claude": {
+          "business_label": "relevant",
+          "confidence": "medium",
+          "evidence_group": "industry_bank_callcenter_system_case",
+          "reason_code": "INDUSTRY_CORE_BIDDING"
+        },
+        "codex": {
+          "business_label": "relevant",
+          "confidence": "high",
+          "evidence_group": "evidence_3125127c42",
+          "reason_code": "INDUSTRY_CORE_BIDDING"
+        },
+        "expert": null,
+        "role_annotation": {
+          "active_until": "",
+          "annotator": "codex",
+          "comment": "Codex最终标注：归入 industry_capability_intelligence；当前样本未提供可核验的在途有效期。",
+          "evidence_role": "industry_capability_intelligence",
+          "procurement_lifecycle": "closed_or_failed"
+        }
+      },
+      "business_label": "relevant",
+      "candidate_id": "c_0002",
+      "domain": "www.ccgp.gov.cn",
+      "evidence_group": "evidence_3125127c42",
+      "evidence_role": "industry_capability_intelligence",
+      "gold_references": [],
+      "identity_key": "identity_53bb984c0a526a67",
+      "is_gold_reference": false,
+      "procurement_lifecycle": "closed_or_failed",
+      "published_at": "2026-06-30T16:24:44.216302+00:00",
+      "snippet": "中标人：上海华成实业有限公司，中标金额：2,060,000.00元。",
+      "source": "web_scrape",
+      "source_kind": "evidence_snapshot",
+      "title": "上海国际招标有限公司关于银联商务有限公司武汉客服中心系统建设项目服务器等设备采购项目的中标公告",
+      "url": "http://www.ccgp.gov.cn/cggg/dfbx/zbgg/201012/t20101222_1456873.shtml"
+    },
+    {
+      "annotation_audit": {
+        "claude": {
+          "business_label": "relevant",
+          "confidence": "medium",
+          "evidence_group": "industry_govt_intelligent_cs_case",
+          "reason_code": "INDUSTRY_CORE_BIDDING"
+        },
+        "codex": {
+          "business_label": "relevant",
+          "confidence": "high",
+          "evidence_group": "evidence_113a49fd6f",
+          "reason_code": "INDUSTRY_CORE_BIDDING"
+        },
+        "expert": null,
+        "role_annotation": {
+          "active_until": "",
+          "annotator": "codex",
+          "comment": "Codex最终标注：归入 industry_capability_intelligence；当前样本未提供可核验的在途有效期。",
+          "evidence_role": "industry_capability_intelligence",
+          "procurement_lifecycle": "closed_or_failed"
+        }
+      },
+      "business_label": "relevant",
+      "candidate_id": "c_0003",
+      "domain": "www.ccgp.gov.cn",
+      "evidence_group": "evidence_113a49fd6f",
+      "evidence_role": "industry_capability_intelligence",
+      "gold_references": [
+        "para_5"
+      ],
+      "identity_key": "identity_397da07327dad59f",
+      "is_gold_reference": true,
+      "procurement_lifecycle": "closed_or_failed",
+      "published_at": "2026-06-30T16:24:44.216303+00:00",
+      "snippet": "采购项目名称 土地交易市场智能客服系统建设项目 品目 服务/信息技术服务/软件开发服务/应用软件开发服务/行业应用软件开发服务 采购单位 上海市土地交易事务中心 行政区域 上海",
+      "source": "web_scrape",
+      "source_kind": "evidence_snapshot",
+      "title": "上海市土地交易事务中心土地交易市场智能客服系统建设项目中标公告",
+      "url": "http://www.ccgp.gov.cn/cggg/dfgg/zbgg/202412/t20241217_23892604.htm"
+    },
+    {
+      "annotation_audit": {
+        "claude": {
+          "business_label": "irrelevant",
+          "confidence": "high",
+          "evidence_group": "",
+          "reason_code": "UNRELATED_PROCUREMENT"
+        },
+        "codex": {
+          "business_label": "irrelevant",
+          "confidence": "high",
+          "evidence_group": "",
+          "reason_code": "NO_CUSTOMER_SERVICE_SIGNAL"
+        },
+        "expert": null,
+        "role_annotation": {
+          "active_until": "",
+          "annotator": "codex",
+          "comment": "Codex最终标注：沿用共识无关标签，排除在广义研究范围外。",
+          "evidence_role": "out_of_scope",
+          "procurement_lifecycle": "not_applicable"
+        }
+      },
+      "business_label": "irrelevant",
+      "candidate_id": "c_0004",
+      "domain": "www.mpaypass.com.cn",
+      "evidence_role": "out_of_scope",
+      "gold_references": [
+        "para_7"
+      ],
+      "identity_key": "identity_297ccb1fb53510dc",
+      "is_gold_reference": true,
+      "procurement_lifecycle": "closed_or_failed",
+      "published_at": "2026-06-30T16:24:44.216304+00:00",
+      "snippet": "上海银行隐私计算平台建设项目采购活动已顺利结束，成交供应商为北京数牍科技有限公司。",
+      "source": "web_scrape",
+      "source_kind": "evidence_snapshot",
+      "title": "上海银行隐私计算平台建设项目中标公告",
+      "url": "https://www.mpaypass.com.cn/news/202303/21151655.html"
+    },
+    {
+      "annotation_audit": {
+        "claude": {
+          "business_label": "irrelevant",
+          "confidence": "high",
+          "evidence_group": "",
+          "reason_code": "UNRELATED_PROCUREMENT"
+        },
+        "codex": {
+          "business_label": "irrelevant",
+          "confidence": "high",
+          "evidence_group": "",
+          "reason_code": "NO_CUSTOMER_SERVICE_SIGNAL"
+        },
+        "expert": null,
+        "role_annotation": {
+          "active_until": "",
+          "annotator": "codex",
+          "comment": "Codex最终标注：沿用共识无关标签，排除在广义研究范围外。",
+          "evidence_role": "out_of_scope",
+          "procurement_lifecycle": "not_applicable"
+        }
+      },
+      "business_label": "irrelevant",
+      "candidate_id": "c_0005",
+      "domain": "ciac.zjw.sh.gov.cn",
+      "evidence_role": "out_of_scope",
+      "gold_references": [
+        "para_7",
+        "para_9"
+      ],
+      "identity_key": "identity_2d9af3ab7681025e",
+      "is_gold_reference": true,
+      "procurement_lifecycle": "closed_or_failed",
+      "published_at": "2026-06-30T16:24:44.216306+00:00",
+      "snippet": "交易登记号: SH202111260026 报建编号: 2102MH0834 标段号: C01 招标方式: 公开招标 招标类型: 施工招标(电子招投标) 招标项目名称: 上海银行股份有限公司闵行支行装",
+      "source": "web_scrape",
+      "source_kind": "evidence_snapshot",
+      "title": "中标结果公告",
+      "url": "https://ciac.zjw.sh.gov.cn/XMJYPTInterWeb/Gsgk/ZbjgGg"
+    },
+    {
+      "annotation_audit": {
+        "claude": {
+          "business_label": "irrelevant",
+          "confidence": "high",
+          "evidence_group": "",
+          "reason_code": "UNRELATED_PROCUREMENT"
+        },
+        "codex": {
+          "business_label": "irrelevant",
+          "confidence": "high",
+          "evidence_group": "",
+          "reason_code": "NO_CUSTOMER_SERVICE_SIGNAL"
+        },
+        "expert": null,
+        "role_annotation": {
+          "active_until": "",
+          "annotator": "codex",
+          "comment": "Codex最终标注：沿用共识无关标签，排除在广义研究范围外。",
+          "evidence_role": "out_of_scope",
+          "procurement_lifecycle": "not_applicable"
+        }
+      },
+      "business_label": "irrelevant",
+      "candidate_id": "c_0006",
+      "domain": "www.cbi360.net",
+      "evidence_role": "out_of_scope",
+      "gold_references": [],
+      "identity_key": "identity_2659ad1cd02cc90a",
+      "is_gold_reference": false,
+      "procurement_lifecycle": "closed_or_failed",
+      "published_at": "2026-06-30T16:24:44.216307+00:00",
+      "snippet": "上海典森广告有限公司 2025年1月中标上海市上海市某中国邮政银行营业场所安装施工项目，建设单位为中国邮政储蓄银行股份有限公司上海。",
+      "source": "web_scrape",
+      "source_kind": "evidence_snapshot",
+      "title": "2025年1月中标上海市上海市某中国邮政银行营业场所安装施工项目 - 建设通",
+      "url": "https://www.cbi360.net/hhb/sg_2330607/zb_161202812098723845.html"
+    },
+    {
+      "annotation_audit": {
+        "claude": {
+          "business_label": "irrelevant",
+          "confidence": "high",
+          "evidence_group": "",
+          "reason_code": "UNRELATED_PROCUREMENT"
+        },
+        "codex": {
+          "business_label": "irrelevant",
+          "confidence": "high",
+          "evidence_group": "",
+          "reason_code": "UNRELATED_PROCUREMENT"
+        },
+        "expert": null,
+        "role_annotation": {
+          "active_until": "",
+          "annotator": "codex",
+          "comment": "Codex最终标注：沿用共识无关标签，排除在广义研究范围外。",
+          "evidence_role": "out_of_scope",
+          "procurement_lifecycle": "not_applicable"
+        }
+      },
+      "business_label": "irrelevant",
+      "candidate_id": "c_0007",
+      "domain": "shanghai.jianyu360.cn",
+      "evidence_role": "out_of_scope",
+      "gold_references": [
+        "para_7"
+      ],
+      "identity_key": "identity_d2e36b99431db342",
+      "is_gold_reference": true,
+      "procurement_lifecycle": "closed_or_failed",
+      "published_at": "2026-06-30T16:24:44.216308+00:00",
+      "snippet": "建行上海市分行营业网点及办公用房装修工程定点设计单位采购项目中标结果公示",
+      "source": "web_scrape",
+      "source_kind": "evidence_snapshot",
+      "title": "建行上海市分行营业网点及办公用房装修工程定点设计单位采购项目(中标结果公示)",
+      "url": "https://shanghai.jianyu360.cn/jybx/20240609_24060876099945.html"
+    },
+    {
+      "annotation_audit": {
+        "claude": {
+          "business_label": "irrelevant",
+          "confidence": "high",
+          "evidence_group": "",
+          "reason_code": "UNRELATED_PROCUREMENT"
+        },
+        "codex": {
+          "business_label": "irrelevant",
+          "confidence": "medium",
+          "evidence_group": "",
+          "reason_code": "NO_CUSTOMER_SERVICE_SIGNAL"
+        },
+        "expert": null,
+        "role_annotation": {
+          "active_until": "",
+          "annotator": "codex",
+          "comment": "Codex最终标注：沿用共识无关标签，排除在广义研究范围外。",
+          "evidence_role": "out_of_scope",
+          "procurement_lifecycle": "not_applicable"
+        }
+      },
+      "business_label": "irrelevant",
+      "candidate_id": "c_0008",
+      "domain": "www.cfcpn.com",
+      "evidence_role": "out_of_scope",
+      "gold_references": [
+        "para_5",
+        "para_9"
+      ],
+      "identity_key": "identity_6b31a90e2ca040bb",
+      "is_gold_reference": true,
+      "procurement_lifecycle": "historical_or_unknown",
+      "published_at": "2026-06-30T16:24:44.216309+00:00",
+      "snippet": "上海银行股份有限公司采购中心拟就“上海银行企业征信2.2报送开发实施服务”项目进行采购，相关信息公示如下：一、采购内容：企业征信系统升",
+      "source": "web_scrape",
+      "source_kind": "evidence_snapshot",
+      "title": "上海银行企业征信2.2报送开发实施服务",
+      "url": "http://www.cfcpn.com/plist/caigou"
+    },
+    {
+      "annotation_audit": {
+        "claude": {
+          "business_label": "irrelevant",
+          "confidence": "medium",
+          "evidence_group": "",
+          "reason_code": "UNRELATED_PROCUREMENT"
+        },
+        "codex": {
+          "business_label": "irrelevant",
+          "confidence": "high",
+          "evidence_group": "",
+          "reason_code": "NO_CUSTOMER_SERVICE_SIGNAL"
+        },
+        "expert": null,
+        "role_annotation": {
+          "active_until": "",
+          "annotator": "codex",
+          "comment": "Codex最终标注：沿用共识无关标签，排除在广义研究范围外。",
+          "evidence_role": "out_of_scope",
+          "procurement_lifecycle": "not_applicable"
+        }
+      },
+      "business_label": "irrelevant",
+      "candidate_id": "c_0009",
+      "domain": "www.bidcenter.com.cn",
+      "evidence_role": "out_of_scope",
+      "gold_references": [
+        "para_7"
+      ],
+      "identity_key": "identity_f4c233744aa1b59c",
+      "is_gold_reference": true,
+      "procurement_lifecycle": "closed_or_failed",
+      "published_at": "2026-06-30T16:24:44.216310+00:00",
+      "snippet": "上海银行客户行为分析产品采购项目采购结果公示 类型:结果公告",
+      "source": "web_scrape",
+      "source_kind": "evidence_snapshot",
+      "title": "上海银行客户行为分析产品采购项目采购结果公示",
+      "url": "https://www.bidcenter.com.cn/newscontent-259104910-4.html"
+    },
+    {
+      "annotation_audit": {
+        "claude": {
+          "business_label": "irrelevant",
+          "confidence": "high",
+          "evidence_group": "",
+          "reason_code": "UNRELATED_PROCUREMENT"
+        },
+        "codex": {
+          "business_label": "irrelevant",
+          "confidence": "high",
+          "evidence_group": "",
+          "reason_code": "NO_CUSTOMER_SERVICE_SIGNAL"
+        },
+        "expert": null,
+        "role_annotation": {
+          "active_until": "",
+          "annotator": "codex",
+          "comment": "Codex最终标注：沿用共识无关标签，排除在广义研究范围外。",
+          "evidence_role": "out_of_scope",
+          "procurement_lifecycle": "not_applicable"
+        }
+      },
+      "business_label": "irrelevant",
+      "candidate_id": "c_0010",
+      "domain": "sh.bidcenter.com.cn",
+      "evidence_role": "out_of_scope",
+      "gold_references": [],
+      "identity_key": "identity_e46ec637122f5c52",
+      "is_gold_reference": false,
+      "procurement_lifecycle": "historical_or_unknown",
+      "published_at": "2026-06-30T16:24:44.216311+00:00",
+      "snippet": "为便于供应商及时了解集中采购信息,现将上海农商",
+      "source": "web_scrape",
+      "source_kind": "evidence_snapshot",
+      "title": "上海农商银行集中采购意向公告",
+      "url": "https://sh.bidcenter.com.cn/diqucontent-419813013-1.html"
+    },
+    {
+      "annotation_audit": {
+        "claude": {
+          "business_label": "irrelevant",
+          "confidence": "high",
+          "evidence_group": "",
+          "reason_code": "UNRELATED_PROCUREMENT"
+        },
+        "codex": {
+          "business_label": "irrelevant",
+          "confidence": "high",
+          "evidence_group": "",
+          "reason_code": "NO_CUSTOMER_SERVICE_SIGNAL"
+        },
+        "expert": null,
+        "role_annotation": {
+          "active_until": "",
+          "annotator": "codex",
+          "comment": "Codex最终标注：沿用共识无关标签，排除在广义研究范围外。",
+          "evidence_role": "out_of_scope",
+          "procurement_lifecycle": "not_applicable"
+        }
+      },
+      "business_label": "irrelevant",
+      "candidate_id": "c_0011",
+      "domain": "www.chinamae.com",
+      "evidence_role": "out_of_scope",
+      "gold_references": [],
+      "identity_key": "identity_f500344ff4d8d050",
+      "is_gold_reference": false,
+      "procurement_lifecycle": "closed_or_failed",
+      "published_at": "2026-06-30T16:24:44.216312+00:00",
+      "snippet": "采购项目名称:客户沙龙活动项目；采购方式:竞争性磋商；评审时间:2024年11月14日；中标单位:******有限公司",
+      "source": "web_scrape",
+      "source_kind": "evidence_snapshot",
+      "title": "华夏银行上海分行客户沙龙活动项目成交结果公示-机电设备采购平台",
+      "url": "https://www.chinamae.com/purchases/cc286b3b66188ae08848be53ca478683.html"
+    },
+    {
+      "annotation_audit": {
+        "claude": {
+          "business_label": "irrelevant",
+          "confidence": "high",
+          "evidence_group": "",
+          "reason_code": "UNRELATED_PROCUREMENT"
+        },
+        "codex": {
+          "business_label": "irrelevant",
+          "confidence": "high",
+          "evidence_group": "",
+          "reason_code": "NO_CUSTOMER_SERVICE_SIGNAL"
+        },
+        "expert": null,
+        "role_annotation": {
+          "active_until": "",
+          "annotator": "codex",
+          "comment": "Codex最终标注：沿用共识无关标签，排除在广义研究范围外。",
+          "evidence_role": "out_of_scope",
+          "procurement_lifecycle": "not_applicable"
+        }
+      },
+      "business_label": "irrelevant",
+      "candidate_id": "c_0012",
+      "domain": "www.bidcenter.com.cn",
+      "evidence_role": "out_of_scope",
+      "gold_references": [
+        "para_7"
+      ],
+      "identity_key": "identity_de8ff838b1474aa5",
+      "is_gold_reference": true,
+      "procurement_lifecycle": "historical_or_unknown",
+      "published_at": "2026-06-30T16:24:44.216313+00:00",
+      "snippet": "上海银行2023-2025年信用卡业务投递服务供应商入围采购项目采购结果公示，发布时间2023年1月10日",
+      "source": "web_scrape",
+      "source_kind": "evidence_snapshot",
+      "title": "上海银行2023-2025年信用卡业务投递服务供应商入围采购项目采购结果公示",
+      "url": "https://www.bidcenter.com.cn/newscontent-212232715-4.html"
+    },
+    {
+      "annotation_audit": {
+        "claude": {
+          "business_label": "irrelevant",
+          "confidence": "high",
+          "evidence_group": "",
+          "reason_code": "UNRELATED_PROCUREMENT"
+        },
+        "codex": {
+          "business_label": "irrelevant",
+          "confidence": "high",
+          "evidence_group": "",
+          "reason_code": "NO_CUSTOMER_SERVICE_SIGNAL"
+        },
+        "expert": null,
+        "role_annotation": {
+          "active_until": "",
+          "annotator": "codex",
+          "comment": "Codex最终标注：沿用共识无关标签，排除在广义研究范围外。",
+          "evidence_role": "out_of_scope",
+          "procurement_lifecycle": "not_applicable"
+        }
+      },
+      "business_label": "irrelevant",
+      "candidate_id": "c_0013",
+      "domain": "sh.bidcenter.com.cn",
+      "evidence_role": "out_of_scope",
+      "gold_references": [],
+      "identity_key": "identity_2100aebf9fb15d3b",
+      "is_gold_reference": false,
+      "procurement_lifecycle": "historical_or_unknown",
+      "published_at": "2026-06-30T16:24:44.216314+00:00",
+      "snippet": "为便于供应商及时了解政府采购信息,根据《关于开展政府采购意向公开工作的通知》(财库〔〕号)等有关规定,现将中国共产党上海市委员会宣传部2021年9月至11月采购意向公开如下:",
+      "source": "web_scrape",
+      "source_kind": "evidence_snapshot",
+      "title": "中国共产党上海市委员会宣传部2021年9月至11月政府采购意向-上海出版管理信息系统-上海招标网",
+      "url": "https://sh.bidcenter.com.cn/diqucontent-145623446-2.html"
+    },
+    {
+      "annotation_audit": {
+        "claude": {
+          "business_label": "irrelevant",
+          "confidence": "medium",
+          "evidence_group": "",
+          "reason_code": "UNRELATED_PROCUREMENT"
+        },
+        "codex": {
+          "business_label": "irrelevant",
+          "confidence": "high",
+          "evidence_group": "",
+          "reason_code": "NO_CUSTOMER_SERVICE_SIGNAL"
+        },
+        "expert": null,
+        "role_annotation": {
+          "active_until": "",
+          "annotator": "codex",
+          "comment": "Codex最终标注：沿用共识无关标签，排除在广义研究范围外。",
+          "evidence_role": "out_of_scope",
+          "procurement_lifecycle": "not_applicable"
+        }
+      },
+      "business_label": "irrelevant",
+      "candidate_id": "c_0014",
+      "domain": "www.chinamae.com",
+      "evidence_role": "out_of_scope",
+      "gold_references": [
+        "para_7"
+      ],
+      "identity_key": "identity_5460285d1e18fd02",
+      "is_gold_reference": true,
+      "procurement_lifecycle": "historical_or_unknown",
+      "published_at": "2026-06-30T16:24:44.216315+00:00",
+      "snippet": "上海银行消息中心项目之短信服务（编号CG-2022-DL213）采购活动已顺利结束，现将采购结果公示如下。",
+      "source": "web_scrape",
+      "source_kind": "evidence_snapshot",
+      "title": "上海银行消息中心项目之短信服务采购结果公示-机电设备采购平台",
+      "url": "https://www.chinamae.com/purchases/2759633fc7397c9d3bd9beccf6fef6bf"
+    },
+    {
+      "annotation_audit": {
+        "claude": {
+          "business_label": "irrelevant",
+          "confidence": "high",
+          "evidence_group": "",
+          "reason_code": "UNRELATED_PROCUREMENT"
+        },
+        "codex": {
+          "business_label": "irrelevant",
+          "confidence": "high",
+          "evidence_group": "",
+          "reason_code": "NO_CUSTOMER_SERVICE_SIGNAL"
+        },
+        "expert": null,
+        "role_annotation": {
+          "active_until": "",
+          "annotator": "codex",
+          "comment": "Codex最终标注：沿用共识无关标签，排除在广义研究范围外。",
+          "evidence_role": "out_of_scope",
+          "procurement_lifecycle": "not_applicable"
+        }
+      },
+      "business_label": "irrelevant",
+      "candidate_id": "c_0015",
+      "domain": "210381.bidcenter.com.cn",
+      "evidence_role": "out_of_scope",
+      "gold_references": [],
+      "identity_key": "identity_ab633095f7650ea7",
+      "is_gold_reference": false,
+      "procurement_lifecycle": "historical_or_unknown",
+      "published_at": "2026-06-30T16:24:44.216316+00:00",
+      "snippet": "为便于供应商及时了解政府采购信息,根据《关于开展政府采购意向公开工作的通知》(财库〔2020〕10号)等有关规定,现将中国人民银行上海分行2021年12月政府采购意向公开如下:本次公开的采购意向",
+      "source": "web_scrape",
+      "source_kind": "evidence_snapshot",
+      "title": "中国人民银行上海分行2021年12月政府采购意向公告(支付系统上海城市处理中心本地备份接入系统新机房租赁项目)",
+      "url": "https://210381.bidcenter.com.cn/bidinfo-2-a0f73512c37219a9c94d5dfc596038aee55c1f6294d7d4c9.html"
+    },
+    {
+      "annotation_audit": {
+        "claude": {
+          "business_label": "irrelevant",
+          "confidence": "high",
+          "evidence_group": "",
+          "reason_code": "UNRELATED_PROCUREMENT"
+        },
+        "codex": {
+          "business_label": "irrelevant",
+          "confidence": "high",
+          "evidence_group": "",
+          "reason_code": "NO_CUSTOMER_SERVICE_SIGNAL"
+        },
+        "expert": null,
+        "role_annotation": {
+          "active_until": "",
+          "annotator": "codex",
+          "comment": "Codex最终标注：沿用共识无关标签，排除在广义研究范围外。",
+          "evidence_role": "out_of_scope",
+          "procurement_lifecycle": "not_applicable"
+        }
+      },
+      "business_label": "irrelevant",
+      "candidate_id": "c_0016",
+      "domain": "shanghai.jianyu360.cn",
+      "evidence_role": "out_of_scope",
+      "gold_references": [],
+      "identity_key": "identity_b7f1f2afee7a441b",
+      "is_gold_reference": false,
+      "procurement_lifecycle": "historical_or_unknown",
+      "published_at": "2026-06-30T16:24:44.216317+00:00",
+      "snippet": "中国银行股份有限公司上海市分行2025年度企业客户信息查询服务项目磋商公告，所属地区上海市，发布日期2025-01-27",
+      "source": "web_scrape",
+      "source_kind": "evidence_snapshot",
+      "title": "中国银行股份有限公司上海市分行2025年度企业客户信息查询服务项目磋商公告",
+      "url": "https://shanghai.jianyu360.cn/jybx/20250127_250126159828055.html"
+    },
+    {
+      "annotation_audit": {
+        "claude": {
+          "business_label": "relevant",
+          "confidence": "medium",
+          "evidence_group": "industry_bank_callcenter_pbx_case",
+          "reason_code": "INDUSTRY_CORE_BIDDING"
+        },
+        "codex": {
+          "business_label": "relevant",
+          "confidence": "medium",
+          "evidence_group": "evidence_0f16ca7714",
+          "reason_code": "INDUSTRY_CORE_BIDDING"
+        },
+        "expert": null,
+        "role_annotation": {
+          "active_until": "",
+          "annotator": "codex",
+          "comment": "Codex最终标注：归入 industry_capability_intelligence；当前样本未提供可核验的在途有效期。",
+          "evidence_role": "industry_capability_intelligence",
+          "procurement_lifecycle": "closed_or_failed"
+        }
+      },
+      "business_label": "relevant",
+      "candidate_id": "c_0017",
+      "domain": "www.dljczb.com",
+      "evidence_group": "evidence_0f16ca7714",
+      "evidence_role": "industry_capability_intelligence",
+      "gold_references": [
+        "para_5"
+      ],
+      "identity_key": "identity_a79894b56714a877",
+      "is_gold_reference": true,
+      "procurement_lifecycle": "closed_or_failed",
+      "published_at": "2026-06-30T16:24:44.216318+00:00",
+      "snippet": "兴业银行呼叫中心程控交换机升级采购项目中标人公示，发布于2022年10月13日。",
+      "source": "web_scrape",
+      "source_kind": "evidence_snapshot",
+      "title": "兴业银行呼叫中心程控交换机升级采购项目--中标人公示",
+      "url": "https://www.dljczb.com/diqu-2-w5818"
+    },
+    {
+      "annotation_audit": {
+        "claude": {
+          "business_label": "relevant",
+          "confidence": "medium",
+          "evidence_group": "industry_virtual_callcenter_service_case",
+          "reason_code": "INDUSTRY_CORE_BIDDING"
+        },
+        "codex": {
+          "business_label": "relevant",
+          "confidence": "medium",
+          "evidence_group": "evidence_8e1b541cee",
+          "reason_code": "INDUSTRY_CORE_BIDDING"
+        },
+        "expert": null,
+        "role_annotation": {
+          "active_until": "",
+          "annotator": "codex",
+          "comment": "Codex最终标注：归入 industry_capability_intelligence；当前样本未提供可核验的在途有效期。",
+          "evidence_role": "industry_capability_intelligence",
+          "procurement_lifecycle": "historical_or_unknown"
+        }
+      },
+      "business_label": "relevant",
+      "candidate_id": "c_0018",
+      "domain": "www.bidcenter.com.cn",
+      "evidence_group": "evidence_8e1b541cee",
+      "evidence_role": "industry_capability_intelligence",
+      "gold_references": [
+        "para_6"
+      ],
+      "identity_key": "identity_f071de5fb25a697d",
+      "is_gold_reference": true,
+      "procurement_lifecycle": "historical_or_unknown",
+      "published_at": "2026-06-30T16:24:44.216319+00:00",
+      "snippet": "所属地区 上海市 - 上海市 发布时间 2020/12/9 招标业主 中国移动通信集团上海有限公司 招标代理 中国移动通信集团上海有限公司",
+      "source": "web_scrape",
+      "source_kind": "evidence_snapshot",
+      "title": "中国移动上海公司金融行业某公司虚拟呼叫中心系统服务项目_单一来源采购信息公告-采招网",
+      "url": "https://www.bidcenter.com.cn/newscontent-114980572-1.html"
+    },
+    {
+      "annotation_audit": {
+        "claude": {
+          "business_label": "relevant",
+          "confidence": "medium",
+          "evidence_group": "industry_virtual_callcenter_platform_case",
+          "reason_code": "INDUSTRY_CORE_BIDDING"
+        },
+        "codex": {
+          "business_label": "uncertain",
+          "confidence": "low",
+          "evidence_group": "",
+          "reason_code": "CORE_SIGNAL_WITHOUT_BIDDING_PROOF"
+        },
+        "expert": {
+          "business_label": "relevant",
+          "comment": "主要和目标企业不匹配且项目时间久远，当然如果是目标企业，这里可以评估用户原有项目建设情况；与目标企业不一致，行业也不一致",
+          "evidence_group": "shanghai_mobile_virtual_call_center_2014"
+        },
+        "role_annotation": {
+          "active_until": "",
+          "annotator": "codex",
+          "comment": "Codex最终标注：归入 industry_capability_intelligence；当前样本未提供可核验的在途有效期。",
+          "evidence_role": "industry_capability_intelligence",
+          "procurement_lifecycle": "not_applicable"
+        }
+      },
+      "business_label": "relevant",
+      "candidate_id": "c_0019",
+      "domain": "www.1330.cn",
+      "evidence_group": "shanghai_mobile_virtual_call_center_2014",
+      "evidence_role": "industry_capability_intelligence",
+      "gold_references": [],
+      "identity_key": "identity_d023d68356c1697d",
+      "is_gold_reference": false,
+      "procurement_lifecycle": "historical_or_unknown",
+      "published_at": "2026-06-30T16:24:44.216320+00:00",
+      "snippet": "由上海机电设备招标有限公司组织招标的中国移动通信集团上海有限公司2014年虚拟呼叫中心平台建设项目",
+      "source": "web_scrape",
+      "source_kind": "evidence_snapshot",
+      "title": "中国移动上海公司2014年虚拟呼叫中心平台建设项目-巨人网络通讯",
+      "url": "http://www.1330.cn/zhishi/1812366.html"
+    },
+    {
+      "annotation_audit": {
+        "claude": {
+          "business_label": "irrelevant",
+          "confidence": "high",
+          "evidence_group": "",
+          "reason_code": "UNRELATED_PROCUREMENT"
+        },
+        "codex": {
+          "business_label": "irrelevant",
+          "confidence": "high",
+          "evidence_group": "",
+          "reason_code": "NO_CUSTOMER_SERVICE_SIGNAL"
+        },
+        "expert": null,
+        "role_annotation": {
+          "active_until": "",
+          "annotator": "codex",
+          "comment": "Codex最终标注：沿用共识无关标签，排除在广义研究范围外。",
+          "evidence_role": "out_of_scope",
+          "procurement_lifecycle": "not_applicable"
+        }
+      },
+      "business_label": "irrelevant",
+      "candidate_id": "c_0020",
+      "domain": "www.qianlima.com",
+      "evidence_role": "out_of_scope",
+      "gold_references": [],
+      "identity_key": "identity_e17fbf13cb128927",
+      "is_gold_reference": false,
+      "procurement_lifecycle": "closed_or_failed",
+      "published_at": "2026-06-30T16:24:44.216321+00:00",
+      "snippet": "中国银联2024年创新技术之辅助研发AI模型采购项目成交结果公告",
+      "source": "web_scrape",
+      "source_kind": "evidence_snapshot",
+      "title": "中国银联2024年创新技术之辅助研发AI模型采购项目成交结果公告",
+      "url": "http://www.qianlima.com/gjxx/351616/index_24.html"
+    },
+    {
+      "annotation_audit": {
+        "claude": {
+          "business_label": "relevant",
+          "confidence": "medium",
+          "evidence_group": "industry_callcenter_service_case",
+          "reason_code": "INDUSTRY_CORE_BIDDING"
+        },
+        "codex": {
+          "business_label": "relevant",
+          "confidence": "high",
+          "evidence_group": "evidence_e503c8010d",
+          "reason_code": "INDUSTRY_CORE_BIDDING"
+        },
+        "expert": null,
+        "role_annotation": {
+          "active_until": "",
+          "annotator": "codex",
+          "comment": "Codex最终标注：归入 industry_capability_intelligence；当前样本未提供可核验的在途有效期。",
+          "evidence_role": "industry_capability_intelligence",
+          "procurement_lifecycle": "closed_or_failed"
+        }
+      },
+      "business_label": "relevant",
+      "candidate_id": "c_0021",
+      "domain": "www.ccgp.gov.cn",
+      "evidence_group": "evidence_e503c8010d",
+      "evidence_role": "industry_capability_intelligence",
+      "gold_references": [],
+      "identity_key": "identity_fc1927b9d854c790",
+      "is_gold_reference": false,
+      "procurement_lifecycle": "closed_or_failed",
+      "published_at": "2026-06-30T16:24:44.216322+00:00",
+      "snippet": "公告概要: 采购项目名称 上海研发公共服务平台管理中心科技公共服务呼叫中心服务项目 品目",
+      "source": "web_scrape",
+      "source_kind": "evidence_snapshot",
+      "title": "上海研发公共服务平台管理中心科技公共服务呼叫中心服务项目的中标公告",
+      "url": "http://www.ccgp.gov.cn/cggg/dfgg/zbgg/201606/t20160622_6934633.htm"
+    },
+    {
+      "annotation_audit": {
+        "claude": {
+          "business_label": "irrelevant",
+          "confidence": "high",
+          "evidence_group": "",
+          "reason_code": "UNRELATED_PROCUREMENT"
+        },
+        "codex": {
+          "business_label": "irrelevant",
+          "confidence": "high",
+          "evidence_group": "",
+          "reason_code": "UNRELATED_PROCUREMENT"
+        },
+        "expert": null,
+        "role_annotation": {
+          "active_until": "",
+          "annotator": "codex",
+          "comment": "Codex最终标注：沿用共识无关标签，排除在广义研究范围外。",
+          "evidence_role": "out_of_scope",
+          "procurement_lifecycle": "not_applicable"
+        }
+      },
+      "business_label": "irrelevant",
+      "candidate_id": "c_0022",
+      "domain": "www.cnrjw.cn",
+      "evidence_role": "out_of_scope",
+      "gold_references": [],
+      "identity_key": "identity_50811167b9ac5d55",
+      "is_gold_reference": false,
+      "procurement_lifecycle": "closed_or_failed",
+      "published_at": "2026-06-30T16:24:44.216323+00:00",
+      "snippet": "物业呼叫平台和房屋急修中心平台建设项目，中标金额2398000.00元，中标供应商上海虹房建筑工程有限公司。",
+      "source": "web_scrape",
+      "source_kind": "evidence_snapshot",
+      "title": "上海市物业呼叫平台和房屋急修中心平台工程",
+      "url": "https://www.cnrjw.cn/yuncaigou/xmxq43729.html"
+    },
+    {
+      "annotation_audit": {
+        "claude": {
+          "business_label": "irrelevant",
+          "confidence": "medium",
+          "evidence_group": "",
+          "reason_code": "UNRELATED_PROCUREMENT"
+        },
+        "codex": {
+          "business_label": "irrelevant",
+          "confidence": "high",
+          "evidence_group": "",
+          "reason_code": "NO_CUSTOMER_SERVICE_SIGNAL"
+        },
+        "expert": null,
+        "role_annotation": {
+          "active_until": "",
+          "annotator": "codex",
+          "comment": "Codex最终标注：沿用共识无关标签，排除在广义研究范围外。",
+          "evidence_role": "out_of_scope",
+          "procurement_lifecycle": "not_applicable"
+        }
+      },
+      "business_label": "irrelevant",
+      "candidate_id": "c_0023",
+      "domain": "shanghai.jianyu360.cn",
+      "evidence_role": "out_of_scope",
+      "gold_references": [],
+      "identity_key": "identity_a6ffba00e37e5f32",
+      "is_gold_reference": false,
+      "procurement_lifecycle": "historical_or_unknown",
+      "published_at": "2026-06-30T16:24:44.216324+00:00",
+      "snippet": "排队叫号系统升级改造项目竞争性磋商项目",
+      "source": "web_scrape",
+      "source_kind": "evidence_snapshot",
+      "title": "排队叫号系统升级改造项目竞争性磋商项目",
+      "url": "https://shanghai.jianyu360.cn/jybx/20251212_25121119600206.html"
+    },
+    {
+      "annotation_audit": {
+        "claude": {
+          "business_label": "relevant",
+          "confidence": "high",
+          "evidence_group": "target_bank_ephone_tender",
+          "reason_code": "TARGET_CORE_BIDDING"
+        },
+        "codex": {
+          "business_label": "must_keep",
+          "confidence": "high",
+          "evidence_group": "",
+          "reason_code": "UNIQUE_TARGET_CORE_BIDDING"
+        },
+        "expert": {
+          "business_label": "relevant",
+          "comment": "有相关性，但非目标的呼叫中心业务，属于仅关联的业务场景；相关性弱",
+          "evidence_group": "shanghai_bank_ephone_procurement"
+        },
+        "role_annotation": {
+          "active_until": "",
+          "annotator": "codex",
+          "comment": "Codex最终标注：归入 target_procurement；当前样本未提供可核验的在途有效期。",
+          "evidence_role": "target_procurement",
+          "procurement_lifecycle": "historical_or_unknown"
+        }
+      },
+      "business_label": "irrelevant",
+      "candidate_id": "c_0024",
+      "domain": "www.163.com",
+      "evidence_role": "out_of_scope",
+      "gold_references": [
+        "para_4",
+        "para_9"
+      ],
+      "identity_key": "identity_f545a0b3618814f6",
+      "is_gold_reference": true,
+      "procurement_lifecycle": "historical_or_unknown",
+      "published_at": "2026-06-30T16:24:44.216326+00:00",
+      "snippet": "上海银行e电话建设采购项目招标公告，招标编号SPM-ZBWJ-202304051，项目所在地区上海市，项目资金已由项目审批/核准/备案机关批准。",
+      "source": "web_scrape",
+      "source_kind": "evidence_snapshot",
+      "title": "公告]上海银行e电话建设采购项目招标公告投标人联合体政府投资项目_网易订阅",
+      "url": "https://www.163.com/dy/article/I30C7HSM05560ONQ.html"
+    },
+    {
+      "annotation_audit": {
+        "claude": {
+          "business_label": "relevant",
+          "confidence": "medium",
+          "evidence_group": "industry_bank_voice_system_case",
+          "reason_code": "INDUSTRY_CORE_BIDDING"
+        },
+        "codex": {
+          "business_label": "relevant",
+          "confidence": "medium",
+          "evidence_group": "evidence_45f30df401",
+          "reason_code": "INDUSTRY_ADJACENT_BIDDING"
+        },
+        "expert": null,
+        "role_annotation": {
+          "active_until": "",
+          "annotator": "codex",
+          "comment": "Codex最终标注：归入 industry_capability_intelligence；当前样本未提供可核验的在途有效期。",
+          "evidence_role": "industry_capability_intelligence",
+          "procurement_lifecycle": "historical_or_unknown"
+        }
+      },
+      "business_label": "irrelevant",
+      "candidate_id": "c_0025",
+      "domain": "sh.bidcenter.com.cn",
+      "evidence_role": "out_of_scope",
+      "gold_references": [
+        "para_6"
+      ],
+      "identity_key": "identity_ad669766380b5ab6",
+      "is_gold_reference": true,
+      "procurement_lifecycle": "not_applicable",
+      "published_at": "2026-06-30T16:24:44.216327+00:00",
+      "snippet": "本招募项目为2025年上海电信金融大客户部银行客户语音系统建设项目(项目编号:TM-DXZM(略)),招募人为上海分公司,招募代理机构为上海通贸国(略)。项目具备招募条件,现进行公开招募。",
+      "source": "web_scrape",
+      "source_kind": "evidence_snapshot",
+      "title": "2025年上海电信金融大客户部银行客户语音系统建设项目招募公告",
+      "url": "https://sh.bidcenter.com.cn/diqucontent-388836506-1.html"
+    },
+    {
+      "annotation_audit": {
+        "claude": {
+          "business_label": "irrelevant",
+          "confidence": "high",
+          "evidence_group": "",
+          "reason_code": "UNRELATED_PROCUREMENT"
+        },
+        "codex": {
+          "business_label": "irrelevant",
+          "confidence": "high",
+          "evidence_group": "",
+          "reason_code": "NO_CUSTOMER_SERVICE_SIGNAL"
+        },
+        "expert": null,
+        "role_annotation": {
+          "active_until": "",
+          "annotator": "codex",
+          "comment": "Codex最终标注：沿用共识无关标签，排除在广义研究范围外。",
+          "evidence_role": "out_of_scope",
+          "procurement_lifecycle": "not_applicable"
+        }
+      },
+      "business_label": "irrelevant",
+      "candidate_id": "c_0026",
+      "domain": "www.ccgp.gov.cn",
+      "evidence_role": "out_of_scope",
+      "gold_references": [],
+      "identity_key": "identity_f5f1f9b5b497cbca",
+      "is_gold_reference": false,
+      "procurement_lifecycle": "closed_or_failed",
+      "published_at": "2026-06-30T16:24:44.216328+00:00",
+      "snippet": "项目编号:SZZ20240656-F，项目名称:2024-2025年度资金存放服务银行选择，中标供应商:上海浦东发展银行股份...",
+      "source": "web_scrape",
+      "source_kind": "evidence_snapshot",
+      "title": "2024-2025年度资金存放服务银行选择项目中标公告",
+      "url": "http://www.ccgp.gov.cn/cggg/dfgg/zbgg/202411/t20241126_23710995.htm"
+    },
+    {
+      "annotation_audit": {
+        "claude": {
+          "business_label": "irrelevant",
+          "confidence": "high",
+          "evidence_group": "",
+          "reason_code": "UNRELATED_PROCUREMENT"
+        },
+        "codex": {
+          "business_label": "irrelevant",
+          "confidence": "high",
+          "evidence_group": "",
+          "reason_code": "NO_CUSTOMER_SERVICE_SIGNAL"
+        },
+        "expert": null,
+        "role_annotation": {
+          "active_until": "",
+          "annotator": "codex",
+          "comment": "Codex最终标注：沿用共识无关标签，排除在广义研究范围外。",
+          "evidence_role": "out_of_scope",
+          "procurement_lifecycle": "not_applicable"
+        }
+      },
+      "business_label": "irrelevant",
+      "candidate_id": "c_0027",
+      "domain": "www.cfcpn.com",
+      "evidence_role": "out_of_scope",
+      "gold_references": [
+        "para_7"
+      ],
+      "identity_key": "identity_5d52b45e6add3e99",
+      "is_gold_reference": true,
+      "procurement_lifecycle": "historical_or_unknown",
+      "published_at": "2026-06-30T16:24:44.216329+00:00",
+      "snippet": "上海银行股份有限公司委托上海银行采购中心，就上海银行奉城支行、朱泾支行综合布线",
+      "source": "web_scrape",
+      "source_kind": "evidence_snapshot",
+      "title": "采购公告",
+      "url": "http://www.cfcpn.com/plist/caigou"
+    },
+    {
+      "annotation_audit": {
+        "claude": {
+          "business_label": "irrelevant",
+          "confidence": "high",
+          "evidence_group": "",
+          "reason_code": "UNRELATED_PROCUREMENT"
+        },
+        "codex": {
+          "business_label": "irrelevant",
+          "confidence": "medium",
+          "evidence_group": "",
+          "reason_code": "NO_CUSTOMER_SERVICE_SIGNAL"
+        },
+        "expert": null,
+        "role_annotation": {
+          "active_until": "",
+          "annotator": "codex",
+          "comment": "Codex最终标注：沿用共识无关标签，排除在广义研究范围外。",
+          "evidence_role": "out_of_scope",
+          "procurement_lifecycle": "not_applicable"
+        }
+      },
+      "business_label": "irrelevant",
+      "candidate_id": "c_0028",
+      "domain": "www.qianlima.com",
+      "evidence_role": "out_of_scope",
+      "gold_references": [],
+      "identity_key": "identity_2b88ec3c07e6fc91",
+      "is_gold_reference": false,
+      "procurement_lifecycle": "historical_or_unknown",
+      "published_at": "2026-06-30T16:24:44.216330+00:00",
+      "snippet": "采购方式:竞争性磋商 候选供应商:上海国际银行金融专修学院,上海当代金融培训有限公司,上海新南洋教育培训有限公司,上海睿泰数字科技有限公司...",
+      "source": "web_scrape",
+      "source_kind": "evidence_snapshot",
+      "title": "“建行生活”专题线上课件开发项目",
+      "url": "http://www.qianlima.com/gjxx/360279/index_24_3.html"
+    },
+    {
+      "annotation_audit": {
+        "claude": {
+          "business_label": "irrelevant",
+          "confidence": "high",
+          "evidence_group": "",
+          "reason_code": "UNRELATED_PROCUREMENT"
+        },
+        "codex": {
+          "business_label": "irrelevant",
+          "confidence": "high",
+          "evidence_group": "",
+          "reason_code": "UNRELATED_PROCUREMENT"
+        },
+        "expert": null,
+        "role_annotation": {
+          "active_until": "",
+          "annotator": "codex",
+          "comment": "Codex最终标注：沿用共识无关标签，排除在广义研究范围外。",
+          "evidence_role": "out_of_scope",
+          "procurement_lifecycle": "not_applicable"
+        }
+      },
+      "business_label": "irrelevant",
+      "candidate_id": "c_0029",
+      "domain": "www.zbwmy.com",
+      "evidence_role": "out_of_scope",
+      "gold_references": [
+        "para_7"
+      ],
+      "identity_key": "identity_65bfef4506af2b04",
+      "is_gold_reference": true,
+      "procurement_lifecycle": "historical_or_unknown",
+      "published_at": "2026-06-30T16:24:44.216331+00:00",
+      "snippet": "上海机电设备招标有限公司受上海银行总行采购中心委托，就“上海银行工会年节员工慰问品服务供应商入围采购项目”进行采购，相关信息公示如下：一、项目概况 本项目针对上海银行工会年节员",
+      "source": "web_scrape",
+      "source_kind": "evidence_snapshot",
+      "title": "上海银行工会年节员工慰问品服务供应商入围采购项目信息公示-建设工程招标网",
+      "url": "http://www.zbwmy.com/150/151/2024/11/06/149901796.html"
+    },
+    {
+      "annotation_audit": {
+        "claude": {
+          "business_label": "irrelevant",
+          "confidence": "high",
+          "evidence_group": "",
+          "reason_code": "UNRELATED_PROCUREMENT"
+        },
+        "codex": {
+          "business_label": "irrelevant",
+          "confidence": "high",
+          "evidence_group": "",
+          "reason_code": "UNRELATED_PROCUREMENT"
+        },
+        "expert": null,
+        "role_annotation": {
+          "active_until": "",
+          "annotator": "codex",
+          "comment": "Codex最终标注：沿用共识无关标签，排除在广义研究范围外。",
+          "evidence_role": "out_of_scope",
+          "procurement_lifecycle": "not_applicable"
+        }
+      },
+      "business_label": "irrelevant",
+      "candidate_id": "c_0030",
+      "domain": "shanghai.jianyu360.cn",
+      "evidence_role": "out_of_scope",
+      "gold_references": [],
+      "identity_key": "identity_549cd207f9d38b6c",
+      "is_gold_reference": false,
+      "procurement_lifecycle": "historical_or_unknown",
+      "published_at": "2026-06-30T16:24:44.216332+00:00",
+      "snippet": "交银信息本部遴选印刷制品供应商项目",
+      "source": "web_scrape",
+      "source_kind": "evidence_snapshot",
+      "title": "【招标公告】交银信息本部遴选印刷制品供应商项目",
+      "url": "https://shanghai.jianyu360.cn/jybx/20240622_24062181690892.html"
+    },
+    {
+      "annotation_audit": {
+        "claude": {
+          "business_label": "irrelevant",
+          "confidence": "high",
+          "evidence_group": "",
+          "reason_code": "UNRELATED_PROCUREMENT"
+        },
+        "codex": {
+          "business_label": "irrelevant",
+          "confidence": "high",
+          "evidence_group": "",
+          "reason_code": "UNRELATED_PROCUREMENT"
+        },
+        "expert": null,
+        "role_annotation": {
+          "active_until": "",
+          "annotator": "codex",
+          "comment": "Codex最终标注：沿用共识无关标签，排除在广义研究范围外。",
+          "evidence_role": "out_of_scope",
+          "procurement_lifecycle": "not_applicable"
+        }
+      },
+      "business_label": "irrelevant",
+      "candidate_id": "c_0031",
+      "domain": "sh.bidcenter.com.cn",
+      "evidence_role": "out_of_scope",
+      "gold_references": [
+        "para_7"
+      ],
+      "identity_key": "identity_b4f5f1408a5460ff",
+      "is_gold_reference": true,
+      "procurement_lifecycle": "historical_or_unknown",
+      "published_at": "2026-06-30T16:24:44.216334+00:00",
+      "snippet": "本项目采购方式拟由原竞争性磋商变更为单一来源",
+      "source": "web_scrape",
+      "source_kind": "evidence_snapshot",
+      "title": "上海银行营业网点及办公场所空调供应商入围采购之国外品牌设备项目采购信息变更公告",
+      "url": "https://sh.bidcenter.com.cn/diqucontent-49685186-6.html"
+    },
+    {
+      "annotation_audit": {
+        "claude": {
+          "business_label": "irrelevant",
+          "confidence": "high",
+          "evidence_group": "",
+          "reason_code": "UNRELATED_PROCUREMENT"
+        },
+        "codex": {
+          "business_label": "irrelevant",
+          "confidence": "high",
+          "evidence_group": "",
+          "reason_code": "NO_CUSTOMER_SERVICE_SIGNAL"
+        },
+        "expert": null,
+        "role_annotation": {
+          "active_until": "",
+          "annotator": "codex",
+          "comment": "Codex最终标注：沿用共识无关标签，排除在广义研究范围外。",
+          "evidence_role": "out_of_scope",
+          "procurement_lifecycle": "not_applicable"
+        }
+      },
+      "business_label": "irrelevant",
+      "candidate_id": "c_0032",
+      "domain": "shanghai.jianyu360.cn",
+      "evidence_role": "out_of_scope",
+      "gold_references": [],
+      "identity_key": "identity_d6970dba8ab7aeca",
+      "is_gold_reference": false,
+      "procurement_lifecycle": "historical_or_unknown",
+      "published_at": "2026-06-30T16:24:44.216335+00:00",
+      "snippet": "中国银行股份有限公司国产备份平台维护服务项目采购邀请公告，所属地区上海市，发布日期2025-05-13。",
+      "source": "web_scrape",
+      "source_kind": "evidence_snapshot",
+      "title": "中国银行股份有限公司国产备份平台维护服务项目采购邀请公告",
+      "url": "https://shanghai.jianyu360.cn/jybx/20250513_250512183361064.html"
+    },
+    {
+      "annotation_audit": {
+        "claude": {
+          "business_label": "irrelevant",
+          "confidence": "medium",
+          "evidence_group": "",
+          "reason_code": "NON_BIDDING_CONTEXT"
+        },
+        "codex": {
+          "business_label": "uncertain",
+          "confidence": "low",
+          "evidence_group": "",
+          "reason_code": "CORE_SIGNAL_WITHOUT_BIDDING_PROOF"
+        },
+        "expert": {
+          "business_label": "uncertain",
+          "comment": "无法看到URL内的内容，不过看标题有相关性；无法看原文内容",
+          "evidence_group": ""
+        },
+        "role_annotation": {
+          "active_until": "",
+          "annotator": "codex",
+          "comment": "Codex最终标注：归入 target_operation_signal；当前样本未提供可核验的在途有效期。",
+          "evidence_role": "target_operation_signal",
+          "procurement_lifecycle": "not_applicable"
+        }
+      },
+      "business_label": "irrelevant",
+      "candidate_id": "c_0033",
+      "domain": "www.hezegd.com",
+      "evidence_role": "out_of_scope",
+      "gold_references": [
+        "para_4"
+      ],
+      "identity_key": "identity_9fb56021a44085f6",
+      "is_gold_reference": true,
+      "procurement_lifecycle": "not_applicable",
+      "published_at": "2026-06-30T16:24:44.216336+00:00",
+      "snippet": "在当今这个金融高速发展的时代银行作为金融服务的必不可少载体,其服务优劣和效率直接关系到消费者的利益。上海银行作为国内知名的金融机构,始坚持以客户为中心,致力于提供全方位的金融服务。在服务进展中,难免会",
+      "source": "web_scrape",
+      "source_kind": "evidence_snapshot",
+      "title": "全方位金融服务与消费者反馈平台—上海银行投诉中心",
+      "url": "https://www.hezegd.com/lawnews/zixun/1002678.html"
+    },
+    {
+      "annotation_audit": {
+        "claude": {
+          "business_label": "irrelevant",
+          "confidence": "high",
+          "evidence_group": "",
+          "reason_code": "UNRELATED_PROCUREMENT"
+        },
+        "codex": {
+          "business_label": "irrelevant",
+          "confidence": "high",
+          "evidence_group": "",
+          "reason_code": "UNRELATED_PROCUREMENT"
+        },
+        "expert": null,
+        "role_annotation": {
+          "active_until": "",
+          "annotator": "codex",
+          "comment": "Codex最终标注：沿用共识无关标签，排除在广义研究范围外。",
+          "evidence_role": "out_of_scope",
+          "procurement_lifecycle": "not_applicable"
+        }
+      },
+      "business_label": "irrelevant",
+      "candidate_id": "c_0034",
+      "domain": "www.bidcenter.com.cn",
+      "evidence_role": "out_of_scope",
+      "gold_references": [
+        "para_7"
+      ],
+      "identity_key": "identity_a700150d89255633",
+      "is_gold_reference": true,
+      "procurement_lifecycle": "historical_or_unknown",
+      "published_at": "2026-06-30T16:24:44.216337+00:00",
+      "snippet": "上海银行总行采购中心就\"'上海银行会客厅'全媒体系列访谈采购项目\"进行采购，相关信息公示如下：采购内容：全媒体系列访谈；采购方式：单一来源；拟邀请供应商：上海第一财经传媒有限公司。",
+      "source": "web_scrape",
+      "source_kind": "evidence_snapshot",
+      "title": "\"上海银行会客厅\"全媒体系列访谈采购项目采购信息公示",
+      "url": "https://www.bidcenter.com.cn/newscontent-144737025-1.html"
+    },
+    {
+      "annotation_audit": {
+        "claude": {
+          "business_label": "irrelevant",
+          "confidence": "high",
+          "evidence_group": "",
+          "reason_code": "LOW_QUALITY_GENERIC_PAGE"
+        },
+        "codex": {
+          "business_label": "irrelevant",
+          "confidence": "medium",
+          "evidence_group": "",
+          "reason_code": "NO_CUSTOMER_SERVICE_SIGNAL"
+        },
+        "expert": null,
+        "role_annotation": {
+          "active_until": "",
+          "annotator": "codex",
+          "comment": "Codex最终标注：沿用共识无关标签，排除在广义研究范围外。",
+          "evidence_role": "out_of_scope",
+          "procurement_lifecycle": "not_applicable"
+        }
+      },
+      "business_label": "irrelevant",
+      "candidate_id": "c_0035",
+      "domain": "www.qixin.com",
+      "evidence_role": "out_of_scope",
+      "gold_references": [],
+      "identity_key": "identity_58f0bd89400f4bdc",
+      "is_gold_reference": false,
+      "procurement_lifecycle": "not_applicable",
+      "published_at": "2026-06-30T16:24:44.216338+00:00",
+      "snippet": "企业状态存续，国有企业，商业银行，负责人彭李雯",
+      "source": "web_scrape",
+      "source_kind": "evidence_snapshot",
+      "title": "上海银行股份有限公司徐汇支行",
+      "url": "http://www.qixin.com/company-operation/18ff838d-be1c-4c2e-883c-a91469b0407c"
+    },
+    {
+      "annotation_audit": {
+        "claude": {
+          "business_label": "irrelevant",
+          "confidence": "high",
+          "evidence_group": "",
+          "reason_code": "UNRELATED_PROCUREMENT"
+        },
+        "codex": {
+          "business_label": "irrelevant",
+          "confidence": "high",
+          "evidence_group": "",
+          "reason_code": "NO_CUSTOMER_SERVICE_SIGNAL"
+        },
+        "expert": null,
+        "role_annotation": {
+          "active_until": "",
+          "annotator": "codex",
+          "comment": "Codex最终标注：沿用共识无关标签，排除在广义研究范围外。",
+          "evidence_role": "out_of_scope",
+          "procurement_lifecycle": "not_applicable"
+        }
+      },
+      "business_label": "irrelevant",
+      "candidate_id": "c_0036",
+      "domain": "www.bidcenter.com.cn",
+      "evidence_role": "out_of_scope",
+      "gold_references": [],
+      "identity_key": "identity_079f15eb2944fc75",
+      "is_gold_reference": false,
+      "procurement_lifecycle": "historical_or_unknown",
+      "published_at": "2026-06-30T16:24:44.216339+00:00",
+      "snippet": "上海银行企业微信内容资讯采购项目采购结果公示，招标业主：上海银行股份有限公司，发布时间：2024/5/13",
+      "source": "web_scrape",
+      "source_kind": "evidence_snapshot",
+      "title": "上海银行企业微信内容资讯采购项目采购结果公示",
+      "url": "https://www.bidcenter.com.cn/newscontent-284632471-4.html"
+    },
+    {
+      "annotation_audit": {
+        "claude": {
+          "business_label": "irrelevant",
+          "confidence": "medium",
+          "evidence_group": "",
+          "reason_code": "NON_BIDDING_CONTEXT"
+        },
+        "codex": {
+          "business_label": "uncertain",
+          "confidence": "low",
+          "evidence_group": "",
+          "reason_code": "CORE_SIGNAL_WITHOUT_BIDDING_PROOF"
+        },
+        "expert": {
+          "business_label": "uncertain",
+          "comment": "无法看到URL内的内容，不过看标题有相关性；无法看原文内容",
+          "evidence_group": ""
+        },
+        "role_annotation": {
+          "active_until": "",
+          "annotator": "codex",
+          "comment": "Codex最终标注：归入 target_operation_signal；当前样本未提供可核验的在途有效期。",
+          "evidence_role": "target_operation_signal",
+          "procurement_lifecycle": "not_applicable"
+        }
+      },
+      "business_label": "uncertain",
+      "candidate_id": "c_0037",
+      "domain": "www.wondercv.com",
+      "evidence_role": "uncertain",
+      "gold_references": [
+        "para_4",
+        "para_9"
+      ],
+      "identity_key": "identity_f134121b2d96bd38",
+      "is_gold_reference": true,
+      "procurement_lifecycle": "not_applicable",
+      "published_at": "2026-06-30T16:24:44.216340+00:00",
+      "snippet": "负责智能客服系统需求的统筹管理,包括制定系统业务需求管理机制,推进日常业务需求工作管理。负责业务需求管理,包括项目管理、业务需求征集、评估、服务流程制定及优化等工作。",
+      "source": "web_scrape",
+      "source_kind": "evidence_snapshot",
+      "title": "零售业务部客户服务中心需求策划岗招聘",
+      "url": "https://www.wondercv.com/jobs/5O085eA.html"
+    },
+    {
+      "annotation_audit": {
+        "claude": {
+          "business_label": "irrelevant",
+          "confidence": "high",
+          "evidence_group": "",
+          "reason_code": "LOW_QUALITY_GENERIC_PAGE"
+        },
+        "codex": {
+          "business_label": "irrelevant",
+          "confidence": "medium",
+          "evidence_group": "",
+          "reason_code": "NO_CUSTOMER_SERVICE_SIGNAL"
+        },
+        "expert": null,
+        "role_annotation": {
+          "active_until": "",
+          "annotator": "codex",
+          "comment": "Codex最终标注：沿用共识无关标签，排除在广义研究范围外。",
+          "evidence_role": "out_of_scope",
+          "procurement_lifecycle": "not_applicable"
+        }
+      },
+      "business_label": "irrelevant",
+      "candidate_id": "c_0038",
+      "domain": "www.kanzhun.com",
+      "evidence_role": "out_of_scope",
+      "gold_references": [],
+      "identity_key": "identity_2131243a2072bec2",
+      "is_gold_reference": false,
+      "procurement_lifecycle": "not_applicable",
+      "published_at": "2026-06-30T16:24:44.216342+00:00",
+      "snippet": "上海银行股份有限公司，上午08:30-下午05:30，联系方式021-68475888，地址中国(上海)自由贸易试验区银城中路168号",
+      "source": "web_scrape",
+      "source_kind": "evidence_snapshot",
+      "title": "上海银行股份有限公司",
+      "url": "https://www.kanzhun.com/firm/interview/detail/1nVy3NW-FFo~.html"
+    },
+    {
+      "annotation_audit": {
+        "claude": {
+          "business_label": "irrelevant",
+          "confidence": "high",
+          "evidence_group": "",
+          "reason_code": "LOW_QUALITY_GENERIC_PAGE"
+        },
+        "codex": {
+          "business_label": "irrelevant",
+          "confidence": "medium",
+          "evidence_group": "",
+          "reason_code": "NO_CUSTOMER_SERVICE_SIGNAL"
+        },
+        "expert": null,
+        "role_annotation": {
+          "active_until": "",
+          "annotator": "codex",
+          "comment": "Codex最终标注：沿用共识无关标签，排除在广义研究范围外。",
+          "evidence_role": "out_of_scope",
+          "procurement_lifecycle": "not_applicable"
+        }
+      },
+      "business_label": "irrelevant",
+      "candidate_id": "c_0040",
+      "domain": "www.qixin.com",
+      "evidence_role": "out_of_scope",
+      "gold_references": [],
+      "identity_key": "identity_1b460cbdddfba131",
+      "is_gold_reference": false,
+      "procurement_lifecycle": "not_applicable",
+      "published_at": "2026-06-30T16:24:44.216344+00:00",
+      "snippet": "存续，上海银行集团，国有企业，商业银行，城市商业银行，银行分支机构，自身风险53条，司法案件",
+      "source": "web_scrape",
+      "source_kind": "evidence_snapshot",
+      "title": "上海银行股份有限公司漕河泾支行",
+      "url": "https://www.qixin.com/financing/92ddad2a-5655-4dc3-aa44-5927271bfc8a"
+    },
+    {
+      "annotation_audit": {
+        "claude": {
+          "business_label": "irrelevant",
+          "confidence": "high",
+          "evidence_group": "",
+          "reason_code": "LOW_QUALITY_GENERIC_PAGE"
+        },
+        "codex": {
+          "business_label": "irrelevant",
+          "confidence": "medium",
+          "evidence_group": "",
+          "reason_code": "NO_CUSTOMER_SERVICE_SIGNAL"
+        },
+        "expert": null,
+        "role_annotation": {
+          "active_until": "",
+          "annotator": "codex",
+          "comment": "Codex最终标注：沿用共识无关标签，排除在广义研究范围外。",
+          "evidence_role": "out_of_scope",
+          "procurement_lifecycle": "not_applicable"
+        }
+      },
+      "business_label": "irrelevant",
+      "candidate_id": "c_0041",
+      "domain": "max.book118.com",
+      "evidence_role": "out_of_scope",
+      "gold_references": [],
+      "identity_key": "identity_4cb7004bc32ee962",
+      "is_gold_reference": false,
+      "procurement_lifecycle": "not_applicable",
+      "published_at": "2026-06-30T16:24:44.216345+00:00",
+      "snippet": "上海银行营业网点大堂服务汇总报告年 月填报单位: 填报时间: 项目及内容总行相应管理部门客户咨询量排前的问题1、2、3、机器故障情况(",
+      "source": "web_scrape",
+      "source_kind": "evidence_snapshot",
+      "title": "附件1-1:上海银行营业网点大堂服务汇总报告.doc-原创力文档",
+      "url": "https://max.book118.com/html/2022/0913/6125031044004235.shtm"
+    },
+    {
+      "annotation_audit": {
+        "claude": {
+          "business_label": "relevant",
+          "confidence": "medium",
+          "evidence_group": "industry_intelligent_cs_support_case",
+          "reason_code": "INDUSTRY_CORE_BIDDING"
+        },
+        "codex": {
+          "business_label": "relevant",
+          "confidence": "medium",
+          "evidence_group": "evidence_13c9d55468",
+          "reason_code": "INDUSTRY_CORE_BIDDING"
+        },
+        "expert": null,
+        "role_annotation": {
+          "active_until": "",
+          "annotator": "codex",
+          "comment": "Codex最终标注：归入 industry_capability_intelligence；当前样本未提供可核验的在途有效期。",
+          "evidence_role": "industry_capability_intelligence",
+          "procurement_lifecycle": "closed_or_failed"
+        }
+      },
+      "business_label": "relevant",
+      "candidate_id": "c_0042",
+      "domain": "www.bidcenter.com.cn",
+      "evidence_group": "evidence_13c9d55468",
+      "evidence_role": "industry_capability_intelligence",
+      "gold_references": [],
+      "identity_key": "identity_50788ba3e02fbb4c",
+      "is_gold_reference": false,
+      "procurement_lifecycle": "closed_or_failed",
+      "published_at": "2026-06-30T16:24:44.216346+00:00",
+      "snippet": "发布时间 2024-09-06 中标金额 6.84万元",
+      "source": "web_scrape",
+      "source_kind": "evidence_snapshot",
+      "title": "上海市信息网络有限公司智能客服交互系统支持服务成交公示-采招网",
+      "url": "https://www.bidcenter.com.cn/news-307895867-4.html"
+    },
+    {
+      "annotation_audit": {
+        "claude": {
+          "business_label": "irrelevant",
+          "confidence": "high",
+          "evidence_group": "",
+          "reason_code": "UNRELATED_PROCUREMENT"
+        },
+        "codex": {
+          "business_label": "irrelevant",
+          "confidence": "high",
+          "evidence_group": "",
+          "reason_code": "NO_CUSTOMER_SERVICE_SIGNAL"
+        },
+        "expert": null,
+        "role_annotation": {
+          "active_until": "",
+          "annotator": "codex",
+          "comment": "Codex最终标注：沿用共识无关标签，排除在广义研究范围外。",
+          "evidence_role": "out_of_scope",
+          "procurement_lifecycle": "not_applicable"
+        }
+      },
+      "business_label": "irrelevant",
+      "candidate_id": "c_0043",
+      "domain": "www.bidcenter.com.cn",
+      "evidence_role": "out_of_scope",
+      "gold_references": [],
+      "identity_key": "identity_c2dcc08c0915194d",
+      "is_gold_reference": false,
+      "procurement_lifecycle": "closed_or_failed",
+      "published_at": "2026-06-30T16:24:44.216347+00:00",
+      "snippet": "中标金额43.41万元，项目编号未显示",
+      "source": "web_scrape",
+      "source_kind": "evidence_snapshot",
+      "title": "上海银行深圳分行绩效管理系统开发采购项目成交结果公告",
+      "url": "https://www.bidcenter.com.cn/news-275156838-4.html"
+    },
+    {
+      "annotation_audit": {
+        "claude": {
+          "business_label": "must_keep",
+          "confidence": "high",
+          "evidence_group": "",
+          "reason_code": "TARGET_CORE_BIDDING"
+        },
+        "codex": {
+          "business_label": "must_keep",
+          "confidence": "high",
+          "evidence_group": "",
+          "reason_code": "UNIQUE_TARGET_CORE_BIDDING"
+        },
+        "expert": {
+          "business_label": "must_keep",
+          "comment": "目标企业的多语言智能客服采购失败公告，仍明确证明项目需求，保留为不可替代关键证据。",
+          "evidence_group": ""
+        },
+        "role_annotation": {
+          "active_until": "",
+          "annotator": "codex",
+          "comment": "Codex最终标注：归入 target_procurement；当前样本未提供可核验的在途有效期。",
+          "evidence_role": "target_procurement",
+          "procurement_lifecycle": "closed_or_failed"
+        }
+      },
+      "business_label": "must_keep",
+      "candidate_id": "c_0044",
+      "domain": "sh.bidcenter.com.cn",
+      "evidence_role": "target_procurement",
+      "gold_references": [
+        "para_2",
+        "para_4",
+        "para_8",
+        "para_9"
+      ],
+      "identity_key": "identity_94c81e023a72f98e",
+      "is_gold_reference": true,
+      "procurement_lifecycle": "closed_or_failed",
+      "published_at": "2026-06-30T16:24:44.216348+00:00",
+      "snippet": "因有效响应人不满足磋商文件要求,故本项目磋商失败。",
+      "source": "web_scrape",
+      "source_kind": "evidence_snapshot",
+      "title": "上海银行多语言智能客服系统采购项目第二次磋商失败公告",
+      "url": "https://sh.bidcenter.com.cn/diqucontent-386980654-6.html"
+    },
+    {
+      "annotation_audit": {
+        "claude": {
+          "business_label": "relevant",
+          "confidence": "medium",
+          "evidence_group": "industry_video_cs_case",
+          "reason_code": "INDUSTRY_CORE_BIDDING"
+        },
+        "codex": {
+          "business_label": "relevant",
+          "confidence": "medium",
+          "evidence_group": "evidence_f0c395ce48",
+          "reason_code": "INDUSTRY_CORE_BIDDING"
+        },
+        "expert": {
+          "business_label": "relevant",
+          "comment": "有行业相关性",
+          "evidence_group": "unionpay_video_customer_service_upgrade_2023"
+        },
+        "role_annotation": {
+          "active_until": "",
+          "annotator": "codex",
+          "comment": "Codex最终标注：归入 industry_capability_intelligence；当前样本未提供可核验的在途有效期。",
+          "evidence_role": "industry_capability_intelligence",
+          "procurement_lifecycle": "closed_or_failed"
+        }
+      },
+      "business_label": "relevant",
+      "candidate_id": "c_0045",
+      "domain": "www.chinamae.com",
+      "evidence_group": "unionpay_video_customer_service_upgrade_2023",
+      "evidence_role": "industry_capability_intelligence",
+      "gold_references": [
+        "para_5"
+      ],
+      "identity_key": "identity_ff6490e7d4e68b7c",
+      "is_gold_reference": true,
+      "procurement_lifecycle": "closed_or_failed",
+      "published_at": "2026-06-30T16:24:44.216349+00:00",
+      "snippet": "银联商务2023年度智能视频客服系统升级采购项目，项目编号20230164，采购内容：采购一家智能视频客服系统升级。",
+      "source": "web_scrape",
+      "source_kind": "evidence_snapshot",
+      "title": "【银联商务2023年度智能视频客服系统升级采购项目】成交结果公告-结果公告-机电设备采购平台",
+      "url": "https://www.chinamae.com/purchases/8d77ef0b1f7cdf616a582d282c4a8180"
+    },
+    {
+      "annotation_audit": {
+        "claude": {
+          "business_label": "irrelevant",
+          "confidence": "high",
+          "evidence_group": "",
+          "reason_code": "UNRELATED_PROCUREMENT"
+        },
+        "codex": {
+          "business_label": "irrelevant",
+          "confidence": "high",
+          "evidence_group": "",
+          "reason_code": "NO_CUSTOMER_SERVICE_SIGNAL"
+        },
+        "expert": null,
+        "role_annotation": {
+          "active_until": "",
+          "annotator": "codex",
+          "comment": "Codex最终标注：沿用共识无关标签，排除在广义研究范围外。",
+          "evidence_role": "out_of_scope",
+          "procurement_lifecycle": "not_applicable"
+        }
+      },
+      "business_label": "irrelevant",
+      "candidate_id": "c_0046",
+      "domain": "www.ccgp.gov.cn",
+      "evidence_role": "out_of_scope",
+      "gold_references": [],
+      "identity_key": "identity_468ed8acaa872c50",
+      "is_gold_reference": false,
+      "procurement_lifecycle": "closed_or_failed",
+      "published_at": "2026-06-30T16:24:44.216350+00:00",
+      "snippet": "采购项目名称：智能数据分析系统(升级改造)，采购单位：上海公安学院，公告时间：2025年02月15日",
+      "source": "web_scrape",
+      "source_kind": "evidence_snapshot",
+      "title": "智能数据分析系统(升级改造)的中标(成交)结果公告",
+      "url": "http://www.ccgp.gov.cn/cggg/dfgg/zbgg/202502/t20250215_24170460.htm"
+    },
+    {
+      "annotation_audit": {
+        "claude": {
+          "business_label": "irrelevant",
+          "confidence": "medium",
+          "evidence_group": "",
+          "reason_code": "UNRELATED_PROCUREMENT"
+        },
+        "codex": {
+          "business_label": "relevant",
+          "confidence": "medium",
+          "evidence_group": "evidence_05512aa6b3",
+          "reason_code": "INDUSTRY_CORE_BIDDING"
+        },
+        "expert": {
+          "business_label": "irrelevant",
+          "comment": "与上海银行不相关，也和金融行业无关；无企业属性",
+          "evidence_group": ""
+        },
+        "role_annotation": {
+          "active_until": "",
+          "annotator": "codex",
+          "comment": "Codex最终标注：沿用共识无关标签，排除在广义研究范围外。",
+          "evidence_role": "out_of_scope",
+          "procurement_lifecycle": "not_applicable"
+        }
+      },
+      "business_label": "relevant",
+      "candidate_id": "c_0047",
+      "domain": "350104.bidcenter.com.cn",
+      "evidence_group": "research_identity_00fc3f6d3ba2c530",
+      "evidence_role": "industry_capability_intelligence",
+      "gold_references": [],
+      "identity_key": "identity_00fc3f6d3ba2c530",
+      "is_gold_reference": false,
+      "procurement_lifecycle": "closed_or_failed",
+      "published_at": "2026-06-30T16:24:44.216351+00:00",
+      "snippet": "智能客服系统开发项目于2026年4月7日开标并评审完毕，采购人按规定确定成交结果。",
+      "source": "web_scrape",
+      "source_kind": "evidence_snapshot",
+      "title": "仓山_智能客服系统开发项目成交结果公示",
+      "url": "https://350104.bidcenter.com.cn/bidinfo-4-a0f73512c37219a9f1030bf649c6e9e548f33e9bf691b7e9.html"
+    },
+    {
+      "annotation_audit": {
+        "claude": {
+          "business_label": "irrelevant",
+          "confidence": "high",
+          "evidence_group": "",
+          "reason_code": "UNRELATED_PROCUREMENT"
+        },
+        "codex": {
+          "business_label": "irrelevant",
+          "confidence": "high",
+          "evidence_group": "",
+          "reason_code": "NO_CUSTOMER_SERVICE_SIGNAL"
+        },
+        "expert": null,
+        "role_annotation": {
+          "active_until": "",
+          "annotator": "codex",
+          "comment": "Codex最终标注：沿用共识无关标签，排除在广义研究范围外。",
+          "evidence_role": "out_of_scope",
+          "procurement_lifecycle": "not_applicable"
+        }
+      },
+      "business_label": "irrelevant",
+      "candidate_id": "c_0048",
+      "domain": "www.bidizhaobiao.com",
+      "evidence_role": "out_of_scope",
+      "gold_references": [],
+      "identity_key": "identity_55a9cae7389f5097",
+      "is_gold_reference": false,
+      "procurement_lifecycle": "closed_or_failed",
+      "published_at": "2026-06-30T16:24:44.216352+00:00",
+      "snippet": "上海市大数据中心市经信委“设计之都”服务子系统建设项目成交",
+      "source": "web_scrape",
+      "source_kind": "evidence_snapshot",
+      "title": "上海智能系统中标公告结果",
+      "url": "http://www.bidizhaobiao.com/clsbzb/20_7325_03.html"
+    },
+    {
+      "annotation_audit": {
+        "claude": {
+          "business_label": "irrelevant",
+          "confidence": "high",
+          "evidence_group": "",
+          "reason_code": "UNRELATED_PROCUREMENT"
+        },
+        "codex": {
+          "business_label": "irrelevant",
+          "confidence": "high",
+          "evidence_group": "",
+          "reason_code": "NO_CUSTOMER_SERVICE_SIGNAL"
+        },
+        "expert": null,
+        "role_annotation": {
+          "active_until": "",
+          "annotator": "codex",
+          "comment": "Codex最终标注：沿用共识无关标签，排除在广义研究范围外。",
+          "evidence_role": "out_of_scope",
+          "procurement_lifecycle": "not_applicable"
+        }
+      },
+      "business_label": "irrelevant",
+      "candidate_id": "c_0049",
+      "domain": "www.chinamae.com",
+      "evidence_role": "out_of_scope",
+      "gold_references": [
+        "para_5"
+      ],
+      "identity_key": "identity_4405739e6a0d194d",
+      "is_gold_reference": true,
+      "procurement_lifecycle": "closed_or_failed",
+      "published_at": "2026-06-30T16:24:44.216353+00:00",
+      "snippet": "广州银行智能柜台四期建设采购项目采用单一来源方式进行采购。现就本次采购的成交结果公告如下: 一、采购项目编号: 广银采购 [ 2023 ] 68 号 二、采购项目名称: 广州银行智能柜台四期建设采购项目",
+      "source": "web_scrape",
+      "source_kind": "evidence_snapshot",
+      "title": "广州银行智能柜台四期建设采购项目成交结果公示-机电设备采购平台",
+      "url": "https://www.chinamae.com/purchases/9069df9719e7a178e1061923098b7313"
+    },
+    {
+      "annotation_audit": {
+        "claude": {
+          "business_label": "acceptable_alternative",
+          "confidence": "medium",
+          "evidence_group": "industry_video_cs_case",
+          "reason_code": "DUPLICATE_EVENT_ALTERNATIVE"
+        },
+        "codex": {
+          "business_label": "relevant",
+          "confidence": "medium",
+          "evidence_group": "evidence_db7e3ae323",
+          "reason_code": "INDUSTRY_CORE_BIDDING"
+        },
+        "expert": {
+          "business_label": "acceptable_alternative",
+          "comment": "有行业相关性；与 c_0045 为同一银联商务智能视频客服升级事件的另一来源，按规则调整为 acceptable_alternative。",
+          "evidence_group": "unionpay_video_customer_service_upgrade_2023"
+        },
+        "role_annotation": {
+          "active_until": "",
+          "annotator": "codex",
+          "comment": "Codex最终标注：归入 industry_capability_intelligence；当前样本未提供可核验的在途有效期。",
+          "evidence_role": "industry_capability_intelligence",
+          "procurement_lifecycle": "closed_or_failed"
+        }
+      },
+      "business_label": "acceptable_alternative",
+      "candidate_id": "c_0050",
+      "domain": "shanghai.jianyu360.cn",
+      "evidence_group": "unionpay_video_customer_service_upgrade_2023",
+      "evidence_role": "industry_capability_intelligence",
+      "gold_references": [],
+      "identity_key": "identity_81b7e2bc0e3fbbea",
+      "is_gold_reference": false,
+      "procurement_lifecycle": "closed_or_failed",
+      "published_at": "2026-06-30T16:24:44.216354+00:00",
+      "snippet": "银联商务2023年度智能视频客服系统升级采购项目成交结果公告，所属地区上海市，发布日期2023-12-20。",
+      "source": "web_scrape",
+      "source_kind": "evidence_snapshot",
+      "title": "【招标结果】【银联商务2023年度智能视频客服系统升级采购项目】成交结果公告",
+      "url": "https://shanghai.jianyu360.cn/jybx/20231220_2312192479998.html"
+    },
+    {
+      "annotation_audit": {
+        "claude": {
+          "business_label": "irrelevant",
+          "confidence": "high",
+          "evidence_group": "",
+          "reason_code": "UNRELATED_PROCUREMENT"
+        },
+        "codex": {
+          "business_label": "irrelevant",
+          "confidence": "high",
+          "evidence_group": "",
+          "reason_code": "NO_CUSTOMER_SERVICE_SIGNAL"
+        },
+        "expert": null,
+        "role_annotation": {
+          "active_until": "",
+          "annotator": "codex",
+          "comment": "Codex最终标注：沿用共识无关标签，排除在广义研究范围外。",
+          "evidence_role": "out_of_scope",
+          "procurement_lifecycle": "not_applicable"
+        }
+      },
+      "business_label": "irrelevant",
+      "candidate_id": "c_0051",
+      "domain": "www.bidcenter.com.cn",
+      "evidence_role": "out_of_scope",
+      "gold_references": [],
+      "identity_key": "identity_3fe1487efeca5e2b",
+      "is_gold_reference": false,
+      "procurement_lifecycle": "historical_or_unknown",
+      "published_at": "2026-06-30T16:24:44.216355+00:00",
+      "snippet": "上海市质量技术监督局业务受理中心窗口服务标准化综合试点服务项目竞争性磋商公告",
+      "source": "web_scrape",
+      "source_kind": "evidence_snapshot",
+      "title": "上海市质量技术监督局业务受理中心窗口服务标准化综合试点服务项目竞争性磋商公告",
+      "url": "https://www.bidcenter.com.cn/newscontent-49915626-1.html"
+    },
+    {
+      "annotation_audit": {
+        "claude": {
+          "business_label": "irrelevant",
+          "confidence": "high",
+          "evidence_group": "",
+          "reason_code": "UNRELATED_PROCUREMENT"
+        },
+        "codex": {
+          "business_label": "irrelevant",
+          "confidence": "medium",
+          "evidence_group": "",
+          "reason_code": "NO_CUSTOMER_SERVICE_SIGNAL"
+        },
+        "expert": null,
+        "role_annotation": {
+          "active_until": "",
+          "annotator": "codex",
+          "comment": "Codex最终标注：沿用共识无关标签，排除在广义研究范围外。",
+          "evidence_role": "out_of_scope",
+          "procurement_lifecycle": "not_applicable"
+        }
+      },
+      "business_label": "irrelevant",
+      "candidate_id": "c_0052",
+      "domain": "www.ccgp.gov.cn",
+      "evidence_role": "out_of_scope",
+      "gold_references": [],
+      "identity_key": "identity_fa7b2024e8baf50b",
+      "is_gold_reference": false,
+      "procurement_lifecycle": "closed_or_failed",
+      "published_at": "2026-06-30T16:24:44.216356+00:00",
+      "snippet": "上海市房地产交易中心委托上海信息投资咨询有限公司，就房地产市场管理(2013年运维)项目进行国内竞争性谈判（谈判编号：XZT2013001）。",
+      "source": "web_scrape",
+      "source_kind": "evidence_snapshot",
+      "title": "上海市房地产交易中心关于房地产市场管理(2013年运维)项目竞争性谈判结果公告",
+      "url": "http://www.ccgp.gov.cn/cggg/dfbx/zbgg/201301/t20130108_2564927.shtml"
+    },
+    {
+      "annotation_audit": {
+        "claude": {
+          "business_label": "irrelevant",
+          "confidence": "high",
+          "evidence_group": "",
+          "reason_code": "UNRELATED_PROCUREMENT"
+        },
+        "codex": {
+          "business_label": "irrelevant",
+          "confidence": "medium",
+          "evidence_group": "",
+          "reason_code": "NO_CUSTOMER_SERVICE_SIGNAL"
+        },
+        "expert": null,
+        "role_annotation": {
+          "active_until": "",
+          "annotator": "codex",
+          "comment": "Codex最终标注：沿用共识无关标签，排除在广义研究范围外。",
+          "evidence_role": "out_of_scope",
+          "procurement_lifecycle": "not_applicable"
+        }
+      },
+      "business_label": "irrelevant",
+      "candidate_id": "c_0053",
+      "domain": "www.zrcbank.com",
+      "evidence_role": "out_of_scope",
+      "gold_references": [],
+      "identity_key": "identity_22314e78609774f9",
+      "is_gold_reference": false,
+      "procurement_lifecycle": "historical_or_unknown",
+      "published_at": "2026-06-30T16:24:44.216357+00:00",
+      "snippet": "竞争性谈判地点: 江苏张家港市人民中路66号,张家港农村商业银行总行大厦9楼902会议室。 供应商基本要求: 供应商应在中华人民共和国境内注册,具有独...",
+      "source": "web_scrape",
+      "source_kind": "evidence_snapshot",
+      "title": "张家港农村商业银行",
+      "url": "https://www.zrcbank.com/index/news/info/id/8899.html"
+    },
+    {
+      "annotation_audit": {
+        "claude": {
+          "business_label": "irrelevant",
+          "confidence": "high",
+          "evidence_group": "",
+          "reason_code": "UNRELATED_PROCUREMENT"
+        },
+        "codex": {
+          "business_label": "irrelevant",
+          "confidence": "high",
+          "evidence_group": "",
+          "reason_code": "NO_CUSTOMER_SERVICE_SIGNAL"
+        },
+        "expert": null,
+        "role_annotation": {
+          "active_until": "",
+          "annotator": "codex",
+          "comment": "Codex最终标注：沿用共识无关标签，排除在广义研究范围外。",
+          "evidence_role": "out_of_scope",
+          "procurement_lifecycle": "not_applicable"
+        }
+      },
+      "business_label": "irrelevant",
+      "candidate_id": "c_0055",
+      "domain": "www.ccgp.gov.cn",
+      "evidence_role": "out_of_scope",
+      "gold_references": [],
+      "identity_key": "identity_e249f99db9845b20",
+      "is_gold_reference": false,
+      "procurement_lifecycle": "historical_or_unknown",
+      "published_at": "2026-06-30T16:24:44.216359+00:00",
+      "snippet": "国家开发银行股份有限公司(以下简称“国家开发银行”)就 持续集成平台功能扩展项目 进行竞争性谈判采购,有意向的合格谈判人可按以下要求领取谈判文件,并按要求递交应答文件,参加本项目的竞争性谈判。",
+      "source": "web_scrape",
+      "source_kind": "evidence_snapshot",
+      "title": "国家开发银行股份有限公司关于持续集成平台功能扩展项目竞争性谈判采购公告",
+      "url": "http://www.ccgp.gov.cn/cggg/zybx/jztp/201410/t20141020_3853934.shtml"
+    },
+    {
+      "annotation_audit": {
+        "claude": {
+          "business_label": "irrelevant",
+          "confidence": "high",
+          "evidence_group": "",
+          "reason_code": "UNRELATED_PROCUREMENT"
+        },
+        "codex": {
+          "business_label": "irrelevant",
+          "confidence": "high",
+          "evidence_group": "",
+          "reason_code": "UNRELATED_PROCUREMENT"
+        },
+        "expert": null,
+        "role_annotation": {
+          "active_until": "",
+          "annotator": "codex",
+          "comment": "Codex最终标注：沿用共识无关标签，排除在广义研究范围外。",
+          "evidence_role": "out_of_scope",
+          "procurement_lifecycle": "not_applicable"
+        }
+      },
+      "business_label": "irrelevant",
+      "candidate_id": "c_0056",
+      "domain": "www.bidcenter.com.cn",
+      "evidence_role": "out_of_scope",
+      "gold_references": [],
+      "identity_key": "identity_4dabc49e9530fbf2",
+      "is_gold_reference": false,
+      "procurement_lifecycle": "historical_or_unknown",
+      "published_at": "2026-06-30T16:24:44.216360+00:00",
+      "snippet": "上海银行市南分行商务活动供应商入围项目竞争性磋商撤项公告，发布时间2017/6/3，招标业主上海银行股份有限。",
+      "source": "web_scrape",
+      "source_kind": "evidence_snapshot",
+      "title": "上海银行市南分行商务活动供应商入围项目竞争性磋商撤项公告",
+      "url": "https://www.bidcenter.com.cn/newscontent-37982121-1.html"
+    },
+    {
+      "annotation_audit": {
+        "claude": {
+          "business_label": "irrelevant",
+          "confidence": "high",
+          "evidence_group": "",
+          "reason_code": "LOW_QUALITY_GENERIC_PAGE"
+        },
+        "codex": {
+          "business_label": "irrelevant",
+          "confidence": "high",
+          "evidence_group": "",
+          "reason_code": "LOW_QUALITY_GENERIC_PAGE"
+        },
+        "expert": null,
+        "role_annotation": {
+          "active_until": "",
+          "annotator": "codex",
+          "comment": "Codex最终标注：沿用共识无关标签，排除在广义研究范围外。",
+          "evidence_role": "out_of_scope",
+          "procurement_lifecycle": "not_applicable"
+        }
+      },
+      "business_label": "irrelevant",
+      "candidate_id": "c_0057",
+      "domain": "max.book118.com",
+      "evidence_role": "out_of_scope",
+      "gold_references": [],
+      "identity_key": "identity_40eab883f7ed9285",
+      "is_gold_reference": false,
+      "procurement_lifecycle": "historical_or_unknown",
+      "published_at": "2026-06-30T16:24:44.216361+00:00",
+      "snippet": "XX银行项目竞争性谈判文件，采购编号: XX银行股份有限公司，包含竞争性谈判邀请书等章节。",
+      "source": "web_scrape",
+      "source_kind": "evidence_snapshot",
+      "title": "银行项目竞争性谈判文件",
+      "url": "https://max.book118.com/html/2019/0417/8033106051002017.shtm"
+    },
+    {
+      "annotation_audit": {
+        "claude": {
+          "business_label": "irrelevant",
+          "confidence": "high",
+          "evidence_group": "",
+          "reason_code": "UNRELATED_PROCUREMENT"
+        },
+        "codex": {
+          "business_label": "irrelevant",
+          "confidence": "high",
+          "evidence_group": "",
+          "reason_code": "LOW_QUALITY_GENERIC_PAGE"
+        },
+        "expert": null,
+        "role_annotation": {
+          "active_until": "",
+          "annotator": "codex",
+          "comment": "Codex最终标注：沿用共识无关标签，排除在广义研究范围外。",
+          "evidence_role": "out_of_scope",
+          "procurement_lifecycle": "not_applicable"
+        }
+      },
+      "business_label": "irrelevant",
+      "candidate_id": "c_0058",
+      "domain": "www.doc88.com",
+      "evidence_role": "out_of_scope",
+      "gold_references": [],
+      "identity_key": "identity_208f622bf617cd93",
+      "is_gold_reference": false,
+      "procurement_lifecycle": "historical_or_unknown",
+      "published_at": "2026-06-30T16:24:44.216362+00:00",
+      "snippet": "南京市政府采购中心现为南京市脑科医院采购医疗设备一批。特邀请你单位前来我中心为该批设",
+      "source": "web_scrape",
+      "source_kind": "evidence_snapshot",
+      "title": "竞争性谈判邀请函",
+      "url": "https://www.doc88.com/p-6807357217371.html"
+    },
+    {
+      "annotation_audit": {
+        "claude": {
+          "business_label": "irrelevant",
+          "confidence": "high",
+          "evidence_group": "",
+          "reason_code": "LOW_QUALITY_GENERIC_PAGE"
+        },
+        "codex": {
+          "business_label": "irrelevant",
+          "confidence": "high",
+          "evidence_group": "",
+          "reason_code": "LOW_QUALITY_GENERIC_PAGE"
+        },
+        "expert": null,
+        "role_annotation": {
+          "active_until": "",
+          "annotator": "codex",
+          "comment": "Codex最终标注：沿用共识无关标签，排除在广义研究范围外。",
+          "evidence_role": "out_of_scope",
+          "procurement_lifecycle": "not_applicable"
+        }
+      },
+      "business_label": "irrelevant",
+      "candidate_id": "c_0059",
+      "domain": "m.shangxueba.com",
+      "evidence_role": "out_of_scope",
+      "gold_references": [],
+      "identity_key": "identity_7404c1b82f3ddc02",
+      "is_gold_reference": false,
+      "procurement_lifecycle": "historical_or_unknown",
+      "published_at": "2026-06-30T16:24:44.216363+00:00",
+      "snippet": "竞争性谈判是指由选聘人成立的谈判小组分别与所选定的不少于()家的咨询单位进行谈判。 A.2B.3C.",
+      "source": "web_scrape",
+      "source_kind": "evidence_snapshot",
+      "title": "竞争性谈判是指由选聘人成立的谈判小组分别与所选定的不少于()家的咨询单位进行谈判。 A.2B.3C. - 上学吧找答案",
+      "url": "https://m.shangxueba.com/ask/1022151.html"
+    }
+  ],
+  "consensus_annotation": {
+    "active_target_opportunity_count": 0,
+    "business_consensus_source": "task_6bb5a627c40b",
+    "method": "existing_business_consensus_with_codex_role_annotation/v1",
+    "role_annotator": "codex",
+    "role_policy": "broad_research_roles_with_active_target_opportunity/v1"
+  },
+  "dimension": "bidding_information",
+  "original_candidate_count": 59,
+  "redacted": true,
+  "schema_version": "task-screening-fixture/v5",
+  "screening_context": {
+    "company_name": "上海银行",
+    "demand_direction": "客服中心系统建设",
+    "dimension": "bidding_information",
+    "goal": "分析 上海银行 的 客服中心系统建设 相关 bidding_information 信息"
+  },
+  "target_entity_names": [
+    "上海银行",
+    "上海银行股份有限公司"
+  ],
+  "target_parent_names": [],
+  "target_scope_policy": "specified_entity_and_parent",
+  "task_ref": "task_6bb5a627c40b",
+  "v5_conversion": {
+    "converted_at": "2026-07-16T16:34:54.628667+00:00",
+    "policy": "identity-clustering-and-scope-correction/v1",
+    "tool": "convert_task_screening_fixture_v5"
+  }
+}

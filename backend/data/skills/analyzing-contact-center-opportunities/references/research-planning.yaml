@@ -1,0 +1,96 @@
+schema_version: contact-center-research-planning/v1
+
+commercial_decision:
+  primary_question: 是否值得为该目标企业投入售前资源
+  required_judgements:
+    - customer_need
+    - procurement_trigger
+    - procurement_window
+    - incumbent_and_competitive_barrier
+    - product_fit_and_win_path
+    - next_action_and_kill_criteria
+
+goal_tree:
+  root: commercial_decision
+  required_properties:
+    - question
+    - rationale
+    - priority
+    - success_criteria
+    - stop_criteria
+  rules:
+    - 子目标必须改变商业裁决或下一行动
+    - 不为报告章节机械创建目标
+    - 目标事实、背景信息和客户私有验证必须分离
+    - 未知项必须有验证路径或停止条件
+
+task_plan:
+  semantic_owner: research_director_llm
+  required_properties:
+    - linked_goal_ids
+    - task_type
+    - business_question
+    - rationale
+    - skill_name
+    - tool_name
+    - evidence_usage
+    - expected_evidence
+    - dependencies
+    - budget
+    - success_conditions
+    - stop_conditions
+  search_task:
+    required_properties:
+      - target_content
+      - preferred_sources
+      - exact_queries
+      - date_scope
+    target_fact_rule: 精确查询必须绑定企业名称、确认别名或官网域名
+    background_rule: 通用政策、行业案例和同行采购必须标记BACKGROUND_ONLY
+
+runtime_validation:
+  checks:
+    - schema_valid
+    - required_goals_covered
+    - target_bound
+    - skill_allowed
+    - tool_allowed
+    - query_budget_within_limit
+    - no_duplicate_queries
+    - dag_acyclic
+    - dag_depth_within_limit
+  repair_attempts: 1
+  fallback_queries: forbidden
+  semantic_rewrite_by_platform: forbidden
+
+dynamic_replan:
+  max_rounds: 1
+  triggers:
+    - low_recall
+    - source_quality_insufficient
+    - required_target_fact_missing
+  required_inputs:
+    - current_approved_plan
+    - completed_task_status
+    - admitted_evidence_summary
+    - counterevidence_summary
+    - unresolved_goal_ids
+    - remaining_budget
+  immutable:
+    - approved_goal_tree
+    - completed_tasks
+    - executed_queries
+  output_rule: 只允许追加能够填补真实证据缺口的新任务
+
+query_adapter:
+  allowed:
+    - validate_non_empty_query
+    - enforce_length_and_count
+    - attach_provider_parameters
+    - execute_exact_query
+    - persist_query_and_result
+  forbidden:
+    - add_contact_center_keywords
+    - add_procurement_keywords
+    - expand_company_alias_without_approved_binding
+    - silently_replace_query

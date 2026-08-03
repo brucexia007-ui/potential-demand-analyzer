@@ -1,0 +1,69 @@
+# 隔离的类生产演练覆盖层。
+# 必须与 docker-compose.yml、docker-compose.prod.yml 一起使用，并指定独立 project name。
+services:
+  backend:
+    container_name: !reset null
+    env_file: !override
+      - .env.verify.local
+    volumes: !override
+      - verify_research_snapshots:/app/data/snapshots
+      - verify_skill_sources:/app/data/workspace_skills
+
+  worker:
+    container_name: !reset null
+    env_file: !override
+      - .env.verify.local
+    volumes: !override
+      - verify_backups:/backups
+      - verify_research_snapshots:/app/data/snapshots
+      - verify_skill_sources:/app/data/workspace_skills
+
+  crawler:
+    container_name: !reset null
+    env_file: !override
+      - .env.verify.local
+    volumes: !override
+      - verify_research_snapshots:/app/data/snapshots
+      - verify_skill_sources:/app/data/workspace_skills
+
+  beat:
+    container_name: !reset null
+    env_file: !override
+      - .env.verify.local
+    volumes: !override
+      - verify_research_snapshots:/app/data/snapshots
+      - verify_skill_sources:/app/data/workspace_skills
+
+  outbox-relay:
+    container_name: !reset null
+    env_file: !override
+      - .env.verify.local
+
+  browserless:
+    container_name: !reset null
+
+  frontend:
+    container_name: !reset null
+    env_file: !override
+      - .env.verify.local
+
+  nginx:
+    container_name: !reset null
+    env_file: !override
+      - .env.verify.local
+    ports: !override
+      - "${VERIFY_HTTPS_PORT:-10443}:443"
+
+  redis:
+    container_name: !reset null
+
+  postgres:
+    container_name: !reset null
+    volumes: !override
+      - verify_postgres_data:/var/lib/postgresql/data
+
+volumes:
+  verify_postgres_data:
+  verify_backups:
+  verify_research_snapshots:
+  verify_skill_sources:

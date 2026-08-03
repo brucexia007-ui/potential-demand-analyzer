@@ -1,0 +1,127 @@
+schema_version: contact-center-capability-taxonomy/v1
+
+status:
+  allowed:
+    - CONFIRMED_PRESENT
+    - LIKELY_PRESENT
+    - UNKNOWN
+    - LIKELY_ABSENT
+    - CONFIRMED_ABSENT
+  rules:
+    CONFIRMED_PRESENT: 目标企业一手来源、合同或至少两条独立可靠证据确认
+    LIKELY_PRESENT: 有相关性较强但范围或时点不完整的证据
+    UNKNOWN: 证据不足、冲突未解或仅因未检索到
+    LIKELY_ABSENT: 有明确范围的间接反证，但缺少一手否定
+    CONFIRMED_ABSENT: 目标企业或权威材料明确说明不存在或已经停用
+
+deployment_status:
+  allowed:
+    - planned
+    - poc
+    - pilot
+    - production
+    - partially_retired
+    - retired
+    - unknown
+
+maturity:
+  levels:
+    L0:
+      label: 不存在
+      rule: 仅在状态为 CONFIRMED_ABSENT 时使用
+    L1:
+      label: 基础可用
+      rule: 核心功能存在但覆盖场景、渠道或坐席有限
+    L2:
+      label: 功能完整
+      rule: 覆盖主要业务场景，运行稳定且功能链较完整
+    L3:
+      label: 运营优化
+      rule: 使用数据、流程和运营指标持续优化
+    L4:
+      label: 智能驱动
+      rule: AI 深度嵌入并有规模覆盖、闭环运营或持续迭代证据
+    L5:
+      label: 行业标杆
+      rule: 有量化领先结果、外部权威认可或可复制输出能力
+    UNKNOWN:
+      label: 无法判定
+      rule: 有无能力或覆盖范围证据不足
+  constraints:
+    - 不因出现“智能”“大模型”等宣传词直接判定 L4
+    - 部署状态为 planned、poc 或 pilot 时不得高于 L2
+    - 成熟度必须说明覆盖范围、运行阶段和证据
+
+capability_groups:
+  channels:
+    - voice_hotline
+    - online_chat
+    - mobile_app_service
+    - social_media_service
+    - email_service
+    - video_service
+  voice_and_telephony:
+    - cti
+    - pbx_sip_ip_phone
+    - ivr_acd
+    - call_recording
+    - outbound_dialing
+    - telecom_gateway_sbc
+  intelligence:
+    - text_bot
+    - voice_bot_asr_tts
+    - agent_assist
+    - smart_quality_inspection
+    - knowledge_rag
+    - intelligent_routing
+    - conversation_summary
+    - sentiment_and_intent
+  operations:
+    - crm_and_ticketing
+    - knowledge_management
+    - workforce_management
+    - complaint_management
+    - callback_and_closed_loop
+  data_and_governance:
+    - service_analytics
+    - customer_voice_analysis
+    - data_governance
+    - privacy_and_recording_compliance
+  infrastructure:
+    - cloud_deployment
+    - high_availability_and_dr
+    - xinchuang_stack
+    - observability_and_operations
+  service_models:
+    deployment_mode:
+      - on_premises
+      - private_cloud
+      - hybrid_cloud
+      - public_cloud
+      - saas
+      - unknown
+    personnel_mode:
+      - in_house
+      - outsourced_onsite
+      - shared_service
+      - full_bpo
+      - mixed
+      - unknown
+    operating_mode:
+      - self_operated
+      - managed_service
+      - joint_operation
+      - unknown
+
+required_assessment_fields:
+  - capability_key
+  - capability_status
+  - deployment_status
+  - maturity_level
+  - coverage_scope
+  - incumbent_supplier
+  - product_name
+  - evidence_refs
+  - counter_evidence_refs
+  - last_verified_at
+  - confidence

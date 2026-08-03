@@ -1,0 +1,261 @@
+schema_version: skill-pilot-eval/v1
+analysis_as_of_date: "2026-07-22T00:00:00+00:00"
+dataset_kind: anonymized-synthetic-business-scenarios
+cases:
+  - id: expired-tender
+    scenario: 目标企业一年前发布招标，但截止日已过且没有延期、重招或替换证据。
+    skills: [pilot-opportunity, researching-bidding-history]
+    temporal:
+      procurement_stage: TENDERING
+      deadline_at: "2025-12-31T00:00:00+00:00"
+    gate:
+      entity_confirmed: true
+      has_time_evidence: true
+      has_capability_baseline: true
+      has_material_gap: true
+      has_current_trigger: false
+      has_current_window: false
+      fit_verified: false
+      hard_fit_blocker: false
+      unresolved_skeptic_blocker: false
+      direct_claim_support_count: 1
+    expected:
+      temporal_stage: EXPIRED
+      window_status: CLOSED
+      gate_grade: G2
+      decision: HYPOTHESIS
+      can_create_opportunity_hypothesis: false
+
+  - id: capability-already-live
+    scenario: 客户系统已经上线并处于维保期，没有扩容、替换或续约窗口证据。
+    skills: [pilot-opportunity, researching-bidding-history]
+    temporal:
+      procurement_stage: LIVE
+      event_at: "2025-06-01T00:00:00+00:00"
+    gate:
+      entity_confirmed: true
+      has_time_evidence: true
+      has_capability_baseline: true
+      has_material_gap: false
+      has_current_trigger: false
+      has_current_window: false
+      fit_verified: false
+      hard_fit_blocker: false
+      unresolved_skeptic_blocker: false
+      direct_claim_support_count: 1
+    expected:
+      temporal_stage: LIVE
+      window_status: CLOSED
+      gate_grade: G1
+      decision: BASELINE
+      can_create_opportunity_hypothesis: false
+
+  - id: time-unknown
+    scenario: 有业务问题信号，但发布日期和当前采购窗口均无法确认。
+    skills: [pilot-opportunity, mining-customer-pain-points]
+    temporal:
+      procurement_stage: UNKNOWN
+    gate:
+      entity_confirmed: true
+      has_time_evidence: false
+      has_capability_baseline: true
+      has_material_gap: true
+      has_current_trigger: true
+      has_current_window: false
+      fit_verified: false
+      hard_fit_blocker: false
+      unresolved_skeptic_blocker: false
+      direct_claim_support_count: 1
+    expected:
+      temporal_stage: UNKNOWN
+      window_status: UNKNOWN
+      gate_grade: GX
+      decision: INSUFFICIENT_EVIDENCE
+      can_create_opportunity_hypothesis: false
+
+  - id: entity-unresolved
+    scenario: 集团与同名子公司的公开证据混杂，无法确认采购主体。
+    skills: [pilot-opportunity, resolving-target-company]
+    gate:
+      entity_confirmed: false
+      has_time_evidence: true
+      has_capability_baseline: true
+      has_material_gap: true
+      has_current_trigger: true
+      has_current_window: true
+      fit_verified: true
+      hard_fit_blocker: false
+      unresolved_skeptic_blocker: false
+      direct_claim_support_count: 2
+    expected:
+      gate_grade: G3
+      decision: SIGNAL
+      can_create_opportunity_hypothesis: false
+
+  - id: policy-consultation-draft
+    scenario: 监管部门发布征求意见稿，但尚未生效且没有明确适用义务。
+    skills: [pilot-opportunity, analyzing-policy-drivers]
+    gate:
+      entity_confirmed: true
+      has_time_evidence: true
+      has_capability_baseline: true
+      has_material_gap: false
+      has_current_trigger: false
+      has_current_window: false
+      fit_verified: false
+      hard_fit_blocker: false
+      unresolved_skeptic_blocker: false
+      direct_claim_support_count: 1
+    expected:
+      gate_grade: G1
+      decision: BASELINE
+      can_create_opportunity_hypothesis: false
+
+  - id: applicable-policy-without-window
+    scenario: 已生效政策形成明确整改义务，但客户尚未确认预算、采购主体或时间窗口。
+    skills: [pilot-opportunity, analyzing-policy-drivers]
+    gate:
+      entity_confirmed: true
+      has_time_evidence: true
+      has_capability_baseline: true
+      has_material_gap: true
+      has_current_trigger: true
+      has_current_window: false
+      fit_verified: true
+      hard_fit_blocker: false
+      unresolved_skeptic_blocker: false
+      direct_claim_support_count: 2
+    expected:
+      gate_grade: G3
+      decision: SIGNAL
+      can_create_opportunity_hypothesis: false
+
+  - id: product-cannot-create-demand
+    scenario: 内部能力档案有成熟产品，但外部及客户私有域均没有需求或能力缺口证据。
+    skills: [pilot-opportunity, matching-product-capabilities]
+    gate:
+      entity_confirmed: true
+      has_time_evidence: false
+      has_capability_baseline: true
+      has_material_gap: false
+      has_current_trigger: false
+      has_current_window: false
+      fit_verified: false
+      hard_fit_blocker: false
+      unresolved_skeptic_blocker: false
+      direct_claim_support_count: 0
+    expected:
+      gate_grade: GX
+      decision: INSUFFICIENT_EVIDENCE
+      can_create_opportunity_hypothesis: false
+
+  - id: prohibited-region
+    scenario: 客户需求和窗口已确认，但产品明确禁止在目标区域交付。
+    skills: [pilot-opportunity, matching-product-capabilities]
+    gate:
+      entity_confirmed: true
+      has_time_evidence: true
+      has_capability_baseline: true
+      has_material_gap: true
+      has_current_trigger: true
+      has_current_window: true
+      fit_verified: false
+      hard_fit_blocker: true
+      unresolved_skeptic_blocker: false
+      direct_claim_support_count: 2
+    expected:
+      gate_grade: GX
+      decision: NO_OPPORTUNITY
+      can_create_opportunity_hypothesis: false
+      rank_score: 0.0
+
+  - id: incumbent-no-replacement
+    scenario: 现有供应商合同仍有效，且没有替换、扩容或提前终止证据。
+    skills: [pilot-opportunity, researching-bidding-history, matching-product-capabilities]
+    gate:
+      entity_confirmed: true
+      has_time_evidence: true
+      has_capability_baseline: true
+      has_material_gap: true
+      has_current_trigger: true
+      has_current_window: false
+      fit_verified: true
+      hard_fit_blocker: false
+      unresolved_skeptic_blocker: true
+      direct_claim_support_count: 2
+    expected:
+      gate_grade: GX
+      decision: NO_OPPORTUNITY
+      can_create_opportunity_hypothesis: false
+      rank_score: 0.0
+
+  - id: g4-potential-window
+    scenario: 客户需求、触发和采购窗口有直接证据，但产品适配仍缺必需参数。
+    skills: [pilot-opportunity, matching-product-capabilities]
+    gate:
+      entity_confirmed: true
+      has_time_evidence: true
+      has_capability_baseline: true
+      has_material_gap: true
+      has_current_trigger: true
+      has_current_window: true
+      fit_verified: false
+      hard_fit_blocker: false
+      unresolved_skeptic_blocker: false
+      direct_claim_support_count: 2
+    ranking_factors:
+      - {dimension: need, value: 0.9, dedupe_key: claim-need}
+      - {dimension: window, value: 0.8, dedupe_key: claim-window}
+    expected:
+      gate_grade: G4
+      decision: POTENTIAL_WINDOW
+      can_create_opportunity_hypothesis: true
+      deduped_factor_count: 2
+
+  - id: g5-candidate
+    scenario: 主体、时间、能力基线、缺口、当前触发、采购窗口和产品适配均有直接证据。
+    skills: [pilot-opportunity, matching-product-capabilities]
+    gate:
+      entity_confirmed: true
+      has_time_evidence: true
+      has_capability_baseline: true
+      has_material_gap: true
+      has_current_trigger: true
+      has_current_window: true
+      fit_verified: true
+      hard_fit_blocker: false
+      unresolved_skeptic_blocker: false
+      direct_claim_support_count: 2
+    ranking_factors:
+      - {dimension: need, value: 0.9, dedupe_key: claim-need}
+      - {dimension: window, value: 0.9, dedupe_key: claim-window}
+      - {dimension: fit, value: 0.8, dedupe_key: claim-fit}
+    expected:
+      gate_grade: G5
+      decision: CANDIDATE
+      can_create_opportunity_hypothesis: true
+      deduped_factor_count: 3
+
+  - id: duplicate-factor-does-not-inflate
+    scenario: 同一 Claim 被多个分析维度重复引用，不得重复抬升排序分或 Gate 等级。
+    skills: [pilot-opportunity, mining-customer-pain-points, matching-product-capabilities]
+    gate:
+      entity_confirmed: true
+      has_time_evidence: true
+      has_capability_baseline: true
+      has_material_gap: true
+      has_current_trigger: true
+      has_current_window: true
+      fit_verified: false
+      hard_fit_blocker: false
+      unresolved_skeptic_blocker: false
+      direct_claim_support_count: 1
+    ranking_factors:
+      - {dimension: need, value: 0.7, dedupe_key: same-claim}
+      - {dimension: need, value: 0.7, dedupe_key: same-claim}
+      - {dimension: confidence, value: 0.8, dedupe_key: independent-confidence}
+    expected:
+      gate_grade: G4
+      decision: POTENTIAL_WINDOW
+      can_create_opportunity_hypothesis: true
+      deduped_factor_count: 2

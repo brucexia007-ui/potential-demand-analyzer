@@ -1,0 +1,25 @@
+schema_version: skill-cases/v1
+cases:
+  - id: hotline_only
+    evidence: 官网仅公布客服电话
+    expected:
+      voice_hotline: CONFIRMED_PRESENT
+      cti: UNKNOWN
+  - id: award_without_acceptance
+    evidence: 智能客服项目已中标，无上线或验收材料
+    expected:
+      capability_status: LIKELY_PRESENT
+      deployment_status: unknown
+  - id: partial_ai_coverage
+    evidence: 智能质检生产运行但仅覆盖 5% 通话
+    expected:
+      capability_status: CONFIRMED_PRESENT
+      maturity_level_max: L2
+  - id: supplier_case_only
+    evidence: 仅供应商官网称为目标企业建设联络中心
+    expected:
+      capability_status_max: LIKELY_PRESENT
+  - id: no_results
+    evidence: 完成检索但未找到材料
+    expected:
+      capability_status: UNKNOWN

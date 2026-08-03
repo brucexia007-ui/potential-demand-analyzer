@@ -1,0 +1,28 @@
+schema_version: skill-cases/v1
+cases:
+  - id: private_protocols
+    evidence: CTI 与专用硬件及私有协议深度绑定，存在大量核心接口
+    expected:
+      technical_lock_in: high
+      integration_lock_in: high
+      preferred_entry_point: sidecar
+  - id: single_source_only
+    evidence: 连续三年单一来源维保，但无服务问题
+    expected:
+      contract_lock_in: high
+      vulnerability_level: UNKNOWN
+  - id: recent_upgrade
+    evidence: 三个月前完成大规模升级和三年续约
+    expected:
+      recent_investment_lock_in: high
+      replacement_difficulty: high
+  - id: confirmed_failure
+    evidence: 目标企业项目连续验收不合格并启动重招
+    expected:
+      service_risk: high
+      vulnerability_level: high
+  - id: brand_only
+    evidence: 只知道现任厂商是外资品牌
+    expected:
+      vulnerability_level: UNKNOWN
+      forbidden_inference: easy_to_replace

@@ -1,0 +1,10 @@
+cases:
+  - id: isolated-complaint
+    evidence: "一条匿名评论称某银行客服等待时间较长。"
+    expected_signal: WEAK_HYPOTHESIS
+  - id: repeated-official-signal
+    evidence: "客户连续两期服务公告说明高峰期人工坐席紧张，并公布分流措施。"
+    expected_signal: VALIDATION_CANDIDATE
+  - id: industry-generalization
+    evidence: "行业报告称多数银行面临客服压力，未提及目标企业。"
+    expected_signal: NOT_TARGET_SPECIFIC

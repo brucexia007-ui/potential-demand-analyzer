@@ -1,0 +1,115 @@
+worker_processes auto;
+
+events { worker_connections 1024; }
+
+http {
+    server_tokens off;
+    limit_req_zone $binary_remote_addr zone=auth_login:10m rate=5r/m;
+    client_body_timeout 30s;
+    client_header_timeout 15s;
+    keepalive_timeout 65s;
+
+    # HTTP → HTTPS 重定向
+    server {
+        listen 80;
+        server_name _;
+        return 301 https://$host${HTTPS_REDIRECT_PORT_SUFFIX}$request_uri;
+    }
+
+    # HTTPS 主服务
+    server {
+        listen 443 ssl http2;
+        server_name _;
+        client_max_body_size 25m;
+
+        add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+        add_header X-Content-Type-Options "nosniff" always;
+        add_header X-Frame-Options "DENY" always;
+        add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+        add_header Permissions-Policy "camera=(), microphone=(), geolocation=()" always;
+        add_header Content-Security-Policy "base-uri 'self'; frame-ancestors 'none'; object-src 'none'" always;
+
+        # SSL 证书路径（由环境变量注入）
+        ssl_certificate     ${TLS_CERT_PATH};
+        ssl_certificate_key ${TLS_KEY_PATH};
+
+        # 现代 SSL 配置
+        ssl_protocols TLSv1.2 TLSv1.3;
+        ssl_ciphers 'ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384';
+        ssl_prefer_server_ciphers off;
+        ssl_session_cache shared:SSL:10m;
+        ssl_session_timeout 1d;
+
+        # Frontend
+        location / {
+            proxy_pass http://frontend:3000;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+            proxy_connect_timeout 10s;
+            proxy_read_timeout 60s;
+            proxy_send_timeout 60s;
+        }
+
+        # 登录接口独立限流，降低密码猜测与撞库风险
+        location = /api/auth/login {
+            limit_req zone=auth_login burst=5 nodelay;
+            proxy_pass http://backend:8000/api/auth/login;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+            proxy_connect_timeout 10s;
+            proxy_read_timeout 60s;
+            proxy_send_timeout 60s;
+        }
+
+        # 存活与就绪探针必须到达后端，不得落入前端路由。
+        location = /health {
+            proxy_pass http://backend:8000/health;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+            proxy_connect_timeout 5s;
+            proxy_read_timeout 10s;
+        }
+
+        location = /ready {
+            proxy_pass http://backend:8000/ready;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+            proxy_connect_timeout 5s;
+            proxy_read_timeout 10s;
+        }
+
+        # Backend API
+        location /api/ {
+            proxy_pass http://backend:8000/api/;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+            proxy_connect_timeout 10s;
+            proxy_read_timeout 120s;
+            proxy_send_timeout 120s;
+        }
+
+        # WebSocket
+        location /ws/ {
+            proxy_pass http://backend:8000/ws/;
+            proxy_http_version 1.1;
+            proxy_set_header Upgrade $http_upgrade;
+            proxy_set_header Connection "upgrade";
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+            proxy_read_timeout 3600s;
+            proxy_send_timeout 3600s;
+        }
+    }
+}

@@ -1,0 +1,99 @@
+schema_version: contact-center-opportunity-rules/v1
+
+opportunity_archetypes:
+  RIP_AND_REPLACE:
+    label: 全量替换
+    prerequisites:
+      - 核心平台存在明确淘汰、合规、服务或架构触发
+      - 已评估迁移、接口、数据和业务连续性风险
+  SIDECAR_INCREMENTAL:
+    label: 旁路或增量改造
+    examples:
+      - 智能质检
+      - 坐席辅助
+      - 大模型知识应用
+      - 统一入口或数据分析
+    default_preference: 当核心 CTI/PBX 锁定强但上层存在缺口时优先
+  EXPANSION_OR_UPGRADE:
+    label: 扩容升级
+    examples:
+      - 坐席扩容
+      - 渠道扩展
+      - 容灾增强
+      - 覆盖率提升
+  MAINTENANCE_OR_RENEWAL:
+    label: 维保续约
+    prerequisites:
+      - 已确认存量系统和服务周期
+  BPO_OR_MANAGED_SERVICE:
+    label: BPO 或运营服务
+    examples:
+      - 人员外包
+      - 驻场运维
+      - 代运营
+      - 弹性峰值服务
+  BPO_SOFTWARE_DECOUPLING:
+    label: BPO 软硬件解耦
+    prerequisites:
+      - 有证据表明核心平台能力由 BPO 打包提供
+      - 客户存在数据、控制权、成本或合规诉求
+
+oig_grades:
+  G0:
+    label: 排除
+    rule: 主体不匹配、需求不属于客服中心领域或有决定性反证
+  G1:
+    label: 历史事实
+    rule: 仅有历史采购、已验收项目或通用背景，没有当前触发
+  G2:
+    label: 观察线索
+    rule: 存在能力缺口或弱信号，但采购动力、窗口或适配性不足
+  G3:
+    label: 验证型商机
+    rule: 有目标企业级缺口和至少一个可解释触发，需要客户访谈或补证
+  G4:
+    label: 明确窗口
+    rule: 有高质量当前触发、可介入形态、产品适配和可控竞争风险
+  G5:
+    label: 活跃采购
+    rule: 有效采购、RFI、重招或客户私有材料确认项目正在推进，且我方满足关键资格
+  GX:
+    label: 证据不足
+    rule: 关键主体、范围、时间或证据链无法完成裁决
+    decision_code: INSUFFICIENT_EVIDENCE
+
+terminal_distinction:
+  INSUFFICIENT_EVIDENCE:
+    meaning: 无法完成商机裁决
+    allowed_grade: GX
+    sales_action: 补证后重新裁决
+  NO_OPPORTUNITY:
+    meaning: 已有充分反证或硬阻断支持当前不介入
+    allowed_grade: GX
+    sales_action: 记录阻断依据和复核日期
+
+scoring:
+  note: 分数只用于同批候选排序，最终等级必须经过硬规则裁决
+  weights:
+    need: 0.30
+    window: 0.25
+    product_fit: 0.20
+    evidence_confidence: 0.15
+    information_completeness: 0.10
+    risk_penalty: -0.25
+  risk_inputs:
+    - recent_renewal_or_upgrade
+    - incumbent_lock_in
+    - migration_complexity
+    - qualification_gap
+    - entity_or_scope_uncertainty
+    - contradictory_evidence
+
+hard_rules:
+  - 没有当前触发时不得高于 G3
+  - 只有历史招标或已验收项目时不得高于 G1
+  - 单条投诉、单个招聘岗位或通用政策不得高于 G2
+  - 有效采购公告在主体和范围确认后才可进入 G5
+  - 产品关键资格不满足时不得输出可赢的 G4/G5
+  - 近期完成大规模升级或续约是风险扣减，不自动排除旁路、扩容和下周期机会
+  - 每个 G3 及以上候选必须包含支持证据、反证、未知项、销售问诊和下一步动作

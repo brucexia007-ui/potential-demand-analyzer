@@ -1,0 +1,70 @@
+schema_version: contact-center-temporal-policy/v1
+
+principles:
+  - 每条证据保存 event_date、published_at、observed_at 和 analysis_as_of；未知字段保持为空
+  - 优先使用确定性业务日期，不用统一半衰期替代项目生命周期判断
+  - 历史事实可以保留，但必须与当前状态、当前触发和未来窗口分开表达
+  - 新证据不会自动覆盖旧证据；先判断是否为同一主体、系统、范围和生命周期
+
+source_rules:
+  procurement_announcement:
+    decisive_dates:
+      - response_deadline
+      - bid_opening_date
+    current_rule: 截止日期晚于 analysis_as_of 才能视为进行中采购
+    historical_rule: 截止日期已过且无重招证据时只作为历史项目
+  award_or_transaction:
+    decisive_dates:
+      - award_date
+      - transaction_date
+    current_rule: 只确认选型或成交，不确认已上线
+  contract:
+    decisive_dates:
+      - service_start_date
+      - service_end_date
+      - warranty_end_date
+    current_rule: 以明确服务期判断存量和观察窗口
+  acceptance:
+    decisive_dates:
+      - acceptance_date
+    current_rule: 验收证明项目已交付，不证明当前仍在用或即将采购
+  maintenance_or_renewal:
+    decisive_dates:
+      - renewal_start_date
+      - renewal_end_date
+    current_rule: 续约会削弱近期替换窗口，但可能保留扩容、旁路和下个周期机会
+  recruitment:
+    bands:
+      current_signal_days: 180
+      weak_signal_days: 365
+    current_rule: 只证明组织或能力方向，不单独证明系统采购
+  user_feedback:
+    bands:
+      current_pattern_days: 365
+      historical_reference_days: 540
+    current_rule: 使用事件发生时间；聚合同类、去重并寻找官方回应
+  product_or_transformation_news:
+    current_rule: 上线事实持续有效，直到出现停用、替换或更新证据
+  policy:
+    decisive_dates:
+      - effective_date
+      - compliance_deadline
+    current_rule: 只有适用于目标企业和客服系统的要求才形成目标触发
+
+contract_observation:
+  configurable_defaults:
+    long_horizon_days: 365
+    renewal_horizon_days: 180
+    high_attention_days: 90
+  rules:
+    - 进入观察期不等于已经立项
+    - 到期日来自推算时必须标记 inference
+    - 发现续约、中标或合同更新后重新计算
+
+budget_pattern:
+  minimum_comparable_cycles: 3
+  allowed_output: 建议接洽月份或观察月份
+  forbidden_output:
+    - 已有预算
+    - 必然招标
+    - 固定使用所有国企或金融机构的统一季度规律

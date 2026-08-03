@@ -1,0 +1,137 @@
+schema_version: contact-center-skill-runtime/v1
+
+analysis:
+  analysis_as_of: required
+  default_history_years: 5
+  modes:
+    quick:
+      max_replan_rounds: 1
+      max_search_queries: 10
+      max_fetches: 30
+      max_extraction_batches: 8
+      max_total_tokens: 200000
+      research_token_ceiling: 110000
+      report_reserve_tokens: 90000
+      max_recovery_rounds: 1
+      max_duration_seconds: 300
+      experience_audit: skip
+      bpo_branch: on_signal
+      deliverable: battlecard
+    standard:
+      max_replan_rounds: 1
+      max_search_queries: 18
+      max_fetches: 60
+      max_extraction_batches: 16
+      max_total_tokens: 400000
+      research_token_ceiling: 280000
+      report_reserve_tokens: 120000
+      max_recovery_rounds: 1
+      max_duration_seconds: 900
+      experience_audit: passive
+      bpo_branch: on_signal
+      deliverable: full_report
+    deep:
+      max_replan_rounds: 1
+      max_search_queries: 28
+      max_fetches: 100
+      max_extraction_batches: 28
+      max_total_tokens: 700000
+      research_token_ceiling: 520000
+      report_reserve_tokens: 180000
+      max_recovery_rounds: 1
+      max_duration_seconds: 1800
+      experience_audit: public_observation_when_authorized
+      bpo_branch: enabled
+      deliverable: full_report_with_competition
+
+workflow:
+  - resolve_entity
+  - build_analysis_goal_tree
+  - generate_llm_research_task_dag
+  - validate_plan_without_rewriting_semantics
+  - execute_ready_research_tasks
+  - conditionally_replan_from_evidence_gaps
+  - assess_gaps
+  - assess_vendor_lock_in
+  - adjudicate_opportunities
+  - match_product_capabilities
+  - admit_and_deduplicate_report_evidence
+  - compose_report
+
+planning:
+  semantic_owner: research_director_llm
+  platform_role:
+    - validate_schema
+    - enforce_budget
+    - enforce_target_binding
+    - enforce_skill_and_tool_permissions
+    - execute_exact_queries
+  forbidden_platform_behavior:
+    - add_domain_keywords
+    - expand_query_semantics
+    - replace_failed_plan_with_template_queries
+    - execute_dependent_task_before_predecessor_completion
+
+dynamic_rules:
+  - when: entity_is_holding_company_or_non_service_entity
+    then:
+      - skip_experience_audit
+      - limit_voice_infrastructure_research
+      - retain_group_and_bpo_signals
+  - when: contact_center_presence_is_unknown
+    then:
+      - run_minimum_second_pass
+      - do_not_infer_absence
+  - when: public_service_channel_is_present_and_audit_is_authorized
+    then:
+      - run_bounded_public_observation
+  - when: experience_audit_is_blocked
+    then:
+      - set_status_EXPERIENCE_AUDIT_BLOCKED
+      - use_static_public_evidence
+  - when: outsourcing_signal_or_deep_mode
+    then:
+      - run_outsourcing_branch
+  - when: quick_mode
+    then:
+      - skip_experience_audit
+      - skip_outsourcing_branch
+  - when: no_product_profile
+    then:
+      - skip_product_matching
+      - do_not_estimate_win_probability
+  - when: no_target_procurement_or_build_fact
+    then:
+      - skip_product_matching
+      - retain_low_cost_customer_validation
+
+contracts:
+  versions:
+    EvidenceRef: v1
+    ContactCenterFootprint: v1
+    TransformationSignal: v1
+    ExperienceFinding: v1
+    OutsourcingProfile: v1
+    GapAssessment: v1
+    VendorLockInAssessment: v1
+    OpportunityCandidate: v1
+    ContactCenterOpportunityReport: v1
+  report_evidence_admission:
+    require_target_binding: true
+    require_contact_center_relevance: true
+    deduplicate_by:
+      - candidate_id
+      - canonical_url
+      - normalized_fact_title
+    max_core_evidence: 30
+    contextual_evidence_policy: background_only
+  required_references:
+    - capability-taxonomy.yaml
+    - trigger-taxonomy.yaml
+    - temporal-policy.yaml
+    - evidence-rubric.md
+    - opportunity-rules.yaml
+    - report-schema.yaml
+    - observability.yaml
+    - source-routing.yaml
+    - research-planning.yaml

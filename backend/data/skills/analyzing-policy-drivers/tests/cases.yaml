@@ -1,0 +1,10 @@
+cases:
+  - id: consultation-draft
+    evidence: "监管部门发布征求意见稿，尚未生效。"
+    expected_driver: BACKGROUND_ONLY
+  - id: non-applicable-policy
+    evidence: "已生效规定仅适用于证券公司，目标企业为制造企业。"
+    expected_driver: NOT_APPLICABLE
+  - id: effective-mandatory-obligation
+    evidence: "已生效监管规定明确要求适用机构在整改期限内完成数据留痕。"
+    expected_driver: APPLICABLE_REQUIREMENT

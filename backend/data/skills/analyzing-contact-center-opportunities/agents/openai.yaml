@@ -1,0 +1,4 @@
+interface:
+  display_name: "客服中心商机分析"
+  short_description: "分析企业客服中心现状、供应商、转型窗口、竞争风险与可介入商机"
+  default_prompt: "使用 $analyzing-contact-center-opportunities 分析目标企业客服中心现状、证据、商机窗口与下一步行动。"

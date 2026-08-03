@@ -1,0 +1,31 @@
+# docker-compose.letsencrypt.yml —— Let's Encrypt 证书自动管理
+#
+# 使用方式（首次运行需获取证书，之后 certbot 每 12h 自动检查续期）:
+#   docker compose --env-file .env.production \
+#     -f docker-compose.yml -f docker-compose.prod.yml \
+#     -f docker-compose.letsencrypt.yml up -d
+#
+# 首次获取证书（替换 your-domain.com 为实际域名）:
+#   docker compose --env-file .env.production \
+#     -f docker-compose.yml -f docker-compose.prod.yml \
+#     -f docker-compose.letsencrypt.yml run --rm certbot \
+#     certonly --webroot -w /var/www/certbot \
+#     -d your-domain.com -d www.your-domain.com --email admin@your-domain.com --agree-tos --no-eff-email
+#
+# 之后设置 .env:
+#   TLS_ENABLED=true
+#   TLS_CERT_PATH=/etc/nginx/certs/live/your-domain.com/fullchain.pem
+#   TLS_KEY_PATH=/etc/nginx/certs/live/your-domain.com/privkey.pem
+services:
+  certbot:
+    image: "${CERTBOT_IMAGE:?生产环境必须设置固定摘要的 CERTBOT_IMAGE}"
+    container_name: potential-demand-certbot
+    volumes:
+      - ./deploy/certs:/etc/letsencrypt
+      - ./deploy/certbot-webroot:/var/www/certbot:rw
+    entrypoint: >
+      /bin/sh -c "trap exit TERM; while :; do
+        certbot renew --webroot -w /var/www/certbot --quiet;
+        sleep 12h;
+      done"
+    restart: unless-stopped

@@ -1,0 +1,4 @@
+interface:
+  display_name: "客服中心外包分析"
+  short_description: "分析客服人员外包、整体BPO、代运营、合同周期与平台解耦机会"
+  default_prompt: "使用 $analyzing-contact-center-outsourcing 分析目标企业客服 BPO、人员和运营模式。"

@@ -1,0 +1,27 @@
+schema_version: skill-cases/v1
+cases:
+  - id: target_specific_xinchuang
+    evidence: 采购文件明确要求客服平台适配国产操作系统和数据库
+    expected:
+      track: XINCHUANG
+      trigger_type: ACTIVE_PROCUREMENT
+  - id: generic_policy
+    evidence: 只有行业信创指导意见
+    expected:
+      is_current_trigger: false
+      usage: background
+  - id: eol_without_installed_base
+    evidence: 某产品发布停服公告，但无法确认目标企业在用
+    expected:
+      trigger_type: TECHNOLOGY_EOL_EOS
+      trigger_strength: none
+  - id: recent_renewal
+    evidence: CTI 平台刚完成三年维保续约
+    expected:
+      counter_evidence: true
+      full_replacement_window: weak
+  - id: repeated_budget_month
+    evidence: 三个可比年度均在同一月份发布相关采购
+    expected:
+      trigger_type: BUDGET_PATTERN
+      window_status: observation

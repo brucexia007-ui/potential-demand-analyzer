@@ -1,0 +1,1413 @@
+{
+  "annotation_policy": "business_label/v1; is_gold_reference仅作来源审计",
+  "annotation_summary": {
+    "evidence_group_count": 6,
+    "irrelevant_count": 40,
+    "must_keep_count": 2,
+    "positive_count": 9,
+    "uncertain_count": 1
+  },
+  "call_timeout_seconds": 60.0,
+  "candidate_count": 50,
+  "fixture_candidate_source": "evidence_snapshot",
+  "fixture_task_ref": "task_2f38e7a47f50",
+  "g1_passed": false,
+  "max_output_tokens": 4000,
+  "max_retries": 0,
+  "output_token_warning_threshold": 4000,
+  "requested_model": "deepseek-v4-pro",
+  "schema_version": "task-screening-poc/v2",
+  "screening_context_sha256": "5ec72c1af8c648a5e8e01cf0dab2b03b8266360ace98a04a6f21c7767de89c9c",
+  "screening_protocol": "full_scorecard_deterministic_top_le_k/v2",
+  "selection_policy": {
+    "exclude_evidence_types": [
+      "weak_or_irrelevant"
+    ],
+    "max_selected_count": 20,
+    "minimum_eligible_relevance": 2
+  },
+  "strategies": {
+    "single_scorecard": {
+      "average_evidence_group_recall_at_k": 0.722222,
+      "average_must_keep_recall_at_k": 1.0,
+      "average_ndcg_at_k": 0.85547,
+      "call_count": 3,
+      "cost": null,
+      "cost_status": "unknown",
+      "finish_reason_counts": {
+        "stop": 3
+      },
+      "g1_gates": {
+        "cost_complete": false,
+        "evidence_group_recall": false,
+        "judged_precision": false,
+        "must_keep_all_views": true,
+        "schema_success": true,
+        "top_k_overlap": false
+      },
+      "g1_passed": false,
+      "min_top_k_jaccard": 0.555556,
+      "min_top_k_overlap_at_k": 0.625,
+      "minimum_judged_precision_at_k": 0.4,
+      "models": [
+        "deepseek-v4-pro"
+      ],
+      "output_token_warning_count": 0,
+      "output_token_warning_threshold": 4000,
+      "p90_latency_seconds": 31.385387,
+      "providers": [
+        "DeepSeek"
+      ],
+      "schema_success_rate": 1.0,
+      "strategy": "single_scorecard",
+      "token_budget_status": "within_warning_threshold",
+      "token_usage": {
+        "input_tokens": 20628,
+        "output_tokens": 10335,
+        "total_tokens": 30963
+      },
+      "views": [
+        {
+          "errors": [],
+          "evidence_group_recall_at_k": 0.833333,
+          "failure_count": 0,
+          "invocation_audit": {
+            "error": null,
+            "finish_reason": "stop",
+            "latency_seconds": 31.385387,
+            "model": "deepseek-v4-pro",
+            "provider": "DeepSeek",
+            "response_content_length": 10153,
+            "token_warning": false,
+            "usage": {
+              "input_tokens": 6876,
+              "output_tokens": 3513,
+              "total_tokens": 10389
+            }
+          },
+          "judged_precision_at_k": 0.444444,
+          "must_keep_recall_at_k": 1.0,
+          "ndcg_at_k": 0.894469,
+          "schema_success": true,
+          "scorecard_count": 50,
+          "scorecards": [
+            {
+              "candidate_id": "c_0001",
+              "evidence_type": "target_adjacent",
+              "novelty": 1,
+              "reason_code": "SHANGHAI_SMART_RISK_ID",
+              "relevance": 3,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0002",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "HR_RECRUITMENT_IRRELEVANT",
+              "relevance": 0,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0003",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "AD_PROMOTION_IRRELEVANT",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0004",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "MARKETING_PLATFORM_IRRELEVANT",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0005",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "DESIGN_SERVICE_IRRELEVANT",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0006",
+              "evidence_type": "industry_analog",
+              "novelty": 1,
+              "reason_code": "BEIJING_SMART_TERMINAL",
+              "relevance": 2,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0007",
+              "evidence_type": "target_adjacent",
+              "novelty": 1,
+              "reason_code": "SHANGHAI_COMM_LINE",
+              "relevance": 2,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0008",
+              "evidence_type": "industry_analog",
+              "novelty": 1,
+              "reason_code": "SHENZHEN_SMART_CS_SYS",
+              "relevance": 3,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0009",
+              "evidence_type": "industry_analog",
+              "novelty": 1,
+              "reason_code": "SHANGHAI_LAND_SMART_CS",
+              "relevance": 2,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0010",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "POS_DEVICE_IRRELEVANT",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0011",
+              "evidence_type": "industry_analog",
+              "novelty": 1,
+              "reason_code": "SHANGHAI_INFO_SMART_CS",
+              "relevance": 2,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0012",
+              "evidence_type": "target_adjacent",
+              "novelty": 1,
+              "reason_code": "SHANGHAI_IP_PHONE",
+              "relevance": 3,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0013",
+              "evidence_type": "target_adjacent",
+              "novelty": 1,
+              "reason_code": "SHANGHAI_UNIFIED_FRONT",
+              "relevance": 2,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0014",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "FIN_DATA_SERVICE_IRRELEVANT",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0015",
+              "evidence_type": "target_adjacent",
+              "novelty": 1,
+              "reason_code": "SHANGHAI_SMART_TEMPLE",
+              "relevance": 1,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0016",
+              "evidence_type": "industry_analog",
+              "novelty": 1,
+              "reason_code": "JIANGXI_SMART_ROBOT",
+              "relevance": 2,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0017",
+              "evidence_type": "industry_analog",
+              "novelty": 1,
+              "reason_code": "HAINAN_SMART_ROBOT",
+              "relevance": 2,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0018",
+              "evidence_type": "industry_analog",
+              "novelty": 1,
+              "reason_code": "NINGBO_RPA",
+              "relevance": 1,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0019",
+              "evidence_type": "industry_analog",
+              "novelty": 1,
+              "reason_code": "BEIJING_RPA",
+              "relevance": 1,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0020",
+              "evidence_type": "industry_analog",
+              "novelty": 1,
+              "reason_code": "BEIJING_RPA_RESULT",
+              "relevance": 1,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0021",
+              "evidence_type": "industry_analog",
+              "novelty": 1,
+              "reason_code": "TIANJIN_SMART_ROBOT",
+              "relevance": 2,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0022",
+              "evidence_type": "industry_analog",
+              "novelty": 0,
+              "reason_code": "NEWS_ROBOT_PROCURE",
+              "relevance": 1,
+              "source_quality": 0
+            },
+            {
+              "candidate_id": "c_0023",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "EXPRESS_ROBOT_IRRELEVANT",
+              "relevance": 0,
+              "source_quality": 0
+            },
+            {
+              "candidate_id": "c_0024",
+              "evidence_type": "industry_analog",
+              "novelty": 1,
+              "reason_code": "SHANGHAI_BANK_RPA",
+              "relevance": 1,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0025",
+              "evidence_type": "industry_analog",
+              "novelty": 1,
+              "reason_code": "CHONGQING_OUTBOUND",
+              "relevance": 2,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0026",
+              "evidence_type": "industry_analog",
+              "novelty": 1,
+              "reason_code": "CHONGQING_SMART_OUTBOUND",
+              "relevance": 3,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0027",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "PRODUCT_AD_IRRELEVANT",
+              "relevance": 0,
+              "source_quality": 0
+            },
+            {
+              "candidate_id": "c_0028",
+              "evidence_type": "industry_analog",
+              "novelty": 1,
+              "reason_code": "GENERAL_SMART_CS_LAUNCH",
+              "relevance": 2,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0029",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "MARKETING_SERVICE_IRRELEVANT",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0030",
+              "evidence_type": "target_direct",
+              "novelty": 2,
+              "reason_code": "TARGET_EXACT",
+              "relevance": 4,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0031",
+              "evidence_type": "industry_analog",
+              "novelty": 1,
+              "reason_code": "BUPT_SMART_CS",
+              "relevance": 1,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0032",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "FLOWCHART_IRRELEVANT",
+              "relevance": 0,
+              "source_quality": 0
+            },
+            {
+              "candidate_id": "c_0033",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "POLICE_SYSTEM_IRRELEVANT",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0034",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "PRODUCT_AD_IRRELEVANT",
+              "relevance": 0,
+              "source_quality": 0
+            },
+            {
+              "candidate_id": "c_0035",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "MEDIA_PLACEMENT_IRRELEVANT",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0036",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "BANK_FEE_LIST_IRRELEVANT",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0037",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "SIGNAGE_INSTALL_IRRELEVANT",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0038",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "AWARD_PROJECT_IRRELEVANT",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0039",
+              "evidence_type": "target_adjacent",
+              "novelty": 1,
+              "reason_code": "SHANGHAI_SUPPLY_CHAIN",
+              "relevance": 2,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0040",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "SMART_LOCKER_IRRELEVANT",
+              "relevance": 0,
+              "source_quality": 0
+            },
+            {
+              "candidate_id": "c_0041",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "MARKETING_PROMO_IRRELEVANT",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0042",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "DYNAMIC_LOCK_IRRELEVANT",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0043",
+              "evidence_type": "target_direct",
+              "novelty": 2,
+              "reason_code": "TARGET_EXACT",
+              "relevance": 4,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0044",
+              "evidence_type": "target_adjacent",
+              "novelty": 1,
+              "reason_code": "SHANGHAI_SMART_RISK_RES",
+              "relevance": 3,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0045",
+              "evidence_type": "industry_analog",
+              "novelty": 1,
+              "reason_code": "ANHUI_WECHAT_OPER",
+              "relevance": 1,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0046",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "ACCESS_CONTROL_IRRELEVANT",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0047",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "REAL_ESTATE_CS_IRRELEVANT",
+              "relevance": 0,
+              "source_quality": 0
+            },
+            {
+              "candidate_id": "c_0048",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "DOCUMENT_PROCURE_IRRELEVANT",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0049",
+              "evidence_type": "industry_analog",
+              "novelty": 1,
+              "reason_code": "SHENZHEN_SMART_CS_CAND",
+              "relevance": 3,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0050",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "SECURITY_CONSTRUCT_IRRELEVANT",
+              "relevance": 0,
+              "source_quality": 1
+            }
+          ],
+          "selected_count": 19,
+          "top_k_ids": [
+            "c_0043",
+            "c_0030",
+            "c_0012",
+            "c_0044",
+            "c_0001",
+            "c_0049",
+            "c_0026",
+            "c_0008",
+            "c_0013",
+            "c_0039",
+            "c_0007",
+            "c_0021",
+            "c_0009",
+            "c_0028",
+            "c_0025",
+            "c_0017",
+            "c_0016",
+            "c_0011",
+            "c_0006"
+          ],
+          "view": "rotation_0"
+        },
+        {
+          "errors": [],
+          "evidence_group_recall_at_k": 0.5,
+          "failure_count": 0,
+          "invocation_audit": {
+            "error": null,
+            "finish_reason": "stop",
+            "latency_seconds": 31.227274,
+            "model": "deepseek-v4-pro",
+            "provider": "DeepSeek",
+            "response_content_length": 10028,
+            "token_warning": false,
+            "usage": {
+              "input_tokens": 6876,
+              "output_tokens": 3447,
+              "total_tokens": 10323
+            }
+          },
+          "judged_precision_at_k": 0.4,
+          "must_keep_recall_at_k": 1.0,
+          "ndcg_at_k": 0.77545,
+          "schema_success": true,
+          "scorecard_count": 50,
+          "scorecards": [
+            {
+              "candidate_id": "c_0001",
+              "evidence_type": "target_direct",
+              "novelty": 1,
+              "reason_code": "PSBC_SH_FRAUD_AI_PROCESS",
+              "relevance": 3,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0002",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "RECRUITMENT_IRRELEVANT",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0003",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "ADVERTISING_IRRELEVANT",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0004",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "MARKETING_PLATFORM",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0005",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "DESIGN_IRRELEVANT",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0006",
+              "evidence_type": "target_adjacent",
+              "novelty": 1,
+              "reason_code": "PSBC_BJ_SMART_TERMINAL",
+              "relevance": 1,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0007",
+              "evidence_type": "target_adjacent",
+              "novelty": 1,
+              "reason_code": "PSBC_SH_TELECOM_LINE",
+              "relevance": 1,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0008",
+              "evidence_type": "target_adjacent",
+              "novelty": 1,
+              "reason_code": "PSBC_SZ_SMART_CS_RESULT",
+              "relevance": 3,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0009",
+              "evidence_type": "industry_analog",
+              "novelty": 1,
+              "reason_code": "SH_LAND_TRANSACTION_CS",
+              "relevance": 1,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0010",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "POS_DEVICE",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0011",
+              "evidence_type": "industry_analog",
+              "novelty": 1,
+              "reason_code": "SH_INFO_NETWORK_CS",
+              "relevance": 1,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0012",
+              "evidence_type": "target_direct",
+              "novelty": 1,
+              "reason_code": "PSBC_SH_IP_PHONE",
+              "relevance": 2,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0013",
+              "evidence_type": "target_adjacent",
+              "novelty": 1,
+              "reason_code": "PSBC_SH_FRONT_SYSTEM",
+              "relevance": 1,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0014",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "FINANCIAL_TERMINAL",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0015",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "SMART_TEMPLE",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0016",
+              "evidence_type": "target_adjacent",
+              "novelty": 1,
+              "reason_code": "PSBC_JX_SMART_ROBOT",
+              "relevance": 2,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0017",
+              "evidence_type": "target_adjacent",
+              "novelty": 1,
+              "reason_code": "PSBC_HAINAN_SMART_ROBOT",
+              "relevance": 2,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0018",
+              "evidence_type": "target_adjacent",
+              "novelty": 1,
+              "reason_code": "PSBC_NINGBO_RPA",
+              "relevance": 2,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0019",
+              "evidence_type": "target_adjacent",
+              "novelty": 1,
+              "reason_code": "PSBC_BEIJING_RPA_CANDIDATE",
+              "relevance": 2,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0020",
+              "evidence_type": "target_adjacent",
+              "novelty": 1,
+              "reason_code": "PSBC_BEIJING_RPA_RESULT",
+              "relevance": 2,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0021",
+              "evidence_type": "target_adjacent",
+              "novelty": 2,
+              "reason_code": "PSBC_TIANJIN_SMART_ROBOT",
+              "relevance": 3,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0022",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "NEWS_AGGREGATION",
+              "relevance": 1,
+              "source_quality": 0
+            },
+            {
+              "candidate_id": "c_0023",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "IRRELEVANT_LOGISTICS",
+              "relevance": 0,
+              "source_quality": 0
+            },
+            {
+              "candidate_id": "c_0024",
+              "evidence_type": "industry_analog",
+              "novelty": 1,
+              "reason_code": "BANK_OF_SHANGHAI_RPA",
+              "relevance": 1,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0025",
+              "evidence_type": "target_adjacent",
+              "novelty": 1,
+              "reason_code": "PSBC_CQ_OUTBOUND_CALL",
+              "relevance": 2,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0026",
+              "evidence_type": "target_adjacent",
+              "novelty": 1,
+              "reason_code": "PSBC_CQ_SMART_OUTBOUND",
+              "relevance": 3,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0027",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "PRODUCT_AD",
+              "relevance": 0,
+              "source_quality": 0
+            },
+            {
+              "candidate_id": "c_0028",
+              "evidence_type": "target_adjacent",
+              "novelty": 1,
+              "reason_code": "PSBC_SMART_CUSTOMER_SERVICE",
+              "relevance": 3,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0029",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "MARKETING_IRRELEVANT",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0030",
+              "evidence_type": "target_direct",
+              "novelty": 2,
+              "reason_code": "PSBC_VOICE_AI_LLM",
+              "relevance": 4,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0031",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "UNRELATED_UNIVERSITY",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0032",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "IRRELEVANT_FLOWCHART",
+              "relevance": 0,
+              "source_quality": 0
+            },
+            {
+              "candidate_id": "c_0033",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "IRRELEVANT_POLICE",
+              "relevance": 0,
+              "source_quality": 0
+            },
+            {
+              "candidate_id": "c_0034",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "PRODUCT_AD",
+              "relevance": 0,
+              "source_quality": 0
+            },
+            {
+              "candidate_id": "c_0035",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "MEDIA_IRRELEVANT",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0036",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "BANK_OF_SHANGHAI_FEE",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0037",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "SIGNAGE_IRRELEVANT",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0038",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "AWARD_IRRELEVANT",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0039",
+              "evidence_type": "target_adjacent",
+              "novelty": 1,
+              "reason_code": "PSBC_SH_FINANCE_SYSTEM",
+              "relevance": 1,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0040",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "PRODUCT_AD",
+              "relevance": 0,
+              "source_quality": 0
+            },
+            {
+              "candidate_id": "c_0041",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "ABC_MARKETING",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0042",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "LOCK_IRRELEVANT",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0043",
+              "evidence_type": "target_direct",
+              "novelty": 2,
+              "reason_code": "PSBC_CREDIT_CARD_AI_CS",
+              "relevance": 4,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0044",
+              "evidence_type": "target_direct",
+              "novelty": 1,
+              "reason_code": "PSBC_SH_FRAUD_AI",
+              "relevance": 3,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0045",
+              "evidence_type": "target_adjacent",
+              "novelty": 1,
+              "reason_code": "PSBC_AH_WECHAT_OPERATION",
+              "relevance": 1,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0046",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "ACCESS_CONTROL",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0047",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "IRRELEVANT_REAL_ESTATE",
+              "relevance": 0,
+              "source_quality": 0
+            },
+            {
+              "candidate_id": "c_0048",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "FORMS_IRRELEVANT",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0049",
+              "evidence_type": "target_adjacent",
+              "novelty": 1,
+              "reason_code": "PSBC_SZ_SMART_CS_SYSTEM",
+              "relevance": 3,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0050",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "SECURITY_IRRELEVANT",
+              "relevance": 0,
+              "source_quality": 1
+            }
+          ],
+          "selected_count": 16,
+          "top_k_ids": [
+            "c_0043",
+            "c_0030",
+            "c_0044",
+            "c_0001",
+            "c_0021",
+            "c_0049",
+            "c_0028",
+            "c_0026",
+            "c_0008",
+            "c_0012",
+            "c_0025",
+            "c_0020",
+            "c_0019",
+            "c_0018",
+            "c_0017",
+            "c_0016"
+          ],
+          "view": "rotation_16"
+        },
+        {
+          "errors": [],
+          "evidence_group_recall_at_k": 0.833333,
+          "failure_count": 0,
+          "invocation_audit": {
+            "error": null,
+            "finish_reason": "stop",
+            "latency_seconds": 29.520388,
+            "model": "deepseek-v4-pro",
+            "provider": "DeepSeek",
+            "response_content_length": 9907,
+            "token_warning": false,
+            "usage": {
+              "input_tokens": 6876,
+              "output_tokens": 3375,
+              "total_tokens": 10251
+            }
+          },
+          "judged_precision_at_k": 0.727273,
+          "must_keep_recall_at_k": 1.0,
+          "ndcg_at_k": 0.896491,
+          "schema_success": true,
+          "scorecard_count": 50,
+          "scorecards": [
+            {
+              "candidate_id": "c_0001",
+              "evidence_type": "target_adjacent",
+              "novelty": 2,
+              "reason_code": "FRAUD_AI_SHANGHAI",
+              "relevance": 3,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0002",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "HR_RECRUITMENT",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0003",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "AD_PROMOTION",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0004",
+              "evidence_type": "target_adjacent",
+              "novelty": 1,
+              "reason_code": "MARKETING_PLATFORM",
+              "relevance": 1,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0005",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "DESIGN_SERVICE",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0006",
+              "evidence_type": "industry_analog",
+              "novelty": 1,
+              "reason_code": "OTHER_BRANCH_TERMINAL",
+              "relevance": 1,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0007",
+              "evidence_type": "target_adjacent",
+              "novelty": 1,
+              "reason_code": "TELECOM_LINE_SH",
+              "relevance": 1,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0008",
+              "evidence_type": "industry_analog",
+              "novelty": 2,
+              "reason_code": "SHENZHEN_SMART_CS",
+              "relevance": 3,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0009",
+              "evidence_type": "industry_analog",
+              "novelty": 2,
+              "reason_code": "LAND_TRANSACTION_CS",
+              "relevance": 2,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0010",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "POS_DEVICE",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0011",
+              "evidence_type": "industry_analog",
+              "novelty": 2,
+              "reason_code": "SHANGHAI_NETWORK_CS",
+              "relevance": 2,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0012",
+              "evidence_type": "target_adjacent",
+              "novelty": 2,
+              "reason_code": "IP_PHONE_SH",
+              "relevance": 3,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0013",
+              "evidence_type": "target_adjacent",
+              "novelty": 1,
+              "reason_code": "FRONT_SYSTEM_IT",
+              "relevance": 1,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0014",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "FINANCIAL_DATA_SVC",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0015",
+              "evidence_type": "target_adjacent",
+              "novelty": 1,
+              "reason_code": "SMART_TEMPLE_IT",
+              "relevance": 1,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0016",
+              "evidence_type": "industry_analog",
+              "novelty": 1,
+              "reason_code": "OTHER_BRANCH_ROBOT",
+              "relevance": 1,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0017",
+              "evidence_type": "industry_analog",
+              "novelty": 1,
+              "reason_code": "OTHER_BRANCH_ROBOT",
+              "relevance": 1,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0018",
+              "evidence_type": "industry_analog",
+              "novelty": 1,
+              "reason_code": "OTHER_BRANCH_RPA",
+              "relevance": 1,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0019",
+              "evidence_type": "industry_analog",
+              "novelty": 1,
+              "reason_code": "OTHER_BRANCH_RPA",
+              "relevance": 1,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0020",
+              "evidence_type": "industry_analog",
+              "novelty": 1,
+              "reason_code": "OTHER_BRANCH_RPA",
+              "relevance": 1,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0021",
+              "evidence_type": "industry_analog",
+              "novelty": 1,
+              "reason_code": "OTHER_BRANCH_ROBOT",
+              "relevance": 1,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0022",
+              "evidence_type": "industry_analog",
+              "novelty": 0,
+              "reason_code": "NEWS_AGGREGATION",
+              "relevance": 1,
+              "source_quality": 0
+            },
+            {
+              "candidate_id": "c_0023",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "LOGISTICS_ROBOT",
+              "relevance": 0,
+              "source_quality": 0
+            },
+            {
+              "candidate_id": "c_0024",
+              "evidence_type": "industry_analog",
+              "novelty": 1,
+              "reason_code": "OTHER_BANK_RPA",
+              "relevance": 1,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0025",
+              "evidence_type": "industry_analog",
+              "novelty": 1,
+              "reason_code": "OUTBOUND_CALL_CQ",
+              "relevance": 2,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0026",
+              "evidence_type": "industry_analog",
+              "novelty": 1,
+              "reason_code": "OUTBOUND_VOICE_CQ",
+              "relevance": 2,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0027",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "GENERIC_PRODUCT_PAGE",
+              "relevance": 1,
+              "source_quality": 0
+            },
+            {
+              "candidate_id": "c_0028",
+              "evidence_type": "industry_analog",
+              "novelty": 1,
+              "reason_code": "PSBC_SMART_CS_NEWS",
+              "relevance": 2,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0029",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "MARKETING_CAMPAIGN",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0030",
+              "evidence_type": "target_direct",
+              "novelty": 2,
+              "reason_code": "TARGET_EXACT",
+              "relevance": 4,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0031",
+              "evidence_type": "industry_analog",
+              "novelty": 1,
+              "reason_code": "UNIVERSITY_CS",
+              "relevance": 1,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0032",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "IRRELEVANT_FLOWCHART",
+              "relevance": 0,
+              "source_quality": 0
+            },
+            {
+              "candidate_id": "c_0033",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "POLICE_SYSTEM",
+              "relevance": 0,
+              "source_quality": 0
+            },
+            {
+              "candidate_id": "c_0034",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "GENERIC_PRODUCT_PAGE",
+              "relevance": 1,
+              "source_quality": 0
+            },
+            {
+              "candidate_id": "c_0035",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "MEDIA_AD_IRRELEVANT",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0036",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "OTHER_BANK_FEE_LIST",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0037",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "SIGNAGE_INSTALL",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0038",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "OTHER_BRANCH_AWARD",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0039",
+              "evidence_type": "target_adjacent",
+              "novelty": 1,
+              "reason_code": "SUPPLY_CHAIN_IT",
+              "relevance": 1,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0040",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "SMART_LOCKER_PRODUCT",
+              "relevance": 0,
+              "source_quality": 0
+            },
+            {
+              "candidate_id": "c_0041",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "OTHER_BANK_MARKETING",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0042",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "OTHER_BRANCH_LOCK",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0043",
+              "evidence_type": "target_direct",
+              "novelty": 2,
+              "reason_code": "TARGET_EXACT",
+              "relevance": 4,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0044",
+              "evidence_type": "target_adjacent",
+              "novelty": 2,
+              "reason_code": "FRAUD_AI_SHANGHAI",
+              "relevance": 3,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0045",
+              "evidence_type": "industry_analog",
+              "novelty": 1,
+              "reason_code": "OTHER_BRANCH_WECHAT",
+              "relevance": 1,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0046",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "ACCESS_CONTROL",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0047",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "REAL_ESTATE_CHAT",
+              "relevance": 0,
+              "source_quality": 0
+            },
+            {
+              "candidate_id": "c_0048",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "OTHER_BRANCH_DOCS",
+              "relevance": 0,
+              "source_quality": 1
+            },
+            {
+              "candidate_id": "c_0049",
+              "evidence_type": "industry_analog",
+              "novelty": 2,
+              "reason_code": "SHENZHEN_SMART_CS",
+              "relevance": 3,
+              "source_quality": 2
+            },
+            {
+              "candidate_id": "c_0050",
+              "evidence_type": "weak_or_irrelevant",
+              "novelty": 0,
+              "reason_code": "SECURITY_CONSTRUCTION",
+              "relevance": 0,
+              "source_quality": 1
+            }
+          ],
+          "selected_count": 12,
+          "top_k_ids": [
+            "c_0043",
+            "c_0030",
+            "c_0044",
+            "c_0012",
+            "c_0001",
+            "c_0049",
+            "c_0008",
+            "c_0011",
+            "c_0009",
+            "c_0028",
+            "c_0026",
+            "c_0025"
+          ],
+          "view": "rotation_33"
+        }
+      ]
+    }
+  },
+  "thinking_mode": "disabled",
+  "token_policy": "quality_first_soft_warning/v1",
+  "top_k": 20
+}

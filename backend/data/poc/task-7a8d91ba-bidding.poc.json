@@ -1,0 +1,115 @@
+{
+  "call_timeout_seconds": 60.0,
+  "candidate_count": 59,
+  "fixture_candidate_source": "evidence_snapshot",
+  "fixture_task_ref": "task_6bb5a627c40b",
+  "gold_label_policy": "gold_priority=critical 为关键金标；未标记时所有金标均视为关键金标",
+  "max_output_tokens": 2400,
+  "max_retries": 0,
+  "requested_model": "deepseek-v4-pro",
+  "schema_version": "task-screening-poc/v1",
+  "screening_context_sha256": "4bfaf0a1bd812a9db5d8d72f736608b9ff65bffeb9d1e79375afbc084f7e4d13",
+  "strategies": {
+    "chunked_40": {
+      "average_critical_recall_at_k": 0.349206,
+      "average_ndcg_at_k": 0.477288,
+      "average_overall_recall_at_k": 0.349206,
+      "call_count": 9,
+      "cost": null,
+      "cost_status": "unknown",
+      "finish_reason_counts": {
+        "stop": 9
+      },
+      "min_top_k_jaccard": 0.166667,
+      "models": [
+        "deepseek-v4-pro"
+      ],
+      "p90_latency_seconds": 13.238214,
+      "providers": [
+        "DeepSeek"
+      ],
+      "schema_success_rate": 1.0,
+      "strategy": "chunked_40",
+      "token_usage": {
+        "input_tokens": 34154,
+        "output_tokens": 5431,
+        "total_tokens": 39585
+      },
+      "views": [
+        {
+          "critical_recall_at_k": 0.285714,
+          "errors": [],
+          "failure_count": 0,
+          "ndcg_at_k": 0.372164,
+          "overall_recall_at_k": 0.285714,
+          "schema_success": true,
+          "top_k_ids": [
+            "c_0001",
+            "c_0024",
+            "c_0037",
+            "c_0044",
+            "c_0009",
+            "c_0014",
+            "c_0036",
+            "c_0025",
+            "c_0041",
+            "c_0042"
+          ],
+          "view": "rotation_0"
+        },
+        {
+          "critical_recall_at_k": 0.238095,
+          "errors": [],
+          "failure_count": 0,
+          "ndcg_at_k": 0.408659,
+          "overall_recall_at_k": 0.238095,
+          "schema_success": true,
+          "top_k_ids": [
+            "c_0024",
+            "c_0044",
+            "c_0037",
+            "c_0033",
+            "c_0041",
+            "c_0036",
+            "c_0001",
+            "c_0014"
+          ],
+          "view": "rotation_19"
+        },
+        {
+          "critical_recall_at_k": 0.52381,
+          "errors": [],
+          "failure_count": 0,
+          "ndcg_at_k": 0.651041,
+          "overall_recall_at_k": 0.52381,
+          "schema_success": true,
+          "top_k_ids": [
+            "c_0044",
+            "c_0024",
+            "c_0037",
+            "c_0033",
+            "c_0025",
+            "c_0018",
+            "c_0019",
+            "c_0002",
+            "c_0045",
+            "c_0050",
+            "c_0017",
+            "c_0021",
+            "c_0022",
+            "c_0023",
+            "c_0042",
+            "c_0047",
+            "c_0003",
+            "c_0046",
+            "c_0004",
+            "c_0009"
+          ],
+          "view": "rotation_39"
+        }
+      ]
+    }
+  },
+  "thinking_mode": "disabled",
+  "top_k": 20
+}

@@ -1,0 +1,10 @@
+node_modules
+.next
+.git
+.env
+.gitignore
+*.md
+.vscode
+.idea
+e2e/.auth
+test-results

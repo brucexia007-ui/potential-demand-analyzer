@@ -1,0 +1,50 @@
+schema_version: contact-center-source-routing/v1
+
+priority_lanes:
+  - lane: first_party
+    order: 1
+    examples: [企业官网, 官方采购门户, 官方公众号原文]
+    reliability: A
+    minimum_share_when_available: 0.30
+  - lane: authority
+    order: 2
+    examples: [政府采购, 公共资源交易, 监管披露]
+    reliability: S
+    minimum_share_when_available: 0.20
+  - lane: original_procurement
+    order: 3
+    examples: [招标公告, 中标结果, 合同公告, 验收公告, 单一来源公示]
+    reliability: A
+  - lane: corroboration
+    order: 4
+    examples: [供应商案例, 权威媒体, 行业机构]
+    reliability: B
+  - lane: weak_signal
+    order: 5
+    examples: [招聘, 投诉, 应用商店, 社交媒体]
+    reliability: C
+    max_prefetch_items: 1
+
+prefetch_rejections:
+  - 内容农场、刷题站、文库转载站
+  - 与目标主体无绑定的同行采购
+  - 与客服中心无关的泛采购
+
+planning_guidance:
+  semantic_owner: research_director_llm
+  source_selection_principles:
+    - 目标企业事实优先选择第一方、权威和原始采购来源
+    - 同行采购和通用政策只能作为背景
+    - 弱信号只能用于提出待验证假设
+  exact_query_policy:
+    - Research Director按本次目标和缺口生成精确查询
+    - 查询必须说明目标内容、优先来源、证据用途和停止条件
+    - 平台只执行原始查询，不添加固定能力域或采购关键词
+    - 动态补检查询只能来自Research Director新增任务
+
+recovery_routes:
+  LOW_RECALL: FOCUSED_SEARCH
+  CONTENT_FARM_DOMINATED: SOURCE_REROUTE_SEARCH
+  FETCH_BLOCKED: ALTERNATE_FETCH
+  EXTRACTION_FAILED: DETERMINISTIC_REEXTRACT
+  TRUE_NO_SIGNAL: NONE

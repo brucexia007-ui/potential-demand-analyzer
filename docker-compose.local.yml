@@ -1,0 +1,51 @@
+# 本地源码开发覆盖层。
+# 与 docker-compose.yml 合并使用：
+# - 为 Nginx 发布唯一的本地 Web 入口；
+# - 取消基础文件中的固定容器名，允许使用 Compose project name 隔离；
+# - 使用独立的命名卷保存本地 PostgreSQL 数据；
+# - 所有调试端口均可通过 LOCAL_* 环境变量调整。
+services:
+  backend:
+    container_name: !reset null
+    ports: !override
+      - "${LOCAL_BACKEND_PORT:-8000}:8000"
+
+  worker:
+    container_name: !reset null
+
+  beat:
+    container_name: !reset null
+
+  outbox-relay:
+    container_name: !reset null
+
+  crawler:
+    container_name: !reset null
+
+  browserless:
+    container_name: !reset null
+    ports: !override
+      - "${LOCAL_BROWSERLESS_PORT:-3002}:3000"
+
+  frontend:
+    container_name: !reset null
+
+  nginx:
+    container_name: !reset null
+    ports: !override
+      - "${LOCAL_HTTP_PORT:-3001}:80"
+
+  redis:
+    container_name: !reset null
+    ports: !override
+      - "${LOCAL_REDIS_PORT:-6380}:6379"
+
+  postgres:
+    container_name: !reset null
+    ports: !override
+      - "${LOCAL_POSTGRES_PORT:-5436}:5432"
+    volumes: !override
+      - local_postgres_data:/var/lib/postgresql/data
+
+volumes:
+  local_postgres_data:

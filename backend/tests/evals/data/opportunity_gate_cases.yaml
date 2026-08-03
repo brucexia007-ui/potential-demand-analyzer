@@ -1,0 +1,26 @@
+{
+  "schema_version": "oig-golden/v1",
+  "analysis_as_of_date": "2026-07-20T00:00:00+00:00",
+  "cases": [
+    {
+      "id": "OIG-G-01",
+      "procurement_stage": "TENDERING",
+      "deadline_at": "2025-12-31T00:00:00+00:00",
+      "expected_stage": "EXPIRED",
+      "expected_window_status": "CLOSED"
+    },
+    {
+      "id": "OIG-G-02",
+      "procurement_stage": "LIVE",
+      "event_at": "2025-05-01T00:00:00+00:00",
+      "expected_stage": "LIVE",
+      "expected_window_status": "CLOSED"
+    },
+    {
+      "id": "OIG-G-05",
+      "procurement_stage": "UNKNOWN",
+      "expected_stage": "UNKNOWN",
+      "expected_window_status": "UNKNOWN"
+    }
+  ]
+}

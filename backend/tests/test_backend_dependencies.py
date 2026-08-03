@@ -61,3 +61,11 @@ def test_langgraph_dependency_uses_audited_version() -> None:
     versions = _production_dependency_versions()
 
     assert versions["langgraph"] == "1.2.9"
+
+
+def test_web_framework_dependencies_use_audited_versions() -> None:
+    versions = _production_dependency_versions()
+
+    assert versions["fastapi"] == "0.139.2"
+    assert versions["starlette"] == "1.3.1"
+    assert versions["prometheus_fastapi_instrumentator"] == "8.0.2"

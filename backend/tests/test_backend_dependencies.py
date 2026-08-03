@@ -49,3 +49,9 @@ def test_auth_and_upload_dependencies_use_audited_versions() -> None:
     assert versions["python-jose"] == "3.5.0"
     assert versions["python-multipart"] == "0.0.32"
     assert versions["python-dotenv"] == "1.2.2"
+
+
+def test_pdf_dependency_uses_audited_version() -> None:
+    versions = _production_dependency_versions()
+
+    assert versions["pypdf"] == "6.14.2"

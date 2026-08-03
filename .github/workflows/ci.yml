@@ -61,6 +61,11 @@ jobs:
         with:
           python-version: "3.11"
 
+      - name: 安装 PDF 中文字体
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends fonts-wqy-zenhei
+
       - name: 安装依赖
         run: |
           cd backend

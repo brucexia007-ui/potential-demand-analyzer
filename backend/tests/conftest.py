@@ -218,7 +218,7 @@ def v35_data_factory(db_session):
 def token_factory():
     """返回一个 callable，接受 user_id (UUID 字符串)，返回签名的 access JWT"""
     from datetime import datetime, timedelta, timezone
-    from jose import jwt
+    import jwt
     from app.db.auth import SECRET_KEY, ALGORITHM
 
     def _make(user_id: str) -> str:

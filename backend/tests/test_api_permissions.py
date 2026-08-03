@@ -4,7 +4,7 @@
 import pytest
 from uuid import uuid4
 from datetime import datetime, timedelta, timezone
-from jose import jwt
+import jwt
 from app.db.auth import SECRET_KEY, ALGORITHM
 
 
@@ -35,7 +35,7 @@ class TestFakeToken:
         """伪造签名的 JWT"""
         fake = jwt.encode(
             {"sub": "fake", "exp": datetime.now(timezone.utc) + timedelta(minutes=5), "type": "access"},
-            "wrong-secret", algorithm=ALGORITHM,
+            "wrong-secret-with-at-least-32-bytes", algorithm=ALGORITHM,
         )
         unauth_client.cookies.set("kanyikan_access", fake, domain="test.local", path="/")
         response = await unauth_client.get("/api/auth/me")

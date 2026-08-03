@@ -2,8 +2,18 @@
 from __future__ import annotations
 
 import csv
+import json
+import os
+import subprocess
+import sys
 from dataclasses import dataclass
 from io import BytesIO, StringIO
+
+
+MAX_PDF_BYTES = 20 * 1024 * 1024
+MAX_PDF_PAGES = 500
+MAX_PDF_EXTRACTED_CHARS = 5_000_000
+PDF_PARSE_TIMEOUT_SECONDS = 20
 
 
 class CapabilityDocumentParseError(ValueError):
@@ -66,14 +76,62 @@ def chunk_segments(segments: list[ParsedSegment], *, max_chars: int = 1800) -> l
 
 
 def _parse_pdf(content: bytes) -> list[ParsedSegment]:
-    from pypdf import PdfReader
+    if len(content) > MAX_PDF_BYTES:
+        raise CapabilityDocumentParseError("PDF 文件大小超过 20 MB 处理上限")
+    return _run_pdf_worker(content)
 
-    reader = PdfReader(BytesIO(content))
-    return [
-        ParsedSegment(content=text, page_ref=f"page:{index}")
-        for index, page in enumerate(reader.pages, start=1)
-        if (text := (page.extract_text() or "").strip())
-    ]
+
+def _run_pdf_worker(content: bytes) -> list[ParsedSegment]:
+    worker_env = {
+        "PYTHONPATH": os.pathsep.join(str(path) for path in sys.path if path),
+        "PYTHONUNBUFFERED": "1",
+        "PDF_PARSE_MAX_BYTES": str(MAX_PDF_BYTES),
+        "PDF_PARSE_MAX_PAGES": str(MAX_PDF_PAGES),
+        "PDF_PARSE_MAX_CHARS": str(MAX_PDF_EXTRACTED_CHARS),
+    }
+    try:
+        result = subprocess.run(
+            [sys.executable, "-m", "app.capabilities.pdf_parser_worker"],
+            input=content,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            check=False,
+            timeout=PDF_PARSE_TIMEOUT_SECONDS,
+            env=worker_env,
+            start_new_session=True,
+        )
+    except subprocess.TimeoutExpired as error:
+        raise CapabilityDocumentParseError("PDF 解析超时") from error
+
+    if result.returncode != 0:
+        reason = result.stderr.decode("utf-8", errors="replace").strip()
+        if reason == "PDF_PAGE_LIMIT":
+            raise CapabilityDocumentParseError(f"PDF 页数超过 {MAX_PDF_PAGES} 页处理上限")
+        if reason == "PDF_TEXT_LIMIT":
+            raise CapabilityDocumentParseError("PDF 提取文本超过处理上限")
+        if reason == "PDF_SIZE_LIMIT":
+            raise CapabilityDocumentParseError("PDF 文件大小超过 20 MB 处理上限")
+        if reason == "PDF_MEMORY_LIMIT":
+            raise CapabilityDocumentParseError("PDF 解析内存超过处理上限")
+        raise CapabilityDocumentParseError("PDF 文件无法安全解析")
+
+    try:
+        payload = json.loads(result.stdout.decode("utf-8"))
+    except (UnicodeDecodeError, json.JSONDecodeError) as error:
+        raise CapabilityDocumentParseError("PDF 解析结果无效") from error
+    if not isinstance(payload, list):
+        raise CapabilityDocumentParseError("PDF 解析结果无效")
+
+    segments: list[ParsedSegment] = []
+    for item in payload:
+        if not isinstance(item, dict):
+            raise CapabilityDocumentParseError("PDF 解析结果无效")
+        text = item.get("content")
+        page_ref = item.get("page_ref")
+        if not isinstance(text, str) or not isinstance(page_ref, str):
+            raise CapabilityDocumentParseError("PDF 解析结果无效")
+        segments.append(ParsedSegment(content=text, page_ref=page_ref))
+    return segments
 
 
 def _parse_docx(content: bytes) -> list[ParsedSegment]:

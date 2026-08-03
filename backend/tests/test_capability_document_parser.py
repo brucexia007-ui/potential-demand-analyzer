@@ -1,14 +1,24 @@
 """能力资料解析保留结构来源并生成稳定切片。"""
 from __future__ import annotations
 
+import subprocess
 from io import BytesIO
 
+import pytest
 from docx import Document
 from openpyxl import Workbook
 from pptx import Presentation
+from pypdf import PdfWriter
 from weasyprint import HTML
 
-from app.capabilities.document_parser import ParsedSegment, chunk_segments, parse_capability_document
+from app.capabilities import document_parser
+from app.capabilities.document_parser import (
+    CapabilityDocumentParseError,
+    MAX_PDF_BYTES,
+    ParsedSegment,
+    chunk_segments,
+    parse_capability_document,
+)
 
 
 def test_parse_docx_preserves_heading() -> None:
@@ -78,3 +88,34 @@ def test_parse_pdf_preserves_page_reference() -> None:
 
     assert segments[0].page_ref == "page:1"
     assert "Product capability statement" in segments[0].content
+
+
+def test_parse_pdf_rejects_payload_over_byte_limit(monkeypatch: pytest.MonkeyPatch) -> None:
+    def unexpected_worker_call(_: bytes) -> list[ParsedSegment]:
+        raise AssertionError("超限文件不应进入 PDF 解析子进程")
+
+    monkeypatch.setattr(document_parser, "_run_pdf_worker", unexpected_worker_call)
+
+    with pytest.raises(CapabilityDocumentParseError, match="大小超过"):
+        parse_capability_document(mime_type="application/pdf", content=b"x" * (MAX_PDF_BYTES + 1))
+
+
+def test_parse_pdf_reports_worker_timeout(monkeypatch: pytest.MonkeyPatch) -> None:
+    def timeout(*args: object, **kwargs: object) -> subprocess.CompletedProcess[bytes]:
+        raise subprocess.TimeoutExpired(cmd=["python", "worker"], timeout=20)
+
+    monkeypatch.setattr(document_parser.subprocess, "run", timeout)
+
+    with pytest.raises(CapabilityDocumentParseError, match="解析超时"):
+        parse_capability_document(mime_type="application/pdf", content=b"%PDF-test")
+
+
+def test_parse_pdf_rejects_excessive_page_count() -> None:
+    writer = PdfWriter()
+    for _ in range(document_parser.MAX_PDF_PAGES + 1):
+        writer.add_blank_page(width=72, height=72)
+    buffer = BytesIO()
+    writer.write(buffer)
+
+    with pytest.raises(CapabilityDocumentParseError, match="页数超过"):
+        parse_capability_document(mime_type="application/pdf", content=buffer.getvalue())

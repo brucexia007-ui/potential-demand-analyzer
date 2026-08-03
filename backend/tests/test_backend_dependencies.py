@@ -5,6 +5,18 @@ import re
 REQUIREMENTS = Path(__file__).resolve().parents[1] / "requirements.txt"
 
 
+def _production_dependency_versions() -> dict[str, str]:
+    versions: dict[str, str] = {}
+    for raw_line in REQUIREMENTS.read_text(encoding="utf-8").splitlines():
+        line = raw_line.strip()
+        if not line or line.startswith("#"):
+            continue
+        match = re.fullmatch(r"([A-Za-z0-9_.-]+)(?:\[[^\]]+\])?==([^,;\s]+)", line)
+        assert match is not None, f"无法识别生产依赖声明: {line}"
+        versions[match.group(1).lower()] = match.group(2)
+    return versions
+
+
 def test_production_dependencies_are_exactly_pinned() -> None:
     lines = [
         line.strip()
@@ -28,3 +40,12 @@ def test_production_dependencies_do_not_include_test_frameworks() -> None:
     assert "pytest" not in package_names
     assert "pytest-asyncio" not in package_names
     assert "pytest-cov" not in package_names
+
+
+def test_auth_and_upload_dependencies_use_audited_versions() -> None:
+    versions = _production_dependency_versions()
+
+    assert "litellm" not in versions, "项目未导入 LiteLLM SDK，不应保留无效攻击面"
+    assert versions["python-jose"] == "3.5.0"
+    assert versions["python-multipart"] == "0.0.32"
+    assert versions["python-dotenv"] == "1.2.2"

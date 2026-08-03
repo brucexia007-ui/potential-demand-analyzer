@@ -47,7 +47,7 @@ def test_auth_and_upload_dependencies_use_audited_versions() -> None:
 
     assert "litellm" not in versions, "项目未导入 LiteLLM SDK，不应保留无效攻击面"
     assert versions["pyjwt"] == "2.13.0"
-    assert versions["python-jose"] == "3.5.0"
+    assert "python-jose" not in versions, "python-jose 会传递引入无修复版本的 ecdsa"
     assert versions["python-multipart"] == "0.0.32"
     assert versions["python-dotenv"] == "1.2.2"
 

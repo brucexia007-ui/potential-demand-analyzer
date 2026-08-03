@@ -1,3 +1,6 @@
+from collections.abc import Callable
+from typing import Any
+
 from langgraph.graph import StateGraph, START, END
 from app.agents.state import AgentState
 
@@ -9,23 +12,37 @@ from app.agents.nodes.service_capability import run as service_capability_node
 from app.agents.nodes.feedback import run as feedback_node
 from app.agents.nodes.synthesizer import synthesize_node
 
-# 初始化一个图
-workflow = StateGraph(AgentState)
+AgentNode = Callable[[AgentState], dict[str, Any]]
 
-# 注册所有节点
-workflow.add_node("bidding", bidding_node)
-workflow.add_node("policy", policy_node)
-workflow.add_node("official_pr", official_pr_node)
-workflow.add_node("service_capability", service_capability_node)
-workflow.add_node("feedback", feedback_node)
-workflow.add_node("synthesizer", synthesize_node)
 
-# 构建边，LangGraph 会将连接到 START 的节点并行执行
-for node in ["bidding", "policy", "official_pr", "service_capability", "feedback"]:
-    workflow.add_edge(START, node)
-    workflow.add_edge(node, "synthesizer")
+def build_agent_graph(
+    *,
+    dimension_nodes: dict[str, AgentNode],
+    synthesizer_node: AgentNode,
+):
+    if not dimension_nodes:
+        raise ValueError("至少需要一个研究维度节点")
 
-workflow.add_edge("synthesizer", END)
+    workflow = StateGraph(AgentState)
+    for name, node in dimension_nodes.items():
+        workflow.add_node(name, node)
+    workflow.add_node("synthesizer", synthesizer_node)
 
-# 编译图
-graph = workflow.compile()
+    dimension_names = list(dimension_nodes)
+    for name in dimension_names:
+        workflow.add_edge(START, name)
+    workflow.add_edge(dimension_names, "synthesizer")
+    workflow.add_edge("synthesizer", END)
+    return workflow.compile()
+
+
+graph = build_agent_graph(
+    dimension_nodes={
+        "bidding": bidding_node,
+        "policy": policy_node,
+        "official_pr": official_pr_node,
+        "service_capability": service_capability_node,
+        "feedback": feedback_node,
+    },
+    synthesizer_node=synthesize_node,
+)

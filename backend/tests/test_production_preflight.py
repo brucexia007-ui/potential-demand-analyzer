@@ -1,9 +1,13 @@
 from __future__ import annotations
 
 import os
+from pathlib import Path
 
 from cryptography.fernet import Fernet
 import pytest
+
+
+_REPOSITORY_ROOT = Path(__file__).resolve().parents[2]
 
 
 def _valid_environment(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -283,3 +287,30 @@ def test_non_production_environment_does_not_require_production_secrets(
         monkeypatch.delenv(key, raising=False)
 
     validate_production_environment()
+
+
+def test_server_tls_environment_template_matches_bootstrap_contract() -> None:
+    template = (_REPOSITORY_ROOT / ".env.production.example").read_text(
+        encoding="utf-8"
+    )
+    entries = {
+        key: value
+        for line in template.splitlines()
+        if line and not line.startswith("#") and "=" in line
+        for key, value in [line.split("=", 1)]
+    }
+
+    assert entries["DEPLOYMENT_PROFILE"] == "server_tls"
+    assert entries["SENTRY_DSN"] == ""
+    execution_only_keys = {
+        "LLM_PROVIDER_PRIMARY_BASE_URL",
+        "LLM_PROVIDER_PRIMARY_API_KEY",
+        "LLM_PROVIDER_PRIMARY_MODELS",
+        "DEFAULT_MODEL",
+        "EMBEDDING_MODEL",
+        "EMBEDDING_PROVIDER_NAME",
+        "SEARCH_PROVIDER",
+        "BOCHA_API_URL",
+        "BOCHA_API_KEY",
+    }
+    assert execution_only_keys.isdisjoint(entries)

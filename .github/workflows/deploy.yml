@@ -369,6 +369,7 @@ jobs:
       packages: read
     outputs:
       offline_zip_name: ${{ steps.candidate_metadata.outputs.offline_zip_name }}
+      online_zip_name: ${{ steps.candidate_metadata.outputs.online_zip_name }}
       public_key_sha256: ${{ steps.candidate_metadata.outputs.public_key_sha256 }}
 
     steps:
@@ -505,6 +506,26 @@ jobs:
             --schema packaging/release-manifest.schema.json \
             --expected-public-key-sha256 "$public_key_sha256"
 
+      - name: 构建并独立验证 Windows 在线引导包
+        shell: bash
+        env:
+          VERSION: ${{ needs.verify-release.outputs.version }}
+          PUBLISHED_AT: ${{ needs.verify-release.outputs.published_at }}
+        run: |
+          set -euo pipefail
+          python packaging/release_tools/build_windows_online_release.py \
+            --output-directory work/online \
+            --version "$VERSION" \
+            --published-at "$PUBLISHED_AT" \
+            --public-key work/keys/public.pem \
+            --repository-url "https://github.com/$GITHUB_REPOSITORY" \
+            > work/online-build-result.json
+          public_key_sha256="$(jq -r '.publicKeySha256' work/build-result.json)"
+          test "$(jq -r '.publicKeySha256' work/online-build-result.json)" = "$public_key_sha256"
+          python packaging/release_tools/verify_windows_online_release.py \
+            --zip "$(jq -r '.onlineZip' work/online-build-result.json)" \
+            --expected-public-key-sha256 "$public_key_sha256"
+
       - name: 生成 SBOM 包、资产摘要和顶层签名
         shell: bash
         env:
@@ -513,7 +534,9 @@ jobs:
         run: |
           set -euo pipefail
           offline_zip="$(jq -r '.offlineZip' work/build-result.json)"
+          online_zip="$(jq -r '.onlineZip' work/online-build-result.json)"
           cp "$offline_zip" release-assets/
+          cp "$online_zip" release-assets/
           cp work/third-party-licenses.html "release-assets/Kanyikan-v$VERSION-third-party-licenses.html"
           python packaging/release_tools/finalize_release_assets.py sbom-zip \
             --version "$VERSION" \
@@ -527,6 +550,7 @@ jobs:
             --output-directory release-assets
           python packaging/release_tools/finalize_release_assets.py sign-checksums \
             --asset "release-assets/$(basename "$offline_zip")" \
+            --asset "release-assets/$(basename "$online_zip")" \
             --asset "release-assets/Kanyikan-v$VERSION-third-party-licenses.html" \
             --asset "release-assets/Kanyikan-v$VERSION-SBOM.zip" \
             --private-key work/keys/private.pem \
@@ -545,16 +569,18 @@ jobs:
         run: |
           set -euo pipefail
           offline_zip_name="$(basename "$(jq -r '.offlineZip' work/build-result.json)")"
+          online_zip_name="$(basename "$(jq -r '.onlineZip' work/online-build-result.json)")"
           public_key_sha256="$(jq -r '.publicKeySha256' work/build-result.json)"
           jq -n \
             --arg tag "$GITHUB_REF_NAME" \
             --arg sourceCommit "$GITHUB_SHA" \
             --arg releaseVersion "$VERSION" \
-            --arg formalReleaseBlockedBy "ONLINE_PACKAGE_CONTRACT" \
-            '{tag:$tag,sourceCommit:$sourceCommit,releaseVersion:$releaseVersion,formalReleaseBlockedBy:$formalReleaseBlockedBy}' \
+            --arg status "WINDOWS_E2E_REQUIRED" \
+            '{tag:$tag,sourceCommit:$sourceCommit,releaseVersion:$releaseVersion,status:$status}' \
             > release-assets/candidate-status.json
           rm -f work/keys/private.pem
           echo "offline_zip_name=$offline_zip_name" >> "$GITHUB_OUTPUT"
+          echo "online_zip_name=$online_zip_name" >> "$GITHUB_OUTPUT"
           echo "public_key_sha256=$public_key_sha256" >> "$GITHUB_OUTPUT"
 
       - name: 为候选资产生成 GitHub 来源证明
@@ -641,14 +667,52 @@ jobs:
           if-no-files-found: error
           retention-days: 30
 
-  release-readiness:
-    needs: windows-clean-offline-e2e
+  publish-github-release:
+    needs: [assemble-offline-candidate, windows-clean-offline-e2e]
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      actions: read
+      contents: write
     steps:
-      - name: 保持正式发布关闭直至在线包契约确认
+      - name: 下载已通过 Windows 验收的发行资产
+        uses: actions/download-artifact@v4
+        with:
+          name: release-candidate
+          path: release-assets
+
+      - name: 发布前复核顶层签名、摘要与候选身份
         shell: bash
+        env:
+          EXPECTED_PUBLIC_KEY_SHA256: ${{ needs.assemble-offline-candidate.outputs.public_key_sha256 }}
         run: |
-          echo "六镜像供应链门禁、离线候选包和三轮 Windows E2E 已进入工作流。"
-          echo "在线包契约未确认，工作流不会创建 GitHub Release。"
+          set -euo pipefail
+          test "$(jq -r '.tag' release-assets/candidate-status.json)" = "$GITHUB_REF_NAME"
+          test "$(jq -r '.sourceCommit' release-assets/candidate-status.json)" = "$GITHUB_SHA"
+          test "$(jq -r '.status' release-assets/candidate-status.json)" = "WINDOWS_E2E_REQUIRED"
+          online_zip="release-assets/${{ needs.assemble-offline-candidate.outputs.online_zip_name }}"
+          test -s "$online_zip"
+          unzip -p "$online_zip" '*/public-key.pem' > release-public-key.pem
+          test "$(sha256sum release-public-key.pem | cut -d' ' -f1)" = "$EXPECTED_PUBLIC_KEY_SHA256"
+          openssl dgst -sha256 -verify release-public-key.pem \
+            -signature release-assets/SHA256SUMS.sig release-assets/SHA256SUMS
+          (cd release-assets && sha256sum --check SHA256SUMS)
+          rm -f release-public-key.pem
+
+      - name: 创建草稿并在全部资产上传后公开 GitHub Release
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          gh release create "$GITHUB_REF_NAME" \
+            "release-assets/${{ needs.assemble-offline-candidate.outputs.online_zip_name }}#Windows 在线引导包" \
+            "release-assets/${{ needs.assemble-offline-candidate.outputs.offline_zip_name }}#Windows 完整离线包" \
+            "release-assets/Kanyikan-$GITHUB_REF_NAME-SBOM.zip#SPDX SBOM" \
+            "release-assets/Kanyikan-$GITHUB_REF_NAME-third-party-licenses.html#第三方许可证" \
+            "release-assets/SHA256SUMS#发布资产 SHA256" \
+            "release-assets/SHA256SUMS.sig#SHA256SUMS RSA 签名" \
+            --verify-tag \
+            --draft \
+            --title "Kanyikan $GITHUB_REF_NAME" \
+            --generate-notes
+          gh release edit "$GITHUB_REF_NAME" --draft=false

@@ -84,18 +84,22 @@ def test_release_candidate_builds_and_gates_exactly_six_linux_amd64_images() -> 
     assert "uses: actions/attest@v4" in workflow
 
 
-def test_release_candidate_assembles_verifies_and_signs_offline_assets() -> None:
+def test_release_candidate_assembles_verifies_and_signs_online_and_offline_assets() -> None:
     workflow = DEPLOY_WORKFLOW.read_text(encoding="utf-8")
 
     assert "python packaging/release_tools/evaluate_vulnerabilities.py" in workflow
     assert "python packaging/release_tools/generate_third_party_licenses.py" in workflow
     assert "python packaging/release_tools/build_windows_release.py" in workflow
     assert "python packaging/release_tools/verify_windows_release.py" in workflow
+    assert "python packaging/release_tools/build_windows_online_release.py" in workflow
+    assert "python packaging/release_tools/verify_windows_online_release.py" in workflow
+    assert '--repository-url "https://github.com/$GITHUB_REPOSITORY"' in workflow
     assert "--schema packaging/release-manifest.schema.json" in workflow
     assert "--schema packaging/windows/release-manifest.schema.json" not in workflow
     assert "python packaging/release_tools/finalize_release_assets.py sbom-zip" in workflow
     assert "python packaging/release_tools/finalize_release_assets.py sign-checksums" in workflow
     assert "python packaging/release_tools/finalize_release_assets.py verify-checksums" in workflow
+    assert '$(basename "$online_zip")' in workflow
     assert "skopeo copy --preserve-digests" in workflow
     assert "-C work/images-oci blobs index.json oci-layout" in workflow
     assert "-C work/images-oci ." not in workflow
@@ -106,7 +110,7 @@ def test_release_candidate_assembles_verifies_and_signs_offline_assets() -> None
     assert 'sha256sum work/keys/public.pem' not in workflow
 
 
-def test_formal_release_waits_for_three_clean_windows_offline_rounds_and_online_contract() -> None:
+def test_formal_release_waits_for_three_clean_windows_offline_rounds() -> None:
     workflow = DEPLOY_WORKFLOW.read_text(encoding="utf-8")
 
     assert "[self-hosted, Windows, X64, kanyikan-clean-e2e]" in workflow
@@ -116,7 +120,12 @@ def test_formal_release_waits_for_three_clean_windows_offline_rounds_and_online_
     assert "KANYIKAN_ENTER_OFFLINE_SCRIPT" in workflow
     assert "KANYIKAN_INFRASTRUCTURE_HOOKS_ROOT" in workflow
     assert "if: always()" in workflow
-    assert "gh release create" not in workflow
+    assert "formalReleaseBlockedBy" not in workflow
+    assert "needs: [assemble-offline-candidate, windows-clean-offline-e2e]" in workflow
+    assert "gh release create" in workflow
+    assert "--verify-tag" in workflow
+    assert "--draft" in workflow
+    assert 'gh release edit "$GITHUB_REF_NAME" --draft=false' in workflow
 
 
 def test_release_runbook_declares_secrets_runner_hooks_evidence_and_no_publish_boundary() -> None:

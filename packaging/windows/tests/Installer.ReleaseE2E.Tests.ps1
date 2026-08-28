@@ -4,6 +4,7 @@ Set-StrictMode -Version 2.0
 $e2ePath = Join-Path $PSScriptRoot '..\e2e\Invoke-CleanOfflineInstallE2E.ps1'
 $wrapperPath = Join-Path $PSScriptRoot '..\e2e\Invoke-ControllerWithAnswers.ps1'
 $e2eModulePath = Join-Path $PSScriptRoot '..\e2e\Kanyikan.ReleaseE2E.psm1'
+$negativeE2EPath = Join-Path $PSScriptRoot '..\e2e\Invoke-NegativeInstallE2E.ps1'
 $script:Passed = 0
 $script:Failed = 0
 
@@ -44,6 +45,44 @@ Invoke-TestCase 'E2E 公共执行模块支持异步中断且不泄露密码' {
     Assert-True ($source.Contains('Stop-KanyikanE2EController')) '公共 E2E 模块缺少中断能力。'
     Assert-True ($source.Contains('$stdout.Contains($Handle.adminPassword)')) '公共 E2E 模块未检测终端密码泄露。'
     Assert-True ($source.Contains("KANYIKAN_CLEAN_E2E', 'Machine'")) '公共 E2E 模块未限制专用 runner。'
+}
+
+Invoke-TestCase '负向 E2E 固定预检与发行资产失败退出码且无持久副作用' {
+    $source = [IO.File]::ReadAllText($negativeE2EPath, [Text.Encoding]::UTF8)
+    [void][scriptblock]::Create($source)
+    foreach ($scenario in @('PortOccupied', 'DockerStopped', 'WindowsContainers', 'DiskInsufficient', 'ManifestTampered', 'ImageArchiveCorrupt')) {
+        Assert-True ($source.Contains("'$scenario'")) "负向 E2E 缺少场景：$scenario"
+    }
+    foreach ($mapping in @("PortOccupied = 22", "DockerStopped = 21", "WindowsContainers = 21", "DiskInsufficient = 22", "ManifestTampered = 30", "ImageArchiveCorrupt = 30")) {
+        Assert-True ($source.Contains($mapping)) "负向 E2E 缺少精确退出码：$mapping"
+    }
+    Assert-True ($source.Contains('Assert-EarlyFailureHasNoPersistentSideEffects')) '负向 E2E 未验证失败前无持久副作用。'
+    Assert-True ($source.Contains('Assert-KanyikanRuntimeAbsent')) '负向 E2E 未验证失败后没有 Compose 资源。'
+    Assert-True ($source.Contains('exitHookEntered')) '负向 E2E 未用 finally 保证恢复基础设施。'
+}
+
+Invoke-TestCase '负向 E2E 覆盖三阶段中断恢复与幂等重复安装' {
+    $source = [IO.File]::ReadAllText($negativeE2EPath, [Text.Encoding]::UTF8)
+    foreach ($state in @('IMAGES_LOADED', 'CONFIG_CREATED', 'SERVICES_STARTING')) {
+        Assert-True ($source.Contains("'$state'")) "中断恢复 E2E 缺少状态：$state"
+    }
+    Assert-True ($source.Contains('Stop-KanyikanE2EController')) '中断恢复 E2E 未真实终止安装进程。'
+    Assert-True ($source.Contains('Wait-ForInstallState')) '中断恢复 E2E 未等待持久状态。'
+    Assert-True ($source.Contains('idempotentResult')) '中断恢复 E2E 未执行第二次幂等安装。'
+    Assert-True ($source.Contains('Test-KanyikanAuthenticatedSmoke')) '中断恢复 E2E 未执行认证核心 API 冒烟。'
+    Assert-True ($source.Contains('configSha256BeforeIdempotent')) '中断恢复 E2E 未验证重复安装不重置配置。'
+}
+
+Invoke-TestCase '负向 E2E 证据可复核且不记录秘密或原始输出' {
+    $source = [IO.File]::ReadAllText($negativeE2EPath, [Text.Encoding]::UTF8)
+    foreach ($field in @('sourceCommit', 'releaseVersion', 'offlineZipSha256', 'publicKeySha256', 'windowsVersion', 'dockerVersion', 'composeVersion', 'expectedExitCode', 'actualExitCode', 'outputSha256', 'startedAt', 'completedAt')) {
+        Assert-True ($source.Contains($field)) "负向 E2E 证据缺少字段：$field"
+    }
+    Assert-True (-not $source.Contains('adminPassword =')) '负向 E2E 证据疑似记录管理员密码。'
+    Assert-True (-not $source.Contains('stdout =')) '负向 E2E 证据记录了原始标准输出。'
+    Assert-True (-not $source.Contains('stderr =')) '负向 E2E 证据记录了原始标准错误。'
+    Assert-True ($source.Contains('manifest.release.version')) '负向 E2E 从错误的 manifest 字段读取发行版本。'
+    Assert-True (-not $source.Contains('manifest.product.version')) '负向 E2E 仍在读取不存在的 product.version。'
 }
 
 Invoke-TestCase 'E2E 覆盖核心安装生命周期和可复核证据' {

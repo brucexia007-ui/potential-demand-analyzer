@@ -18,6 +18,64 @@ public static class KanyikanNativeMethods
 '@
 }
 
+if (-not ('KanyikanReleaseSignature' -as [type])) {
+    Add-Type -TypeDefinition @'
+using System;
+using System.IO;
+using System.Security.Cryptography;
+
+public static class KanyikanReleaseSignature
+{
+    private static int ReadLength(byte[] data, ref int offset)
+    {
+        int first = data[offset++];
+        if ((first & 0x80) == 0) return first;
+        int count = first & 0x7f;
+        if (count < 1 || count > 4 || offset + count > data.Length) throw new InvalidDataException("Invalid DER length.");
+        int length = 0;
+        for (int i = 0; i < count; i++) length = (length << 8) | data[offset++];
+        return length;
+    }
+
+    private static byte[] ReadInteger(byte[] data, ref int offset)
+    {
+        if (offset >= data.Length || data[offset++] != 0x02) throw new InvalidDataException("Expected DER integer.");
+        int length = ReadLength(data, ref offset);
+        if (length < 1 || offset + length > data.Length) throw new InvalidDataException("Invalid DER integer.");
+        int start = offset;
+        if (length > 1 && data[start] == 0) { start++; length--; }
+        byte[] value = new byte[length];
+        Buffer.BlockCopy(data, start, value, 0, length);
+        offset += (start - offset) + length;
+        return value;
+    }
+
+    public static bool Verify(byte[] publicKeyPem, byte[] content, byte[] signature)
+    {
+        string pem = System.Text.Encoding.ASCII.GetString(publicKeyPem).Replace("\r", "").Trim();
+        const string begin = "-----BEGIN RSA PUBLIC KEY-----\n";
+        const string end = "\n-----END RSA PUBLIC KEY-----";
+        if (!pem.StartsWith(begin, StringComparison.Ordinal) || !pem.EndsWith(end, StringComparison.Ordinal))
+            throw new InvalidDataException("public-key.pem must contain one PKCS#1 RSA public key.");
+        string base64 = pem.Substring(begin.Length, pem.Length - begin.Length - end.Length).Replace("\n", "");
+        byte[] der = Convert.FromBase64String(base64);
+        int offset = 0;
+        if (der[offset++] != 0x30) throw new InvalidDataException("Expected DER sequence.");
+        int sequenceLength = ReadLength(der, ref offset);
+        if (sequenceLength != der.Length - offset) throw new InvalidDataException("Invalid DER sequence length.");
+        RSAParameters parameters = new RSAParameters { Modulus = ReadInteger(der, ref offset), Exponent = ReadInteger(der, ref offset) };
+        if (offset != der.Length) throw new InvalidDataException("Unexpected RSA public key data.");
+        using (RSACryptoServiceProvider rsa = new RSACryptoServiceProvider())
+        {
+            rsa.PersistKeyInCsp = false;
+            rsa.ImportParameters(parameters);
+            return rsa.VerifyData(content, CryptoConfig.MapNameToOID("SHA256"), signature);
+        }
+    }
+}
+'@
+}
+
 $script:ContractVersion = 1
 $script:ComposeProjectName = 'kanyikan'
 $script:InstallStates = @(
@@ -508,6 +566,204 @@ function Invoke-KanyikanPreflight {
     return Test-KanyikanPreflightFacts -Facts $facts
 }
 
+function Get-KanyikanFileSha256 {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$Path
+    )
+
+    $stream = [System.IO.File]::OpenRead($Path)
+    $sha256 = [Security.Cryptography.SHA256]::Create()
+    try {
+        return ([BitConverter]::ToString($sha256.ComputeHash($stream))).Replace('-', '').ToLowerInvariant()
+    }
+    finally {
+        $sha256.Dispose()
+        $stream.Dispose()
+    }
+}
+
+function Assert-KanyikanPackageRelativePath {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$Path
+    )
+
+    if (
+        [string]::IsNullOrWhiteSpace($Path) -or
+        $Path.Length -gt 240 -or
+        $Path.Contains('\') -or
+        $Path.Contains('//') -or
+        $Path.EndsWith('/') -or
+        [System.IO.Path]::IsPathRooted($Path) -or
+        $Path -match '(^|/)\.\.?(/|$)' -or
+        $Path -match '[:<>"|?*\x00-\x1f]'
+    ) {
+        throw "发行清单包含非法相对路径：$Path"
+    }
+}
+
+function Assert-KanyikanExactProperties {
+    param(
+        [Parameter(Mandatory = $true)]
+        [psobject]$Value,
+
+        [Parameter(Mandatory = $true)]
+        [string[]]$Names,
+
+        [Parameter(Mandatory = $true)]
+        [string]$Context
+    )
+
+    $actualNames = @($Value.PSObject.Properties.Name)
+    foreach ($name in $Names) {
+        if ($actualNames -notcontains $name) { throw "$Context 缺少字段 $name。" }
+    }
+    foreach ($name in $actualNames) {
+        if ($Names -notcontains $name) { throw "$Context 包含未允许字段 $name。" }
+    }
+}
+
+function Assert-KanyikanReleaseManifest {
+    param(
+        [Parameter(Mandatory = $true)]
+        [psobject]$Manifest
+    )
+
+    Assert-KanyikanExactProperties -Value $Manifest -Names @(
+        'schemaVersion', 'product', 'release', 'target', 'requirements', 'entrypoint',
+        'tls', 'compose', 'resources', 'files', 'images', 'signing'
+    ) -Context 'manifest'
+    if ($Manifest.schemaVersion -ne 1 -or $Manifest.product -cne 'Kanyikan') { throw 'manifest 产品或契约版本不合法。' }
+
+    Assert-KanyikanExactProperties -Value $Manifest.release -Names @('version', 'publishedAt', 'sourceCommit', 'packageType') -Context 'release'
+    if ([string]$Manifest.release.version -notmatch '^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(?:-[0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*)?(?:\+[0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*)?$') { throw 'release.version 不是合法语义化版本。' }
+    if ([string]$Manifest.release.sourceCommit -notmatch '^[0-9a-f]{40}$' -or $Manifest.release.packageType -cne 'offline') { throw 'release 元数据不合法。' }
+    $publishedAt = [DateTime]::MinValue
+    if (-not [DateTime]::TryParse([string]$Manifest.release.publishedAt, [ref]$publishedAt)) { throw 'release.publishedAt 不合法。' }
+
+    Assert-KanyikanExactProperties -Value $Manifest.target -Names @('os', 'architecture', 'dockerPlatform', 'deploymentProfile') -Context 'target'
+    if ($Manifest.target.os -cne 'windows' -or $Manifest.target.architecture -cne 'amd64' -or $Manifest.target.dockerPlatform -cne 'linux/amd64' -or $Manifest.target.deploymentProfile -cne 'local_appliance') { throw '发行目标必须是 Windows amd64 本地设备。' }
+
+    Assert-KanyikanExactProperties -Value $Manifest.requirements -Names @('windowsEditions', 'powershellMinimumVersion', 'dockerDesktopRequired', 'composeMajorVersion', 'minimumCpuCores', 'minimumMemoryBytes', 'minimumFreeDiskBytes') -Context 'requirements'
+    if (@($Manifest.requirements.windowsEditions).Count -ne 2 -or $Manifest.requirements.windowsEditions[0] -cne '10' -or $Manifest.requirements.windowsEditions[1] -cne '11' -or $Manifest.requirements.powershellMinimumVersion -cne '5.1' -or -not $Manifest.requirements.dockerDesktopRequired -or $Manifest.requirements.composeMajorVersion -ne 2 -or $Manifest.requirements.minimumCpuCores -ne 4 -or $Manifest.requirements.minimumMemoryBytes -ne 8589934592L -or $Manifest.requirements.minimumFreeDiskBytes -ne 21474836480L) { throw 'requirements 与 V1 契约不一致。' }
+
+    Assert-KanyikanExactProperties -Value $Manifest.entrypoint -Names @('scheme', 'host', 'port', 'path') -Context 'entrypoint'
+    if ($Manifest.entrypoint.scheme -cne 'https' -or $Manifest.entrypoint.host -cne '127.0.0.1' -or $Manifest.entrypoint.port -ne 10443 -or $Manifest.entrypoint.path -cne '/') { throw '唯一入口与 V1 契约不一致。' }
+
+    Assert-KanyikanExactProperties -Value $Manifest.tls -Names @('leafValidityDays', 'caValidityDays') -Context 'tls'
+    if ($Manifest.tls.leafValidityDays -lt 1 -or $Manifest.tls.leafValidityDays -gt 825 -or $Manifest.tls.caValidityDays -lt 825 -or $Manifest.tls.caValidityDays -gt 3650 -or $Manifest.tls.caValidityDays -le $Manifest.tls.leafValidityDays) { throw 'TLS 有效期不合法。' }
+
+    Assert-KanyikanExactProperties -Value $Manifest.compose -Names @('path', 'projectName', 'pullPolicy', 'services') -Context 'compose'
+    $expectedServices = @('postgres', 'redis', 'backend', 'worker', 'crawler', 'beat', 'outbox-relay', 'frontend', 'nginx', 'browserless')
+    if ($Manifest.compose.path -cne 'compose.release.yml' -or $Manifest.compose.projectName -cne 'kanyikan' -or $Manifest.compose.pullPolicy -cne 'never' -or @($Manifest.compose.services).Count -ne 10) { throw 'Compose 契约不合法。' }
+    foreach ($service in $expectedServices) { if (@($Manifest.compose.services) -notcontains $service) { throw "Compose 缺少服务 $service。" } }
+
+    Assert-KanyikanExactProperties -Value $Manifest.resources -Names @('namedVolumes') -Context 'resources'
+    Assert-KanyikanExactProperties -Value $Manifest.resources.namedVolumes -Names @('postgres', 'redis', 'snapshots', 'skills') -Context 'namedVolumes'
+    $expectedVolumes = $script:OwnedResources.volumes
+    foreach ($volume in $expectedVolumes.Keys) { if ([string]$Manifest.resources.namedVolumes.$volume -cne [string]$expectedVolumes[$volume]) { throw "数据卷 $volume 名称不合法。" } }
+
+    $requiredFiles = [ordered]@{
+        'install.cmd' = 'entrypoint'; 'kanyikan.ps1' = 'controller'; 'lib/Kanyikan.Installer.psm1' = 'module';
+        'compose.release.yml' = 'compose'; 'images/kanyikan-images-windows-amd64.tar' = 'image_archive';
+        'config/system.env.template' = 'config_template'; 'docs/快速安装说明.md' = 'documentation';
+        'docs/故障排查.md' = 'documentation'; 'docs/第三方许可证.html' = 'documentation';
+        'public-key.pem' = 'public_key'; 'VERSION' = 'version'; 'LICENSE' = 'license'
+    }
+    if (@($Manifest.files).Count -lt 12) { throw '发行文件清单少于 12 项。' }
+    $seenFiles = @{}
+    foreach ($file in @($Manifest.files)) {
+        Assert-KanyikanExactProperties -Value $file -Names @('path', 'role', 'sizeBytes', 'sha256') -Context 'files[]'
+        Assert-KanyikanPackageRelativePath -Path ([string]$file.path)
+        if ($seenFiles.ContainsKey([string]$file.path)) { throw "发行文件路径重复：$($file.path)" }
+        $seenFiles[[string]$file.path] = $true
+        if ($file.sizeBytes -lt 1 -or [string]$file.sha256 -notmatch '^[0-9a-f]{64}$') { throw "发行文件摘要元数据不合法：$($file.path)" }
+    }
+    foreach ($requiredPath in $requiredFiles.Keys) {
+        $entry = @($Manifest.files | Where-Object { $_.path -ceq $requiredPath -and $_.role -ceq $requiredFiles[$requiredPath] })
+        if ($entry.Count -ne 1) { throw "发行文件清单缺少或错误声明：$requiredPath" }
+    }
+
+    Assert-KanyikanExactProperties -Value $Manifest.images -Names @('backend', 'frontend', 'postgres', 'redis', 'nginx', 'browserless') -Context 'images'
+    $imageServices = [ordered]@{
+        backend = @('backend', 'worker', 'crawler', 'beat', 'outbox-relay'); frontend = @('frontend');
+        postgres = @('postgres'); redis = @('redis'); nginx = @('nginx'); browserless = @('browserless')
+    }
+    foreach ($imageName in $imageServices.Keys) {
+        $image = $Manifest.images.$imageName
+        Assert-KanyikanExactProperties -Value $image -Names @('reference', 'digest', 'imageId', 'platform', 'archivePath', 'composeServices') -Context "images.$imageName"
+        if ([string]$image.digest -notmatch '^sha256:[0-9a-f]{64}$' -or [string]$image.imageId -notmatch '^sha256:[0-9a-f]{64}$' -or -not ([string]$image.reference).EndsWith("@$($image.digest)") -or $image.platform -cne 'linux/amd64' -or $image.archivePath -cne 'images/kanyikan-images-windows-amd64.tar') { throw "镜像 $imageName 元数据不合法。" }
+        $actualServices = @($image.composeServices)
+        if ($actualServices.Count -ne $imageServices[$imageName].Count) { throw "镜像 $imageName 服务映射不合法。" }
+        foreach ($service in $imageServices[$imageName]) { if ($actualServices -notcontains $service) { throw "镜像 $imageName 缺少服务映射 $service。" } }
+    }
+
+    Assert-KanyikanExactProperties -Value $Manifest.signing -Names @('algorithm', 'keyId', 'publicKeySha256', 'publicKeyPath', 'signaturePath') -Context 'signing'
+    if ($Manifest.signing.algorithm -cne 'RSASSA-PKCS1-v1_5-SHA256' -or [string]$Manifest.signing.keyId -notmatch '^[A-Za-z0-9._-]{1,128}$' -or [string]$Manifest.signing.publicKeySha256 -notmatch '^[0-9a-f]{64}$' -or $Manifest.signing.publicKeyPath -cne 'public-key.pem' -or $Manifest.signing.signaturePath -cne 'release-manifest.sig') { throw '签名元数据不合法。' }
+}
+
+function Test-KanyikanReleasePackage {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$PackageRoot,
+
+        [Parameter(Mandatory = $true)]
+        [ValidatePattern('^[0-9a-f]{64}$')]
+        [string]$TrustedPublicKeySha256
+    )
+
+    $root = Get-KanyikanNormalizedPath -Path $PackageRoot
+    $controlPaths = @('release-manifest.json', 'release-manifest.sig', 'manifest.sha256', 'public-key.pem', 'VERSION')
+    foreach ($relativePath in $controlPaths) {
+        if (-not [System.IO.File]::Exists([System.IO.Path]::Combine($root, $relativePath))) { throw "发行包缺少文件：$relativePath" }
+    }
+
+    $manifestPath = [System.IO.Path]::Combine($root, 'release-manifest.json')
+    $signaturePath = [System.IO.Path]::Combine($root, 'release-manifest.sig')
+    $publicKeyPath = [System.IO.Path]::Combine($root, 'public-key.pem')
+    $manifestBytes = [System.IO.File]::ReadAllBytes($manifestPath)
+    try { $manifest = ([Text.Encoding]::UTF8.GetString($manifestBytes)) | ConvertFrom-Json }
+    catch { throw "release-manifest.json 不是合法 JSON：$($_.Exception.Message)" }
+    Assert-KanyikanReleaseManifest -Manifest $manifest
+
+    $publicKeySha256 = Get-KanyikanFileSha256 -Path $publicKeyPath
+    if ($publicKeySha256 -cne $TrustedPublicKeySha256 -or $publicKeySha256 -cne [string]$manifest.signing.publicKeySha256) { throw '发行公钥指纹与固定信任锚不匹配。' }
+    $signature = [System.IO.File]::ReadAllBytes($signaturePath)
+    if (-not [KanyikanReleaseSignature]::Verify([System.IO.File]::ReadAllBytes($publicKeyPath), $manifestBytes, $signature)) { throw 'release-manifest.json 的 RSA-SHA256 签名无效。' }
+
+    $checksumPath = [System.IO.Path]::Combine($root, 'manifest.sha256')
+    $checksumLines = [System.IO.File]::ReadAllLines($checksumPath, [Text.Encoding]::UTF8)
+    $declaredChecksums = @{}
+    foreach ($line in $checksumLines) {
+        if ($line -notmatch '^([0-9a-f]{64})  ([^\r\n]+)$') { throw 'manifest.sha256 格式不合法。' }
+        Assert-KanyikanPackageRelativePath -Path $Matches[2]
+        if ($declaredChecksums.ContainsKey($Matches[2])) { throw "manifest.sha256 路径重复：$($Matches[2])" }
+        $declaredChecksums[$Matches[2]] = $Matches[1]
+    }
+    if ($declaredChecksums.Count -ne @($manifest.files).Count) { throw 'manifest.sha256 与发行文件清单数量不一致。' }
+
+    $rootPrefix = $root + [System.IO.Path]::DirectorySeparatorChar
+    foreach ($file in @($manifest.files)) {
+        $relativePath = [string]$file.path
+        if (-not $declaredChecksums.ContainsKey($relativePath) -or $declaredChecksums[$relativePath] -cne [string]$file.sha256) { throw "manifest.sha256 与 manifest 不一致：$relativePath" }
+        $fullPath = Get-KanyikanNormalizedPath -Path ([System.IO.Path]::Combine($root, $relativePath.Replace('/', [System.IO.Path]::DirectorySeparatorChar)))
+        if (-not $fullPath.StartsWith($rootPrefix, [StringComparison]::OrdinalIgnoreCase) -or -not [System.IO.File]::Exists($fullPath)) { throw "发行文件缺失或越界：$relativePath" }
+        $fileInfo = New-Object System.IO.FileInfo($fullPath)
+        if ($fileInfo.Length -ne [int64]$file.sizeBytes -or (Get-KanyikanFileSha256 -Path $fullPath) -cne [string]$file.sha256) { throw "发行文件大小或 SHA256 不匹配：$relativePath" }
+    }
+
+    $version = [System.IO.File]::ReadAllText([System.IO.Path]::Combine($root, 'VERSION'), [Text.Encoding]::UTF8).Trim()
+    if ($version -cne [string]$manifest.release.version) { throw 'VERSION 与 release.version 不一致。' }
+    return [pscustomobject][ordered]@{
+        passed = $true
+        version = $version
+        manifestSha256 = Get-KanyikanFileSha256 -Path $manifestPath
+        releasePublicKeySha256 = $publicKeySha256
+        manifest = $manifest
+    }
+}
+
 Export-ModuleMember -Function @(
     'Get-KanyikanInstallStates',
     'Get-KanyikanStatePath',
@@ -517,5 +773,6 @@ Export-ModuleMember -Function @(
     'Read-KanyikanInstallState',
     'Set-KanyikanInstallState',
     'Set-KanyikanInstallFailure',
-    'Test-KanyikanPreflightFacts'
+    'Test-KanyikanPreflightFacts',
+    'Test-KanyikanReleasePackage'
 )

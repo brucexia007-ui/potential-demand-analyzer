@@ -855,6 +855,255 @@ function Import-KanyikanReleaseImages {
     return Test-KanyikanLoadedImageFacts -Manifest $Manifest -LoadedReferences $loadedReferences -InspectedImages $inspectedImages
 }
 
+function ConvertFrom-KanyikanSecureString {
+    param(
+        [Parameter(Mandatory = $true)]
+        [Security.SecureString]$Value
+    )
+
+    $pointer = [Runtime.InteropServices.Marshal]::SecureStringToBSTR($Value)
+    try {
+        return [Runtime.InteropServices.Marshal]::PtrToStringBSTR($pointer)
+    }
+    finally {
+        [Runtime.InteropServices.Marshal]::ZeroFreeBSTR($pointer)
+    }
+}
+
+function Test-KanyikanAdminPassword {
+    param(
+        [Parameter(Mandatory = $true)]
+        [Security.SecureString]$Password,
+
+        [Parameter(Mandatory = $true)]
+        [Security.SecureString]$Confirmation
+    )
+
+    $passwordText = ConvertFrom-KanyikanSecureString -Value $Password
+    $confirmationText = ConvertFrom-KanyikanSecureString -Value $Confirmation
+    try {
+        if ($passwordText -cne $confirmationText) {
+            return [pscustomobject]@{ passed = $false; reason = '两次输入的管理员密码不一致。' }
+        }
+        if ($passwordText.Length -lt 16 -or @('admin123', 'password', 'changeme') -contains $passwordText.ToLowerInvariant()) {
+            return [pscustomobject]@{ passed = $false; reason = '管理员密码必须至少为 16 个字符且不得使用默认口令。' }
+        }
+        if ($passwordText.IndexOf([char]0) -ge 0 -or $passwordText.Contains("`r") -or $passwordText.Contains("`n")) {
+            return [pscustomobject]@{ passed = $false; reason = '管理员密码不得包含换行符或 NUL。' }
+        }
+        return [pscustomobject]@{ passed = $true; reason = $null }
+    }
+    finally {
+        $passwordText = $null
+        $confirmationText = $null
+    }
+}
+
+function Read-KanyikanAdminPassword {
+    $password = Read-Host '请输入管理员密码（至少 16 个字符）' -AsSecureString
+    $confirmation = Read-Host '请再次输入管理员密码' -AsSecureString
+    $result = Test-KanyikanAdminPassword -Password $password -Confirmation $confirmation
+    if (-not $result.passed) { throw $result.reason }
+    return $password
+}
+
+function New-KanyikanRandomBytes {
+    param(
+        [Parameter(Mandatory = $true)]
+        [ValidateRange(1, 4096)]
+        [int]$Length
+    )
+
+    $bytes = New-Object byte[] $Length
+    $generator = [Security.Cryptography.RandomNumberGenerator]::Create()
+    try { $generator.GetBytes($bytes); return $bytes }
+    finally { $generator.Dispose() }
+}
+
+function ConvertTo-KanyikanBase64Url {
+    param(
+        [Parameter(Mandatory = $true)]
+        [byte[]]$Bytes,
+
+        [switch]$KeepPadding
+    )
+
+    $encoded = [Convert]::ToBase64String($Bytes).Replace('+', '-').Replace('/', '_')
+    if (-not $KeepPadding) { $encoded = $encoded.TrimEnd('=') }
+    return $encoded
+}
+
+function ConvertTo-KanyikanEnvValue {
+    param(
+        [Parameter(Mandatory = $true)]
+        [AllowEmptyString()]
+        [string]$Value
+    )
+
+    if ($Value.IndexOf([char]0) -ge 0 -or $Value.Contains("`r") -or $Value.Contains("`n")) {
+        throw '环境变量值不得包含换行符或 NUL。'
+    }
+    $escaped = $Value.Replace('\', '\\').Replace('"', '\"').Replace('$', '$$')
+    return '"' + $escaped + '"'
+}
+
+function Set-KanyikanRestrictedFileAcl {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$Path
+    )
+
+    $currentIdentity = [Security.Principal.WindowsIdentity]::GetCurrent()
+    $currentUserSid = $currentIdentity.User
+    $administratorsSid = New-Object Security.Principal.SecurityIdentifier(
+        [Security.Principal.WellKnownSidType]::BuiltinAdministratorsSid,
+        $null
+    )
+    $security = New-Object Security.AccessControl.FileSecurity
+    $security.SetOwner($currentUserSid)
+    $security.SetAccessRuleProtection($true, $false)
+    $rights = [Security.AccessControl.FileSystemRights]::FullControl
+    $allow = [Security.AccessControl.AccessControlType]::Allow
+    $security.AddAccessRule((New-Object Security.AccessControl.FileSystemAccessRule($currentUserSid, $rights, $allow)))
+    $security.AddAccessRule((New-Object Security.AccessControl.FileSystemAccessRule($administratorsSid, $rights, $allow)))
+    [System.IO.File]::SetAccessControl($Path, $security)
+}
+
+function Test-KanyikanRestrictedFileAcl {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$Path
+    )
+
+    if (-not [System.IO.File]::Exists($Path)) { return $false }
+    $security = [System.IO.File]::GetAccessControl($Path)
+    if (-not $security.AreAccessRulesProtected) { return $false }
+    $currentUserSid = [Security.Principal.WindowsIdentity]::GetCurrent().User.Value
+    $administratorsSid = (New-Object Security.Principal.SecurityIdentifier(
+        [Security.Principal.WellKnownSidType]::BuiltinAdministratorsSid,
+        $null
+    )).Value
+    $rules = @($security.GetAccessRules($true, $false, [Security.Principal.SecurityIdentifier]))
+    if ($rules.Count -ne 2) { return $false }
+    foreach ($rule in $rules) {
+        if (@($currentUserSid, $administratorsSid) -cnotcontains $rule.IdentityReference.Value) { return $false }
+        if ($rule.AccessControlType -ne [Security.AccessControl.AccessControlType]::Allow) { return $false }
+        if (($rule.FileSystemRights -band [Security.AccessControl.FileSystemRights]::FullControl) -ne [Security.AccessControl.FileSystemRights]::FullControl) { return $false }
+    }
+    return $true
+}
+
+function Get-KanyikanEnvironmentMap {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$Path
+    )
+
+    $values = @{}
+    foreach ($line in [System.IO.File]::ReadAllLines($Path, [Text.Encoding]::UTF8)) {
+        if ($line -match '^([A-Z][A-Z0-9_]*)=(.*)$') { $values[$Matches[1]] = $Matches[2] }
+    }
+    return $values
+}
+
+function Write-KanyikanSystemEnvironment {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$TemplatePath,
+
+        [Parameter(Mandatory = $true)]
+        [string]$DestinationPath,
+
+        [Parameter(Mandatory = $true)]
+        [psobject]$Manifest,
+
+        [Parameter(Mandatory = $true)]
+        [Security.SecureString]$AdminPassword
+    )
+
+    if ([System.IO.File]::Exists($DestinationPath)) { throw 'system.env 已存在；安装器拒绝覆盖现有密钥。' }
+    if (-not [System.IO.File]::Exists($TemplatePath)) { throw '缺少 system.env.template。' }
+    $adminPasswordText = ConvertFrom-KanyikanSecureString -Value $AdminPassword
+    try {
+        $passwordCheck = Test-KanyikanAdminPassword -Password $AdminPassword -Confirmation $AdminPassword
+        if (-not $passwordCheck.passed) { throw $passwordCheck.reason }
+        $secretKey = ConvertTo-KanyikanBase64Url -Bytes (New-KanyikanRandomBytes -Length 48)
+        $encryptionKey = ConvertTo-KanyikanBase64Url -Bytes (New-KanyikanRandomBytes -Length 32) -KeepPadding
+        $postgresPassword = ConvertTo-KanyikanBase64Url -Bytes (New-KanyikanRandomBytes -Length 32)
+        $redisPassword = ConvertTo-KanyikanBase64Url -Bytes (New-KanyikanRandomBytes -Length 32)
+        $browserlessToken = ConvertTo-KanyikanBase64Url -Bytes (New-KanyikanRandomBytes -Length 32)
+        $postgresUrlPassword = [Uri]::EscapeDataString($postgresPassword)
+        $redisUrlPassword = [Uri]::EscapeDataString($redisPassword)
+        $overrides = [ordered]@{
+            BACKEND_IMAGE = [string]$Manifest.images.backend.reference
+            FRONTEND_IMAGE = [string]$Manifest.images.frontend.reference
+            POSTGRES_IMAGE = [string]$Manifest.images.postgres.reference
+            REDIS_IMAGE = [string]$Manifest.images.redis.reference
+            NGINX_IMAGE = [string]$Manifest.images.nginx.reference
+            BROWSERLESS_IMAGE = [string]$Manifest.images.browserless.reference
+            SECRET_KEY = $secretKey
+            CONFIG_ENCRYPTION_KEY = $encryptionKey
+            ADMIN_PASSWORD = $adminPasswordText
+            POSTGRES_PASSWORD = $postgresPassword
+            REDIS_PASSWORD = $redisPassword
+            BROWSERLESS_TOKEN = $browserlessToken
+            DATABASE_URL = "postgresql://demand_user:$postgresUrlPassword@postgres:5432/demand_analyzer"
+            REDIS_URL = "redis://:$redisUrlPassword@redis:6379/0"
+        }
+
+        $seen = @{}
+        $outputLines = @()
+        foreach ($line in [System.IO.File]::ReadAllLines($TemplatePath, [Text.Encoding]::UTF8)) {
+            if ($line -match '^([A-Z][A-Z0-9_]*)=.*$' -and $overrides.Contains($Matches[1])) {
+                $key = $Matches[1]
+                $outputLines += "$key=$(ConvertTo-KanyikanEnvValue -Value ([string]$overrides[$key]))"
+                $seen[$key] = $true
+            }
+            else { $outputLines += $line }
+        }
+        foreach ($key in $overrides.Keys) { if (-not $seen.ContainsKey($key)) { throw "system.env.template 缺少键 $key。" } }
+
+        $directory = [System.IO.Path]::GetDirectoryName((Get-KanyikanNormalizedPath -Path $DestinationPath))
+        [System.IO.Directory]::CreateDirectory($directory) | Out-Null
+        $temporaryPath = [System.IO.Path]::Combine($directory, ".system.env.$([Guid]::NewGuid().ToString('N')).tmp")
+        try {
+            $utf8WithoutBom = New-Object Text.UTF8Encoding($false)
+            [System.IO.File]::WriteAllLines($temporaryPath, $outputLines, $utf8WithoutBom)
+            Set-KanyikanRestrictedFileAcl -Path $temporaryPath
+            if (-not (Test-KanyikanRestrictedFileAcl -Path $temporaryPath)) { throw '无法收紧 system.env ACL。' }
+            if (-not [KanyikanNativeMethods]::MoveFileEx($temporaryPath, $DestinationPath, (0x1 -bor 0x8))) {
+                throw (New-Object ComponentModel.Win32Exception([Runtime.InteropServices.Marshal]::GetLastWin32Error()))
+            }
+        }
+        finally {
+            if ([System.IO.File]::Exists($temporaryPath)) { [System.IO.File]::Delete($temporaryPath) }
+        }
+    }
+    finally {
+        $adminPasswordText = $null
+    }
+}
+
+function Test-KanyikanSystemEnvironment {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$Path,
+
+        [Parameter(Mandatory = $true)]
+        [psobject]$Manifest
+    )
+
+    if (-not [System.IO.File]::Exists($Path) -or -not (Test-KanyikanRestrictedFileAcl -Path $Path)) { return $false }
+    $values = Get-KanyikanEnvironmentMap -Path $Path
+    $required = @('SECRET_KEY', 'CONFIG_ENCRYPTION_KEY', 'ADMIN_PASSWORD', 'POSTGRES_PASSWORD', 'REDIS_PASSWORD', 'BROWSERLESS_TOKEN', 'DATABASE_URL', 'REDIS_URL')
+    foreach ($key in $required) { if (-not $values.ContainsKey($key) -or [string]::IsNullOrWhiteSpace([string]$values[$key])) { return $false } }
+    foreach ($imageName in @('backend', 'frontend', 'postgres', 'redis', 'nginx', 'browserless')) {
+        $key = "$($imageName.ToUpperInvariant())_IMAGE"
+        if (-not $values.ContainsKey($key) -or [string]$values[$key] -cne (ConvertTo-KanyikanEnvValue -Value ([string]$Manifest.images.$imageName.reference))) { return $false }
+    }
+    return $true
+}
+
 Export-ModuleMember -Function @(
     'Get-KanyikanInstallStates',
     'Get-KanyikanStatePath',
@@ -862,10 +1111,15 @@ Export-ModuleMember -Function @(
     'Import-KanyikanReleaseImages',
     'Invoke-KanyikanPreflight',
     'New-KanyikanInstallState',
+    'Read-KanyikanAdminPassword',
     'Read-KanyikanInstallState',
     'Set-KanyikanInstallState',
     'Set-KanyikanInstallFailure',
+    'Test-KanyikanAdminPassword',
     'Test-KanyikanPreflightFacts',
     'Test-KanyikanLoadedImageFacts',
-    'Test-KanyikanReleasePackage'
+    'Test-KanyikanReleasePackage',
+    'Test-KanyikanRestrictedFileAcl',
+    'Test-KanyikanSystemEnvironment',
+    'Write-KanyikanSystemEnvironment'
 )

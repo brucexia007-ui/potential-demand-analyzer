@@ -76,6 +76,44 @@ public static class KanyikanReleaseSignature
 '@
 }
 
+if (-not ('KanyikanPinnedHttps' -as [type])) {
+    Add-Type -TypeDefinition @'
+using System;
+using System.Net;
+using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
+
+public static class KanyikanPinnedHttps
+{
+    public static int GetStatusCode(string url, byte[] expectedSha256, int timeoutMilliseconds)
+    {
+        HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+        request.Method = "GET";
+        request.Timeout = timeoutMilliseconds;
+        request.ReadWriteTimeout = timeoutMilliseconds;
+        request.Proxy = null;
+        request.AllowAutoRedirect = false;
+        request.ServerCertificateValidationCallback = (sender, certificate, chain, errors) =>
+        {
+            if (certificate == null) return false;
+            using (SHA256 sha256 = SHA256.Create())
+            {
+                byte[] actual = sha256.ComputeHash(certificate.GetRawCertData());
+                if (actual.Length != expectedSha256.Length) return false;
+                int difference = 0;
+                for (int i = 0; i < actual.Length; i++) difference |= actual[i] ^ expectedSha256[i];
+                return difference == 0;
+            }
+        };
+        using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
+        {
+            return (int)response.StatusCode;
+        }
+    }
+}
+'@
+}
+
 $script:ContractVersion = 1
 $script:ComposeProjectName = 'kanyikan'
 $script:InstallStates = @(
@@ -1248,12 +1286,135 @@ function Remove-KanyikanLocalRootTrust {
     return $removed
 }
 
+function Get-KanyikanComposeArguments {
+    param(
+        [Parameter(Mandatory = $true)][string]$InstallRoot,
+        [Parameter(Mandatory = $true)][string[]]$Arguments
+    )
+
+    $root = Get-KanyikanNormalizedPath -Path $InstallRoot
+    return @(
+        'compose', '--project-name', $script:ComposeProjectName,
+        '--env-file', [System.IO.Path]::Combine($root, 'config', 'system.env'),
+        '--file', [System.IO.Path]::Combine($root, 'compose.release.yml')
+    ) + $Arguments
+}
+
+function Invoke-KanyikanComposeCommand {
+    param(
+        [Parameter(Mandatory = $true)][string]$InstallRoot,
+        [Parameter(Mandatory = $true)][string[]]$Arguments
+    )
+
+    return Invoke-KanyikanDockerCommand -Arguments (Get-KanyikanComposeArguments -InstallRoot $InstallRoot -Arguments $Arguments)
+}
+
+function Get-KanyikanServiceFacts {
+    param([Parameter(Mandatory = $true)][string]$InstallRoot)
+
+    $result = Invoke-KanyikanComposeCommand -InstallRoot $InstallRoot -Arguments @('ps', '--format', 'json', '--all')
+    if ($result.exitCode -ne 0) { throw "无法读取 Compose 服务状态：$(Protect-KanyikanText -Text $result.output)" }
+    if ([string]::IsNullOrWhiteSpace($result.output)) { return @() }
+    try {
+        if ($result.output.TrimStart().StartsWith('[')) { return @($result.output | ConvertFrom-Json) }
+        $facts = @()
+        foreach ($line in ($result.output -split '\r?\n' | Where-Object { -not [string]::IsNullOrWhiteSpace($_) })) { $facts += $line | ConvertFrom-Json }
+        return $facts
+    }
+    catch { throw 'Docker Compose 返回了无法解析的服务状态。' }
+}
+
+function Test-KanyikanServiceFacts {
+    param([Parameter(Mandatory = $true)][psobject[]]$Facts)
+
+    $expectedServices = @('postgres', 'redis', 'backend', 'worker', 'crawler', 'beat', 'outbox-relay', 'frontend', 'nginx', 'browserless')
+    if ($Facts.Count -ne 10) { return [pscustomobject]@{ passed = $false; reason = "服务数量不是 10，实际为 $($Facts.Count)。" } }
+    foreach ($service in $expectedServices) {
+        $matches = @($Facts | Where-Object { [string]$_.Service -ceq $service })
+        if ($matches.Count -ne 1) { return [pscustomobject]@{ passed = $false; reason = "服务 $service 缺失或重复。" } }
+        $fact = $matches[0]
+        if ([string]$fact.State -cne 'running' -or [string]$fact.Health -cne 'healthy') { return [pscustomobject]@{ passed = $false; reason = "服务 $service 尚未健康。" } }
+        $publishers = @($fact.Publishers)
+        if ($service -ceq 'nginx') {
+            if ($publishers.Count -ne 1) { return [pscustomobject]@{ passed = $false; reason = 'Nginx 发布端口数量不合法。' } }
+            $publisher = $publishers[0]
+            if ([string]$publisher.URL -cne '127.0.0.1' -or [int]$publisher.PublishedPort -ne 10443 -or [int]$publisher.TargetPort -ne 443 -or [string]$publisher.Protocol -cne 'tcp') { return [pscustomobject]@{ passed = $false; reason = 'Nginx 未精确绑定 127.0.0.1:10443。' } }
+        }
+        elseif ($publishers.Count -ne 0) { return [pscustomobject]@{ passed = $false; reason = "服务 $service 不得发布宿主端口。" } }
+    }
+    return [pscustomobject]@{ passed = $true; reason = $null }
+}
+
+function Get-KanyikanLeafCertificateSha256Bytes {
+    param([Parameter(Mandatory = $true)][string]$CertificatePath)
+    $certificate = New-Object Security.Cryptography.X509Certificates.X509Certificate2($CertificatePath)
+    $sha256 = [Security.Cryptography.SHA256]::Create()
+    try { return $sha256.ComputeHash($certificate.RawData) }
+    finally { $sha256.Dispose(); $certificate.Dispose() }
+}
+
+function Test-KanyikanBootstrapEndpoints {
+    param(
+        [Parameter(Mandatory = $true)][string]$LeafCertificatePath,
+        [int]$RequestTimeoutSeconds = 10
+    )
+
+    $expectedSha256 = Get-KanyikanLeafCertificateSha256Bytes -CertificatePath $LeafCertificatePath
+    foreach ($path in @('/health', '/ready')) {
+        try { $statusCode = [KanyikanPinnedHttps]::GetStatusCode("https://127.0.0.1:10443$path", $expectedSha256, ($RequestTimeoutSeconds * 1000)) }
+        catch { return [pscustomobject]@{ passed = $false; reason = "$path 请求失败：$(Protect-KanyikanText -Text $_.Exception.Message)" } }
+        if ($statusCode -lt 200 -or $statusCode -ge 300) { return [pscustomobject]@{ passed = $false; reason = "$path 返回 HTTP $statusCode。" } }
+    }
+    return [pscustomobject]@{ passed = $true; reason = $null }
+}
+
+function Wait-KanyikanBootstrapReady {
+    param(
+        [Parameter(Mandatory = $true)][string]$InstallRoot,
+        [ValidateRange(1, 3600)][int]$TimeoutSeconds = 600,
+        [ValidateRange(1, 60)][int]$PollIntervalSeconds = 5
+    )
+
+    $deadline = [DateTime]::UtcNow.AddSeconds($TimeoutSeconds)
+    $lastReason = '服务尚未报告状态。'
+    do {
+        try {
+            $serviceResult = Test-KanyikanServiceFacts -Facts @(Get-KanyikanServiceFacts -InstallRoot $InstallRoot)
+            if ($serviceResult.passed) {
+                $endpointResult = Test-KanyikanBootstrapEndpoints -LeafCertificatePath ([System.IO.Path]::Combine((Get-KanyikanNormalizedPath -Path $InstallRoot), 'config', 'certs', 'localhost.crt'))
+                if ($endpointResult.passed) { return [pscustomobject]@{ passed = $true; reason = $null } }
+                $lastReason = $endpointResult.reason
+            }
+            else { $lastReason = $serviceResult.reason }
+        }
+        catch { $lastReason = Protect-KanyikanText -Text $_.Exception.Message }
+        if ([DateTime]::UtcNow -lt $deadline) { Start-Sleep -Seconds $PollIntervalSeconds }
+    } while ([DateTime]::UtcNow -lt $deadline)
+    return [pscustomobject]@{ passed = $false; reason = "健康检查超时：$lastReason" }
+}
+
+function Start-KanyikanServices {
+    param([Parameter(Mandatory = $true)][string]$InstallRoot)
+    $config = Invoke-KanyikanComposeCommand -InstallRoot $InstallRoot -Arguments @('config', '--quiet')
+    if ($config.exitCode -ne 0) { throw "Compose 配置无效：$(Protect-KanyikanText -Text $config.output)" }
+    $up = Invoke-KanyikanComposeCommand -InstallRoot $InstallRoot -Arguments @('up', '--detach', '--no-build', '--pull', 'never', '--remove-orphans')
+    if ($up.exitCode -ne 0) { throw "Compose 启动失败：$(Protect-KanyikanText -Text $up.output)" }
+}
+
+function Stop-KanyikanServices {
+    param([Parameter(Mandatory = $true)][string]$InstallRoot)
+    $result = Invoke-KanyikanComposeCommand -InstallRoot $InstallRoot -Arguments @('stop')
+    if ($result.exitCode -ne 0) { throw "Compose 停止失败：$(Protect-KanyikanText -Text $result.output)" }
+}
+
 Export-ModuleMember -Function @(
     'Get-KanyikanCertificateDockerArguments',
+    'Get-KanyikanComposeArguments',
     'Get-KanyikanInstallStates',
     'Get-KanyikanLocalCaThumbprint',
     'Get-KanyikanStatePath',
     'Get-KanyikanHostFacts',
+    'Get-KanyikanServiceFacts',
     'Import-KanyikanReleaseImages',
     'Install-KanyikanLocalRootTrust',
     'Invoke-KanyikanPreflight',
@@ -1264,6 +1425,8 @@ Export-ModuleMember -Function @(
     'Remove-KanyikanLocalRootTrust',
     'Set-KanyikanInstallState',
     'Set-KanyikanInstallFailure',
+    'Start-KanyikanServices',
+    'Stop-KanyikanServices',
     'Test-KanyikanAdminPassword',
     'Test-KanyikanPreflightFacts',
     'Test-KanyikanLoadedImageFacts',
@@ -1271,5 +1434,7 @@ Export-ModuleMember -Function @(
     'Test-KanyikanReleasePackage',
     'Test-KanyikanRestrictedFileAcl',
     'Test-KanyikanSystemEnvironment',
+    'Test-KanyikanServiceFacts',
+    'Wait-KanyikanBootstrapReady',
     'Write-KanyikanSystemEnvironment'
 )

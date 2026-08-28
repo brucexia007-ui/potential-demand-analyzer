@@ -212,5 +212,33 @@ switch -CaseSensitive ($Command.ToLowerInvariant()) {
         Write-KanyikanResult -Level '重要' -Message '请另行安全保存 config/system.env；缺少该文件将无法恢复已加密的 Provider 配置。'
         exit 0
     }
+    'restore' {
+        $script:State = Read-KanyikanInstallState -InstallRoot $script:InstallRoot
+        if ($script:State.currentState -cne 'INSTALLED') { Stop-KanyikanCommand -ExitCode 10 -Reason '尚未完成安装。' -NextStep '请先运行 install。' }
+        if ([string]::IsNullOrWhiteSpace($Backup)) { Stop-KanyikanCommand -ExitCode 10 -Reason 'restore 必须指定 -Backup。' -NextStep '请传入 data/backups 内的完整备份目录。' }
+        $script:Stage = 'RESTORE_VALIDATE'
+        try { $validated = Invoke-KanyikanValidateBackup -InstallRoot $script:InstallRoot -State $script:State -BackupPath $Backup }
+        catch { Stop-KanyikanCommand -ExitCode 61 -Reason $_.Exception.Message -NextStep '请选择当前版本生成且带 VALID 标志的完整备份。' }
+        $confirmation = Read-Host "恢复将覆盖当前数据库、快照和 Skill。请输入 RESTORE $($validated.name)"
+        if ($confirmation -cne "RESTORE $($validated.name)") { Stop-KanyikanCommand -ExitCode 10 -Reason '恢复确认文本不匹配。' -NextStep '未修改任何数据；需要恢复时重新运行命令。' }
+        $script:Stage = 'RESTORE_PROTECTION_BACKUP'
+        try { $protection = Invoke-KanyikanBackup -InstallRoot $script:InstallRoot -State $script:State }
+        catch { Stop-KanyikanCommand -ExitCode 60 -Reason $_.Exception.Message -NextStep '保护备份失败，恢复未开始。' }
+        $script:Stage = 'RESTORE'
+        try {
+            Stop-KanyikanServices -InstallRoot $script:InstallRoot
+            [void](Invoke-KanyikanRestore -InstallRoot $script:InstallRoot -State $script:State -BackupName $validated.name)
+            Start-KanyikanServices -InstallRoot $script:InstallRoot
+            $ready = Wait-KanyikanBootstrapReady -InstallRoot $script:InstallRoot
+            if (-not $ready.passed) { throw $ready.reason }
+        }
+        catch {
+            try { Stop-KanyikanServices -InstallRoot $script:InstallRoot } catch { }
+            Stop-KanyikanCommand -ExitCode 61 -Reason $_.Exception.Message -NextStep "入口已停止；恢复前保护备份保留在 $($protection.path)，请人工处理后重试。"
+        }
+        Write-KanyikanResult -Level '成功' -Message "已从 $($validated.path) 恢复并通过健康检查。"
+        Write-KanyikanResult -Level '保护备份' -Message $protection.path
+        exit 0
+    }
     default { Write-Host "[失败] 未知或尚未实现的命令：$Command"; exit 10 }
 }

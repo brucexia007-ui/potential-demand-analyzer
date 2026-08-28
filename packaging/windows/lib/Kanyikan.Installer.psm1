@@ -1499,6 +1499,88 @@ function Invoke-KanyikanBackup {
     return [pscustomobject][ordered]@{ name = $backupName; path = $windowsPath; valid = $true }
 }
 
+function Resolve-KanyikanBackupDirectory {
+    param(
+        [Parameter(Mandatory = $true)][string]$InstallRoot,
+        [Parameter(Mandatory = $true)][string]$BackupPath
+    )
+    $backupRoot = Get-KanyikanNormalizedPath -Path ([System.IO.Path]::Combine((Get-KanyikanNormalizedPath -Path $InstallRoot), 'data', 'backups'))
+    $resolved = Get-KanyikanNormalizedPath -Path $BackupPath
+    $prefix = $backupRoot + [System.IO.Path]::DirectorySeparatorChar
+    if (-not $resolved.StartsWith($prefix, [StringComparison]::OrdinalIgnoreCase) -or -not [System.IO.Directory]::Exists($resolved)) { throw '恢复目录必须存在于 data/backups 内。' }
+    if ([System.IO.Path]::GetFileName($resolved) -notmatch '^kanyikan-[0-9]{8}T[0-9]{6}Z-[0-9a-f]{8}$') { throw '恢复目录名称不合法。' }
+    $cursor = $resolved
+    while ($cursor.StartsWith($backupRoot, [StringComparison]::OrdinalIgnoreCase)) {
+        if (([System.IO.File]::GetAttributes($cursor) -band [System.IO.FileAttributes]::ReparsePoint) -ne 0) { throw '恢复路径不得包含重解析点。' }
+        if ([string]::Equals($cursor, $backupRoot, [StringComparison]::OrdinalIgnoreCase)) { break }
+        $cursor = [System.IO.Directory]::GetParent($cursor).FullName
+    }
+    return $resolved
+}
+
+function Invoke-KanyikanValidateBackup {
+    param(
+        [Parameter(Mandatory = $true)][string]$InstallRoot,
+        [Parameter(Mandatory = $true)][psobject]$State,
+        [Parameter(Mandatory = $true)][string]$BackupPath
+    )
+    $resolved = Resolve-KanyikanBackupDirectory -InstallRoot $InstallRoot -BackupPath $BackupPath
+    $name = [System.IO.Path]::GetFileName($resolved)
+    $result = Invoke-KanyikanDockerCommand -Arguments (Get-KanyikanBackupArguments -InstallRoot $InstallRoot -State $State -BackupName $name)
+    if ($result.exitCode -ne 0) { throw "备份复核失败：$(Protect-KanyikanText -Text $result.output)" }
+    $jsonLine = @($result.output -split '\r?\n' | Where-Object { $_.Trim().StartsWith('{') }) | Select-Object -Last 1
+    try { $metadata = ($jsonLine | ConvertFrom-Json).metadata }
+    catch { throw '备份复核未返回合法公开元数据。' }
+    if ([string]$metadata.productVersion -cne [string]$State.productVersion -or [string]$metadata.manifestSha256 -cne [string]$State.manifestSha256 -or [string]$metadata.releasePublicKeySha256 -cne [string]$State.releasePublicKeySha256) { throw '备份版本或发行信任元数据与当前安装不匹配。' }
+    return [pscustomobject][ordered]@{ name = $name; path = $resolved; metadata = $metadata }
+}
+
+function Get-KanyikanRestoreArguments {
+    param(
+        [Parameter(Mandatory = $true)][string]$InstallRoot,
+        [Parameter(Mandatory = $true)][string]$BackupName
+    )
+    if ($BackupName -notmatch '^kanyikan-[0-9]{8}T[0-9]{6}Z-[0-9a-f]{8}$') { throw '备份名称不合法。' }
+    return Get-KanyikanComposeArguments -InstallRoot $InstallRoot -Arguments @(
+        'run', '--rm', '--no-deps', '--pull', 'never', '--entrypoint', 'python', 'backend',
+        '-m', 'app.tools.local_backup', 'restore', '--backup-root', '/backups',
+        '--backup', "/backups/$BackupName", '--snapshots-root', '/app/data/snapshots',
+        '--skills-root', '/app/data/workspace_skills'
+    )
+}
+
+function Start-KanyikanPostgresForRestore {
+    param(
+        [Parameter(Mandatory = $true)][string]$InstallRoot,
+        [ValidateRange(1, 600)][int]$TimeoutSeconds = 120
+    )
+    $start = Invoke-KanyikanComposeCommand -InstallRoot $InstallRoot -Arguments @('up', '--detach', '--no-build', '--pull', 'never', 'postgres')
+    if ($start.exitCode -ne 0) { throw "无法启动恢复所需 PostgreSQL：$(Protect-KanyikanText -Text $start.output)" }
+    $deadline = [DateTime]::UtcNow.AddSeconds($TimeoutSeconds)
+    do {
+        $facts = @(Get-KanyikanServiceFacts -InstallRoot $InstallRoot | Where-Object { $_.Service -ceq 'postgres' })
+        if ($facts.Count -eq 1 -and $facts[0].State -ceq 'running' -and $facts[0].Health -ceq 'healthy') { return }
+        if ([DateTime]::UtcNow -lt $deadline) { Start-Sleep -Seconds 2 }
+    } while ([DateTime]::UtcNow -lt $deadline)
+    throw '等待 PostgreSQL 恢复就绪超时。'
+}
+
+function Invoke-KanyikanRestore {
+    param(
+        [Parameter(Mandatory = $true)][string]$InstallRoot,
+        [Parameter(Mandatory = $true)][psobject]$State,
+        [Parameter(Mandatory = $true)][string]$BackupName
+    )
+    Start-KanyikanPostgresForRestore -InstallRoot $InstallRoot
+    $result = Invoke-KanyikanDockerCommand -Arguments (Get-KanyikanRestoreArguments -InstallRoot $InstallRoot -BackupName $BackupName)
+    if ($result.exitCode -ne 0) { throw "完整恢复失败：$(Protect-KanyikanText -Text $result.output)" }
+    $jsonLine = @($result.output -split '\r?\n' | Where-Object { $_.Trim().StartsWith('{') }) | Select-Object -Last 1
+    try { $metadata = $jsonLine | ConvertFrom-Json }
+    catch { throw '完整恢复工具未返回合法公开元数据。' }
+    if ([string]$metadata.status -cne 'restored' -or [string]$metadata.backup -cne $BackupName) { throw '完整恢复结果与请求不一致。' }
+    return $metadata
+}
+
 Export-ModuleMember -Function @(
     'Get-KanyikanCertificateDockerArguments',
     'Get-KanyikanBackupArguments',
@@ -1507,17 +1589,21 @@ Export-ModuleMember -Function @(
     'Get-KanyikanLocalCaThumbprint',
     'Get-KanyikanStatePath',
     'Get-KanyikanHostFacts',
+    'Get-KanyikanRestoreArguments',
     'Get-KanyikanInspectedImages',
     'Get-KanyikanServiceFacts',
     'Import-KanyikanReleaseImages',
     'Install-KanyikanLocalRootTrust',
     'Invoke-KanyikanBackup',
+    'Invoke-KanyikanRestore',
+    'Invoke-KanyikanValidateBackup',
     'Invoke-KanyikanPreflight',
     'New-KanyikanInstallState',
     'New-KanyikanLocalCertificate',
     'Read-KanyikanAdminPassword',
     'Read-KanyikanInstallState',
     'Remove-KanyikanLocalRootTrust',
+    'Resolve-KanyikanBackupDirectory',
     'Set-KanyikanInstallState',
     'Set-KanyikanInstallFailure',
     'Set-KanyikanBackupAcl',

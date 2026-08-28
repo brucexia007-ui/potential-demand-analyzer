@@ -161,7 +161,7 @@ jobs:
 
       - name: 构建并推送 Backend 候选镜像
         id: backend_image
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: ./backend
           file: ./backend/Dockerfile
@@ -173,7 +173,7 @@ jobs:
 
       - name: 构建并推送 Frontend 候选镜像
         id: frontend_image
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: ./frontend
           file: ./frontend/Dockerfile
@@ -185,7 +185,7 @@ jobs:
 
       - name: 构建并推送 Nginx 候选镜像
         id: nginx_image
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: ./deploy/nginx
           file: ./deploy/nginx/Dockerfile.release

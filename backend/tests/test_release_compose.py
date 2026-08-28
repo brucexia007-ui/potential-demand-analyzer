@@ -2,10 +2,12 @@
 from __future__ import annotations
 
 import json
+import os
 import re
 from pathlib import Path
 
 import yaml
+from cryptography.fernet import Fernet
 
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[2]
@@ -197,3 +199,33 @@ def test_system_env_template_contains_only_bootstrap_configuration() -> None:
         "TAVILY_API_KEY",
     }
     assert execution_only.isdisjoint(entries)
+
+
+def test_installer_filled_system_env_satisfies_local_bootstrap_preflight(
+    monkeypatch,
+) -> None:
+    from app.core.production_preflight import validate_production_environment
+
+    entries = _load_env_template()
+    entries.update(
+        {
+            "SECRET_KEY": "s" * 64,
+            "CONFIG_ENCRYPTION_KEY": Fernet.generate_key().decode("ascii"),
+            "ADMIN_PASSWORD": "Local-Admin-Password-2026!",
+            "POSTGRES_PASSWORD": "local-postgres-secret-2026",
+            "REDIS_PASSWORD": "local-redis-secret-2026",
+            "DATABASE_URL": (
+                "postgresql+psycopg2://demand_user:local-postgres-secret-2026"
+                "@postgres:5432/demand_analyzer"
+            ),
+            "REDIS_URL": "redis://:local-redis-secret-2026@redis:6379/0",
+            "BROWSERLESS_TOKEN": "local-browserless-token-2026",
+        }
+    )
+    for key, value in entries.items():
+        monkeypatch.setenv(key, value)
+    for key in tuple(os.environ):
+        if key.startswith("LLM_PROVIDER_"):
+            monkeypatch.delenv(key, raising=False)
+
+    validate_production_environment()

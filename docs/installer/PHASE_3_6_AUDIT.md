@@ -1,6 +1,6 @@
 # Phase 3～6 实现与证据审计
 
-审计基线：`94b4005df0e6baeacba5008644b5323e3aafdb29`
+审计基线：`ad4db7d55c53c8deee5dc47897ce5de8a7ac1ac1`
 
 审计时间：2026-08-28（Asia/Shanghai）
 
@@ -47,6 +47,24 @@
 
 证据强度：工作流和发行工具为 `IMPLEMENTED_AUTOMATED_VERIFIED`；GitHub Actions 实际执行为 `IMPLEMENTED_NOT_RUNTIME_VERIFIED`。
 
+### 全仓后端回归
+
+执行范围：隔离 PostgreSQL 16 与 Redis 环境，使用仓库规定的 `DATABASE_URL_TEST`，执行 `python -m pytest -m "not integration" --tb=short -q`。
+
+结果：1979 条用例完成收集；1944 条选中，其中 1939 条通过、5 条跳过；35 条 integration 用例按既定基线排除，0 失败，8 条弃用或命名空间警告。
+
+证据强度：`IMPLEMENTED_AUTOMATED_VERIFIED`。该结果不包含显式标记为 integration 的 35 条用例，也不替代 Windows 十服务运行验收。
+
+### 前端构建与浏览器回归
+
+执行范围：前端依赖安全契约、Next.js 生产构建与 TypeScript 检查，以及连接隔离测试后端的完整 Chromium 套件。最终浏览器命令显式使用 `--retries=0`，避免以重试掩盖波动。
+
+结果：安全契约 1/1 通过；生产构建完成 22 个静态页面生成并通过类型检查；Playwright 108/108 通过，0 失败、0 flaky。
+
+首轮浏览器执行实际暴露 6 条失败与 3 条 flaky。失败用例先作为复现证据保留，随后修复默认口令过时断言、任务详情非精确选择器、页面稳定等待和配置向导漏模拟通知接口导致的会话过期竞态；对应提交为 `3400796` 与 `ad4db7d`。
+
+证据强度：`IMPLEMENTED_AUTOMATED_VERIFIED`。本机浏览器结果不替代 Tag 工作流在 GitHub 托管环境中的实际执行记录。
+
 ## 3. Phase 3
 
 | 要求 | 当前证据 | 状态 |
@@ -88,6 +106,7 @@
 | 六镜像 SPDX SBOM、第三方许可证、Grype Critical/High 门禁与时效豁免 | 生成器、评估器与工作流契约测试 | `IMPLEMENTED_AUTOMATED_VERIFIED` |
 | 六镜像 Cosign 签名、SBOM 证明、GitHub 来源证明 | Tag 工作流已接线，尚未在 GitHub 执行 | `IMPLEMENTED_NOT_RUNTIME_VERIFIED` |
 | 离线 ZIP、SBOM ZIP、许可证、`SHA256SUMS` 和 RSA 顶层签名 | 生成器及独立验签测试；候选工作流已接线 | `IMPLEMENTED_AUTOMATED_VERIFIED` |
+| 后端非集成回归、前端安全契约、生产构建和 Chromium E2E | 本机隔离环境 1939/1939、1/1、构建成功、108/108 且禁用重试 | `IMPLEMENTED_AUTOMATED_VERIFIED` |
 | 端口占用、Docker 停止、Windows Containers、低磁盘、manifest/镜像损坏 | 负向 E2E 编排、精确退出码与无副作用检查已实现 | `IMPLEMENTED_NOT_RUNTIME_VERIFIED` |
 | `IMAGES_LOADED`、`CONFIG_CREATED`、`SERVICES_STARTING` 中断重试及重复安装不重置密钥 | 中断进程、重试、认证冒烟和身份摘要编排已实现 | `IMPLEMENTED_NOT_RUNTIME_VERIFIED` |
 | 三轮独立纯净 Windows 11 完全断网 E2E | 工作流矩阵与证据上传已实现；runner 与证据不存在 | `EXTERNAL_NOT_RUN` |
@@ -111,5 +130,5 @@
 3. 为仓库配置配对的 RSA Secrets，并准备三台带规定标签、机器标记和 Hook 的一次性 Windows 11 runner。
 4. 推送候选 Tag，保存六镜像签名/证明、`release-candidate`、三轮 Windows JSON 和脱敏输出。
 5. 使用两套正式版本执行更新成功、迁移/健康失败回滚成功和回滚失败三类真实 Windows 场景。
-6. 执行全仓后端、前端和浏览器回归；根据实际证据更新 `ACCEPTANCE_MATRIX.md`，未执行的真实 E2E 条目不得写 PASS。
+6. 本机全仓后端非集成、前端构建和 108 条浏览器回归已完成；候选 Tag 仍须在 GitHub 工作流中重跑相同门禁并保存日志。根据实际外部证据更新 `ACCEPTANCE_MATRIX.md`，未执行的真实 Windows E2E 条目不得写 PASS。
 7. 只有全部 P0/P1 发布门通过后，才允许新增正式 GitHub Release 作业并解除 NO-GO。

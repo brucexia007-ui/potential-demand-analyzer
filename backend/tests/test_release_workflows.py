@@ -169,7 +169,7 @@ def test_phase_audit_separates_automated_evidence_from_unverified_release_gates(
     assert re.search(r"审计基线：`[0-9a-f]{40}`", audit)
     for value in (
         "108/108",
-        "39/39",
+        "47/47",
         "IMPLEMENTED_AUTOMATED_VERIFIED",
         "IMPLEMENTED_NOT_RUNTIME_VERIFIED",
         "EXTERNAL_NOT_RUN",

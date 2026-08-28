@@ -1,6 +1,6 @@
 # Phase 3～6 实现与证据审计
 
-审计基线：`ad4db7d55c53c8deee5dc47897ce5de8a7ac1ac1`
+审计基线：`65bc53aadb85271bf44db63754720350e4fff975`
 
 审计时间：2026-08-28（Asia/Shanghai）
 
@@ -33,6 +33,7 @@
 - `backend/tests/test_release_workflows.py`
 - `backend/tests/test_windows_release_builder.py`
 - `backend/tests/test_windows_release_verifier.py`
+- `backend/tests/test_windows_online_release.py`
 - `backend/tests/test_third_party_license_report.py`
 - `backend/tests/test_release_asset_finalizer.py`
 - `backend/tests/test_release_vulnerability_gate.py`
@@ -40,9 +41,11 @@
 - `backend/tests/test_release_compose.py`
 - `backend/tests/test_release_nginx_image.py`
 
-结果：39/39 用例通过，0 失败。
+结果：47/47 用例通过，0 失败。
 
-覆盖：严格 Tag 契约、六镜像候选矩阵、SBOM/Grype/Cosign/来源证明接线、许可证生成、OCI 六镜像归档、RSA 离线包构建、独立包验证、SBOM ZIP、顶层摘要签名、漏洞豁免、发行 Compose、自包含 Nginx 镜像和发布 Runbook。
+覆盖：严格 Tag 契约、六镜像候选矩阵、SBOM/Grype/Cosign/来源证明接线、许可证生成、OCI 六镜像归档、RSA 离线包构建、在线引导包构建、两类独立包验证、SBOM ZIP、顶层摘要签名、漏洞豁免、发行 Compose、自包含 Nginx 镜像、单机三轮快照复原门禁和发布 Runbook。
+
+补充 Windows 烟测：生成的 `install-online.ps1` 通过 PowerShell AST 语法解析；将发行地址指向不可达的 `https://127.0.0.1:1/releases` 时以退出码 1 终止，没有进入离线安装器。
 
 证据强度：工作流和发行工具为 `IMPLEMENTED_AUTOMATED_VERIFIED`；GitHub Actions 实际执行为 `IMPLEMENTED_NOT_RUNTIME_VERIFIED`。
 

@@ -1104,20 +1104,170 @@ function Test-KanyikanSystemEnvironment {
     return $true
 }
 
+function Get-KanyikanCertificateDockerArguments {
+    param(
+        [Parameter(Mandatory = $true)][string]$BackendImage,
+        [Parameter(Mandatory = $true)][string]$CertificateDirectory,
+        [Parameter(Mandatory = $true)][ValidateRange(1, 825)][int]$LeafValidityDays,
+        [Parameter(Mandatory = $true)][ValidateRange(825, 3650)][int]$CaValidityDays,
+        [switch]$Validate
+    )
+
+    if ($BackendImage -notmatch '@sha256:[0-9a-f]{64}$') { throw '证书工具必须使用固定到 SHA256 digest 的 Backend 镜像。' }
+    if ($CaValidityDays -le $LeafValidityDays) { throw '根 CA 有效期必须晚于叶子证书有效期。' }
+    $directory = Get-KanyikanNormalizedPath -Path $CertificateDirectory
+    $mountMode = if ($Validate) { 'ro' } else { 'rw' }
+    $arguments = @(
+        'run', '--rm', '--pull', 'never', '--platform', 'linux/amd64',
+        '--network', 'none', '--read-only', '--cap-drop', 'ALL',
+        '--security-opt', 'no-new-privileges',
+        '--tmpfs', '/tmp:rw,noexec,nosuid,size=16m',
+        '--volume', "${directory}:/certs:$mountMode",
+        '--entrypoint', 'python', $BackendImage,
+        '-m', 'app.tools.generate_local_certificate', '--output-dir', '/certs',
+        '--leaf-validity-days', [string]$LeafValidityDays,
+        '--ca-validity-days', [string]$CaValidityDays
+    )
+    if ($Validate) { $arguments += '--validate' }
+    return $arguments
+}
+
+function Invoke-KanyikanCertificateTool {
+    param(
+        [Parameter(Mandatory = $true)][string]$BackendImage,
+        [Parameter(Mandatory = $true)][string]$CertificateDirectory,
+        [Parameter(Mandatory = $true)][int]$LeafValidityDays,
+        [Parameter(Mandatory = $true)][int]$CaValidityDays,
+        [switch]$Validate
+    )
+
+    $arguments = Get-KanyikanCertificateDockerArguments -BackendImage $BackendImage -CertificateDirectory $CertificateDirectory -LeafValidityDays $LeafValidityDays -CaValidityDays $CaValidityDays -Validate:$Validate
+    $result = Invoke-KanyikanDockerCommand -Arguments $arguments
+    if ($result.exitCode -ne 0) { throw "本地证书工具执行失败：$(Protect-KanyikanText -Text $result.output)" }
+    $jsonLine = @($result.output -split '\r?\n' | Where-Object { $_.Trim().StartsWith('{') }) | Select-Object -Last 1
+    if ([string]::IsNullOrWhiteSpace($jsonLine)) { throw '本地证书工具未返回可验证的公开元数据。' }
+    try { return $jsonLine | ConvertFrom-Json }
+    catch { throw '本地证书工具返回的公开元数据不是合法 JSON。' }
+}
+
+function Get-KanyikanLocalCaThumbprint {
+    param([Parameter(Mandatory = $true)][string]$CertificatePath)
+    $certificate = New-Object Security.Cryptography.X509Certificates.X509Certificate2($CertificatePath)
+    try { return $certificate.Thumbprint.ToUpperInvariant() }
+    finally { $certificate.Dispose() }
+}
+
+function Test-KanyikanLocalCertificate {
+    param(
+        [Parameter(Mandatory = $true)][psobject]$Manifest,
+        [Parameter(Mandatory = $true)][string]$CertificateDirectory
+    )
+
+    $directory = Get-KanyikanNormalizedPath -Path $CertificateDirectory
+    $paths = @(
+        [System.IO.Path]::Combine($directory, 'local-root-ca.crt'),
+        [System.IO.Path]::Combine($directory, 'localhost.crt'),
+        [System.IO.Path]::Combine($directory, 'localhost.key')
+    )
+    foreach ($path in $paths) {
+        if (-not [System.IO.File]::Exists($path) -or -not (Test-KanyikanRestrictedFileAcl -Path $path)) { throw "证书材料缺失或 ACL 不合格：$([System.IO.Path]::GetFileName($path))" }
+    }
+    if ([System.IO.File]::Exists([System.IO.Path]::Combine($directory, 'local-root-ca.key'))) { throw '检测到不应保留的根 CA 私钥。' }
+    $metadata = Invoke-KanyikanCertificateTool -BackendImage ([string]$Manifest.images.backend.reference) -CertificateDirectory $directory -LeafValidityDays ([int]$Manifest.tls.leafValidityDays) -CaValidityDays ([int]$Manifest.tls.caValidityDays) -Validate
+    if ([string]$metadata.ca_sha256 -notmatch '^[0-9a-f]{64}$' -or [string]$metadata.leaf_sha256 -notmatch '^[0-9a-f]{64}$') { throw '证书公开摘要元数据不合法。' }
+    return [pscustomobject][ordered]@{
+        caThumbprint = Get-KanyikanLocalCaThumbprint -CertificatePath $paths[0]
+        caSha256 = [string]$metadata.ca_sha256
+        leafSha256 = [string]$metadata.leaf_sha256
+        caNotAfter = [string]$metadata.ca_not_after
+        leafNotAfter = [string]$metadata.leaf_not_after
+    }
+}
+
+function New-KanyikanLocalCertificate {
+    param(
+        [Parameter(Mandatory = $true)][psobject]$Manifest,
+        [Parameter(Mandatory = $true)][string]$CertificateDirectory
+    )
+
+    $directory = Get-KanyikanNormalizedPath -Path $CertificateDirectory
+    [System.IO.Directory]::CreateDirectory($directory) | Out-Null
+    $materialNames = @('local-root-ca.crt', 'localhost.crt', 'localhost.key')
+    foreach ($name in $materialNames) {
+        if ([System.IO.File]::Exists([System.IO.Path]::Combine($directory, $name))) { throw '证书材料已存在；请使用复核流程，安装器不会覆盖现有证书。' }
+    }
+    $generated = $false
+    try {
+        Invoke-KanyikanCertificateTool -BackendImage ([string]$Manifest.images.backend.reference) -CertificateDirectory $directory -LeafValidityDays ([int]$Manifest.tls.leafValidityDays) -CaValidityDays ([int]$Manifest.tls.caValidityDays) | Out-Null
+        $generated = $true
+        foreach ($name in $materialNames) {
+            $path = [System.IO.Path]::Combine($directory, $name)
+            if (-not [System.IO.File]::Exists($path)) { throw "证书工具缺少输出：$name" }
+            Set-KanyikanRestrictedFileAcl -Path $path
+        }
+        return Test-KanyikanLocalCertificate -Manifest $Manifest -CertificateDirectory $directory
+    }
+    catch {
+        if ($generated) {
+            foreach ($name in $materialNames) {
+                $path = [System.IO.Path]::Combine($directory, $name)
+                if ([System.IO.File]::Exists($path)) { [System.IO.File]::Delete($path) }
+            }
+        }
+        throw
+    }
+}
+
+function Install-KanyikanLocalRootTrust {
+    param(
+        [Parameter(Mandatory = $true)][string]$CertificatePath,
+        [Parameter(Mandatory = $true)][bool]$Consent
+    )
+
+    if (-not $Consent) { return $null }
+    $certificate = New-Object Security.Cryptography.X509Certificates.X509Certificate2($CertificatePath)
+    $store = New-Object Security.Cryptography.X509Certificates.X509Store([Security.Cryptography.X509Certificates.StoreName]::Root, [Security.Cryptography.X509Certificates.StoreLocation]::CurrentUser)
+    try {
+        $store.Open([Security.Cryptography.X509Certificates.OpenFlags]::ReadWrite)
+        if (@($store.Certificates | Where-Object { $_.Thumbprint -ceq $certificate.Thumbprint }).Count -eq 0) { $store.Add($certificate) }
+        return $certificate.Thumbprint.ToUpperInvariant()
+    }
+    finally { $store.Close(); $certificate.Dispose() }
+}
+
+function Remove-KanyikanLocalRootTrust {
+    param([Parameter(Mandatory = $true)][ValidatePattern('^[0-9A-Fa-f]{40}$')][string]$Thumbprint)
+    $normalizedThumbprint = $Thumbprint.ToUpperInvariant()
+    $store = New-Object Security.Cryptography.X509Certificates.X509Store([Security.Cryptography.X509Certificates.StoreName]::Root, [Security.Cryptography.X509Certificates.StoreLocation]::CurrentUser)
+    $removed = 0
+    try {
+        $store.Open([Security.Cryptography.X509Certificates.OpenFlags]::ReadWrite)
+        foreach ($certificate in @($store.Certificates | Where-Object { $_.Thumbprint -ceq $normalizedThumbprint })) { $store.Remove($certificate); $removed++ }
+    }
+    finally { $store.Close() }
+    return $removed
+}
+
 Export-ModuleMember -Function @(
+    'Get-KanyikanCertificateDockerArguments',
     'Get-KanyikanInstallStates',
+    'Get-KanyikanLocalCaThumbprint',
     'Get-KanyikanStatePath',
     'Get-KanyikanHostFacts',
     'Import-KanyikanReleaseImages',
+    'Install-KanyikanLocalRootTrust',
     'Invoke-KanyikanPreflight',
     'New-KanyikanInstallState',
+    'New-KanyikanLocalCertificate',
     'Read-KanyikanAdminPassword',
     'Read-KanyikanInstallState',
+    'Remove-KanyikanLocalRootTrust',
     'Set-KanyikanInstallState',
     'Set-KanyikanInstallFailure',
     'Test-KanyikanAdminPassword',
     'Test-KanyikanPreflightFacts',
     'Test-KanyikanLoadedImageFacts',
+    'Test-KanyikanLocalCertificate',
     'Test-KanyikanReleasePackage',
     'Test-KanyikanRestrictedFileAcl',
     'Test-KanyikanSystemEnvironment',

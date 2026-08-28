@@ -1,0 +1,6 @@
+{
+  "schemaVersion": 1,
+  "keyId": "windows-release-v1",
+  "migrationStrategy": "alembic_upgrade_head",
+  "supportedFrom": []
+}

@@ -1,6 +1,5 @@
-name: Deploy
+name: Release candidate
 
-# 推送 tag v* 时构建 Docker 镜像并推送到 GitHub Container Registry
 on:
   push:
     tags:
@@ -9,10 +8,23 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  REGISTRY: ghcr.io
+  POSTGRES_SOURCE: pgvector/pgvector@sha256:1d533553fefe4f12e5d80c7b80622ba0c382abb5758856f52983d8789179f0fb
+  REDIS_SOURCE: redis@sha256:6ab0b6e7381779332f97b8ca76193e45b0756f38d4c0dcda72dbb3c32061ab99
+  BROWSERLESS_SOURCE: browserless/chrome@sha256:57d19e414d9fe4ae9d2ab12ba768c97f38d51246c5b31af55a009205c136012f
+
 jobs:
   verify-release:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 90
+    outputs:
+      version: ${{ steps.release_metadata.outputs.version }}
+      published_at: ${{ steps.release_metadata.outputs.published_at }}
 
     services:
       postgres:
@@ -29,7 +41,7 @@ jobs:
           --health-timeout 5s
           --health-retries 5
       redis:
-        image: redis:7-alpine
+        image: redis@sha256:6ab0b6e7381779332f97b8ca76193e45b0756f38d4c0dcda72dbb3c32061ab99
         ports:
           - 6379:6379
         options: >-
@@ -46,43 +58,85 @@ jobs:
       CONFIG_ENCRYPTION_KEY: MDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDA=
 
     steps:
-      - name: 检出代码
+      - name: 检出完整 Tag 历史
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 校验严格发行 Tag 与发行策略
+        id: release_metadata
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ ! "$GITHUB_REF_NAME" =~ ^v(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$ ]]; then
+            echo "只接受严格 vX.Y.Z Tag" >&2
+            exit 1
+          fi
+          jq -e '
+            keys == ["keyId", "migrationStrategy", "schemaVersion", "supportedFrom"] and
+            .schemaVersion == 1 and
+            (.keyId | test("^[A-Za-z0-9._-]{1,128}$")) and
+            (.migrationStrategy == "none" or .migrationStrategy == "alembic_upgrade_head") and
+            (.supportedFrom | type == "array" and length == (unique | length))
+          ' packaging/windows/release-policy.json >/dev/null
+          version="${GITHUB_REF_NAME#v}"
+          published_at="$(date -u -d "$(git show -s --format=%cI "$GITHUB_SHA")" +'%Y-%m-%dT%H:%M:%SZ')"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "published_at=$published_at" >> "$GITHUB_OUTPUT"
 
       - name: 安装 Python 3.11
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
+          cache: pip
+          cache-dependency-path: backend/requirements.txt
 
       - name: 安装 Node.js 20
         uses: actions/setup-node@v4
         with:
           node-version: "20"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
 
-      - name: 验证后端
+      - name: 验证后端与 Python 依赖
+        shell: bash
         run: |
+          set -euo pipefail
           cd backend
-          pip install --upgrade pip
+          python -m pip install --upgrade pip
           pip install -r requirements.txt
           pip install pytest pytest-asyncio
           pip install pip-audit==2.10.1
           python -m pip_audit -r requirements.txt --progress-spinner off
           python -m pytest --tb=short -q
 
-      - name: 验证前端
+      - name: 验证前端、依赖和浏览器 E2E
+        shell: bash
         run: |
+          set -euo pipefail
           cd frontend
           npm ci
+          npm audit --audit-level=high
           node --test tests/security-dependencies.test.mjs
+          npx playwright install --with-deps chromium
           npm run build
+          npm run test:e2e
 
-  build-and-push:
+  build-images:
     needs: verify-release
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 90
     permissions:
       contents: read
       packages: write
+    outputs:
+      backend_digest: ${{ steps.backend_image.outputs.digest }}
+      frontend_digest: ${{ steps.frontend_image.outputs.digest }}
+      nginx_digest: ${{ steps.nginx_image.outputs.digest }}
+      postgres_digest: ${{ steps.upstream_images.outputs.postgres_digest }}
+      redis_digest: ${{ steps.upstream_images.outputs.redis_digest }}
+      browserless_digest: ${{ steps.upstream_images.outputs.browserless_digest }}
+      image_matrix: ${{ steps.image_matrix.outputs.value }}
 
     steps:
       - name: 检出代码
@@ -94,49 +148,507 @@ jobs:
       - name: 登录 GitHub Container Registry
         uses: docker/login-action@v3
         with:
-          registry: ghcr.io
+          registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: 提取镜像元数据
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: |
-            ghcr.io/${{ github.repository }}/backend
-            ghcr.io/${{ github.repository }}/frontend
-          tags: |
-            type=semver,pattern={{version}}
-            type=semver,pattern={{major}}.{{minor}}
-            type=sha,prefix=
+      - name: 安装固定摘要镜像复制工具
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends skopeo
 
-      - name: 构建并推送 Backend 镜像
+      - name: 构建并推送 Backend 候选镜像
         id: backend_image
         uses: docker/build-push-action@v6
         with:
           context: ./backend
           file: ./backend/Dockerfile
+          platforms: linux/amd64
           push: true
-          tags: |
-            ghcr.io/${{ github.repository }}/backend:${{ github.ref_name }}
-            ghcr.io/${{ github.repository }}/backend:sha-${{ github.sha }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          tags: ghcr.io/${{ github.repository }}/backend:sha-${{ github.sha }}
+          cache-from: type=gha,scope=release-backend
+          cache-to: type=gha,mode=max,scope=release-backend
 
-      - name: 构建并推送 Frontend 镜像
+      - name: 构建并推送 Frontend 候选镜像
         id: frontend_image
         uses: docker/build-push-action@v6
         with:
           context: ./frontend
           file: ./frontend/Dockerfile
+          platforms: linux/amd64
           push: true
-          tags: |
-            ghcr.io/${{ github.repository }}/frontend:${{ github.ref_name }}
-            ghcr.io/${{ github.repository }}/frontend:sha-${{ github.sha }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          tags: ghcr.io/${{ github.repository }}/frontend:sha-${{ github.sha }}
+          cache-from: type=gha,scope=release-frontend
+          cache-to: type=gha,mode=max,scope=release-frontend
 
-      - name: 记录可部署镜像摘要
+      - name: 构建并推送 Nginx 候选镜像
+        id: nginx_image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./deploy/nginx
+          file: ./deploy/nginx/Dockerfile.release
+          platforms: linux/amd64
+          push: true
+          tags: ghcr.io/${{ github.repository }}/nginx:sha-${{ github.sha }}
+          cache-from: type=gha,scope=release-nginx
+          cache-to: type=gha,mode=max,scope=release-nginx
+
+      - name: 镜像化固定的三个上游发行依赖
+        id: upstream_images
+        shell: bash
         run: |
-          echo "Backend: ghcr.io/${{ github.repository }}/backend@${{ steps.backend_image.outputs.digest }}" >> "$GITHUB_STEP_SUMMARY"
-          echo "Frontend: ghcr.io/${{ github.repository }}/frontend@${{ steps.frontend_image.outputs.digest }}" >> "$GITHUB_STEP_SUMMARY"
+          set -euo pipefail
+          postgres_destination="$REGISTRY/$GITHUB_REPOSITORY/postgres:sha-$GITHUB_SHA"
+          redis_destination="$REGISTRY/$GITHUB_REPOSITORY/redis:sha-$GITHUB_SHA"
+          browserless_destination="$REGISTRY/$GITHUB_REPOSITORY/browserless:sha-$GITHUB_SHA"
+          skopeo copy --preserve-digests "docker://$POSTGRES_SOURCE" "docker://$postgres_destination"
+          skopeo copy --preserve-digests "docker://$REDIS_SOURCE" "docker://$redis_destination"
+          skopeo copy --preserve-digests "docker://$BROWSERLESS_SOURCE" "docker://$browserless_destination"
+          postgres_digest="$(skopeo inspect --format '{{.Digest}}' "docker://$postgres_destination")"
+          redis_digest="$(skopeo inspect --format '{{.Digest}}' "docker://$redis_destination")"
+          browserless_digest="$(skopeo inspect --format '{{.Digest}}' "docker://$browserless_destination")"
+          test "$postgres_digest" = "${POSTGRES_SOURCE##*@}"
+          test "$redis_digest" = "${REDIS_SOURCE##*@}"
+          test "$browserless_digest" = "${BROWSERLESS_SOURCE##*@}"
+          echo "postgres_digest=$postgres_digest" >> "$GITHUB_OUTPUT"
+          echo "redis_digest=$redis_digest" >> "$GITHUB_OUTPUT"
+          echo "browserless_digest=$browserless_digest" >> "$GITHUB_OUTPUT"
+
+      - name: 生成六镜像并行门禁矩阵
+        id: image_matrix
+        shell: bash
+        env:
+          BACKEND_DIGEST: ${{ steps.backend_image.outputs.digest }}
+          FRONTEND_DIGEST: ${{ steps.frontend_image.outputs.digest }}
+          NGINX_DIGEST: ${{ steps.nginx_image.outputs.digest }}
+          POSTGRES_DIGEST: ${{ steps.upstream_images.outputs.postgres_digest }}
+          REDIS_DIGEST: ${{ steps.upstream_images.outputs.redis_digest }}
+          BROWSERLESS_DIGEST: ${{ steps.upstream_images.outputs.browserless_digest }}
+        run: |
+          set -euo pipefail
+          value="$(jq -cn \
+            --arg root "$REGISTRY/$GITHUB_REPOSITORY" \
+            --arg backend "$BACKEND_DIGEST" \
+            --arg frontend "$FRONTEND_DIGEST" \
+            --arg nginx "$NGINX_DIGEST" \
+            --arg postgres "$POSTGRES_DIGEST" \
+            --arg redis "$REDIS_DIGEST" \
+            --arg browserless "$BROWSERLESS_DIGEST" \
+            '{include:[
+              {name:"backend",repository:($root+"/backend"),digest:$backend},
+              {name:"frontend",repository:($root+"/frontend"),digest:$frontend},
+              {name:"nginx",repository:($root+"/nginx"),digest:$nginx},
+              {name:"postgres",repository:($root+"/postgres"),digest:$postgres},
+              {name:"redis",repository:($root+"/redis"),digest:$redis},
+              {name:"browserless",repository:($root+"/browserless"),digest:$browserless}
+            ]}')"
+          echo "value=$value" >> "$GITHUB_OUTPUT"
+
+  supply-chain:
+    needs: build-images
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    permissions:
+      actions: read
+      artifact-metadata: write
+      attestations: write
+      contents: read
+      id-token: write
+      packages: write
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.build-images.outputs.image_matrix) }}
+
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 登录 GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 安装镜像检查工具
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends skopeo
+          mkdir -p "supply/${{ matrix.name }}"
+
+      - name: 生成 SPDX SBOM
+        uses: anchore/sbom-action@v0.24.0
+        with:
+          image: ${{ matrix.repository }}@${{ matrix.digest }}
+          format: spdx-json
+          output-file: supply/${{ matrix.name }}/${{ matrix.name }}.spdx.json
+          upload-artifact: false
+          upload-release-assets: false
+
+      - name: 生成 Grype 漏洞报告
+        uses: anchore/scan-action@v7
+        with:
+          image: ${{ matrix.repository }}@${{ matrix.digest }}
+          fail-build: false
+          output-format: json
+          output-file: supply/${{ matrix.name }}/${{ matrix.name }}.grype.json
+
+      - name: 核对平台并记录 OCI 元数据
+        shell: bash
+        env:
+          IMAGE: ${{ matrix.repository }}@${{ matrix.digest }}
+        run: |
+          set -euo pipefail
+          observed_digest="$(skopeo inspect --format '{{.Digest}}' "docker://$IMAGE")"
+          test "$observed_digest" = "${{ matrix.digest }}"
+          platform="$(skopeo inspect --config "docker://$IMAGE" | jq -r '.os + "/" + .architecture')"
+          test "$platform" = "linux/amd64"
+          image_id="$(skopeo inspect --raw "docker://$IMAGE" | jq -r '.config.digest')"
+          test "${image_id#sha256:}" != "$image_id"
+          jq -n \
+            --arg name "${{ matrix.name }}" \
+            --arg reference "$IMAGE" \
+            --arg digest "${{ matrix.digest }}" \
+            --arg imageId "$image_id" \
+            --arg platform "$platform" \
+            '{name:$name,reference:$reference,digest:$digest,imageId:$imageId,platform:$platform}' \
+            > "supply/${{ matrix.name }}/${{ matrix.name }}.image.json"
+
+      - name: 安装 Cosign
+        uses: sigstore/cosign-installer@v4.1.2
+        with:
+          cosign-release: v3.0.6
+
+      - name: 签名并附加 SBOM 证明
+        shell: bash
+        env:
+          IMAGE: ${{ matrix.repository }}@${{ matrix.digest }}
+          SBOM: supply/${{ matrix.name }}/${{ matrix.name }}.spdx.json
+        run: |
+          set -euo pipefail
+          identity="https://github.com/$GITHUB_REPOSITORY/.github/workflows/deploy.yml@$GITHUB_REF"
+          cosign sign --yes "$IMAGE"
+          cosign verify \
+            --certificate-identity "$identity" \
+            --certificate-oidc-issuer https://token.actions.githubusercontent.com \
+            "$IMAGE" >/dev/null
+          cosign attest --yes --predicate "$SBOM" --type spdxjson "$IMAGE"
+          cosign verify-attestation \
+            --certificate-identity "$identity" \
+            --certificate-oidc-issuer https://token.actions.githubusercontent.com \
+            --type spdxjson "$IMAGE" >/dev/null
+
+      - name: 生成 GitHub OCI 构建来源证明
+        uses: actions/attest@v4
+        with:
+          subject-name: ${{ matrix.repository }}
+          subject-digest: ${{ matrix.digest }}
+          push-to-registry: true
+
+      - name: 上传单镜像供应链证据
+        uses: actions/upload-artifact@v4
+        with:
+          name: supply-${{ matrix.name }}
+          path: supply/${{ matrix.name }}
+          if-no-files-found: error
+          retention-days: 7
+
+  assemble-offline-candidate:
+    needs: [verify-release, build-images, supply-chain]
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    permissions:
+      actions: read
+      attestations: write
+      contents: read
+      id-token: write
+      packages: read
+    outputs:
+      offline_zip_name: ${{ steps.candidate_metadata.outputs.offline_zip_name }}
+      public_key_sha256: ${{ steps.candidate_metadata.outputs.public_key_sha256 }}
+
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 安装 Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: 安装发行组装依赖
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m pip install --upgrade pip
+          pip install cryptography==49.0.0 jsonschema==4.26.0
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends skopeo
+
+      - name: 登录 GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 下载六镜像供应链证据
+        uses: actions/download-artifact@v4
+        with:
+          pattern: supply-*
+          path: supply
+          merge-multiple: false
+
+      - name: 阻断未豁免 Critical 与 High 漏洞
+        shell: bash
+        env:
+          PUBLISHED_AT: ${{ needs.verify-release.outputs.published_at }}
+        run: |
+          set -euo pipefail
+          python packaging/release_tools/evaluate_vulnerabilities.py \
+            --report backend=supply/supply-backend/backend.grype.json \
+            --report frontend=supply/supply-frontend/frontend.grype.json \
+            --report nginx=supply/supply-nginx/nginx.grype.json \
+            --report postgres=supply/supply-postgres/postgres.grype.json \
+            --report redis=supply/supply-redis/redis.grype.json \
+            --report browserless=supply/supply-browserless/browserless.grype.json \
+            --exceptions packaging/security/vulnerability-exceptions.json \
+            --evaluated-at "$PUBLISHED_AT"
+
+      - name: 生成许可证清单与镜像元数据
+        shell: bash
+        env:
+          VERSION: ${{ needs.verify-release.outputs.version }}
+          PUBLISHED_AT: ${{ needs.verify-release.outputs.published_at }}
+        run: |
+          set -euo pipefail
+          mkdir -p work release-assets
+          python packaging/release_tools/generate_third_party_licenses.py \
+            --version "$VERSION" \
+            --generated-at "$PUBLISHED_AT" \
+            --sbom backend=supply/supply-backend/backend.spdx.json \
+            --sbom frontend=supply/supply-frontend/frontend.spdx.json \
+            --sbom nginx=supply/supply-nginx/nginx.spdx.json \
+            --sbom postgres=supply/supply-postgres/postgres.spdx.json \
+            --sbom redis=supply/supply-redis/redis.spdx.json \
+            --sbom browserless=supply/supply-browserless/browserless.spdx.json \
+            --output work/third-party-licenses.html
+          jq -s '
+            map({key:.name,value:{reference:.reference,digest:.digest,imageId:.imageId,platform:.platform}})
+            | from_entries
+          ' supply/supply-*/*.image.json > work/image-metadata.json
+          test "$(jq 'keys | length' work/image-metadata.json)" = "6"
+
+      - name: 构造恰含六个顶层 Digest 的 OCI 离线归档
+        shell: bash
+        env:
+          PUBLISHED_AT: ${{ needs.verify-release.outputs.published_at }}
+        run: |
+          set -euo pipefail
+          mkdir -p work/images-oci
+          for name in backend frontend postgres redis nginx browserless; do
+            reference="$(jq -r --arg name "$name" '.[$name].reference' work/image-metadata.json)"
+            skopeo copy --preserve-digests "docker://$reference" "oci:work/images-oci:$name"
+          done
+          test "$(jq '.manifests | length' work/images-oci/index.json)" = "6"
+          tar --sort=name --mtime="$PUBLISHED_AT" --owner=0 --group=0 --numeric-owner \
+            -cf work/kanyikan-images-windows-amd64.tar -C work/images-oci blobs index.json oci-layout
+
+      - name: 从受保护 Secrets 建立短生命周期 RSA 签名材料
+        shell: bash
+        env:
+          WINDOWS_RELEASE_PRIVATE_KEY_PEM: ${{ secrets.WINDOWS_RELEASE_PRIVATE_KEY_PEM }}
+          WINDOWS_RELEASE_PUBLIC_KEY_PEM: ${{ secrets.WINDOWS_RELEASE_PUBLIC_KEY_PEM }}
+        run: |
+          set -euo pipefail
+          test -n "$WINDOWS_RELEASE_PRIVATE_KEY_PEM"
+          test -n "$WINDOWS_RELEASE_PUBLIC_KEY_PEM"
+          umask 077
+          mkdir -p work/keys
+          printf '%s\n' "$WINDOWS_RELEASE_PRIVATE_KEY_PEM" > work/keys/private.pem
+          printf '%s\n' "$WINDOWS_RELEASE_PUBLIC_KEY_PEM" > work/keys/public.pem
+
+      - name: 构建并独立验证 Windows 离线候选包
+        shell: bash
+        env:
+          VERSION: ${{ needs.verify-release.outputs.version }}
+          PUBLISHED_AT: ${{ needs.verify-release.outputs.published_at }}
+        run: |
+          set -euo pipefail
+          migration_strategy="$(jq -r '.migrationStrategy' packaging/windows/release-policy.json)"
+          key_id="$(jq -r '.keyId' packaging/windows/release-policy.json)"
+          supported_args=()
+          while IFS= read -r supported_version; do
+            supported_args+=(--supported-from "$supported_version")
+          done < <(jq -r '.supportedFrom[]' packaging/windows/release-policy.json)
+          python packaging/release_tools/build_windows_release.py \
+            --repository . \
+            --output-directory work/windows \
+            --version "$VERSION" \
+            --source-commit "$GITHUB_SHA" \
+            --published-at "$PUBLISHED_AT" \
+            --image-metadata work/image-metadata.json \
+            --image-archive work/kanyikan-images-windows-amd64.tar \
+            --private-key work/keys/private.pem \
+            --public-key work/keys/public.pem \
+            --key-id "$key_id" \
+            --third-party-licenses work/third-party-licenses.html \
+            --migration-strategy "$migration_strategy" \
+            "${supported_args[@]}" > work/build-result.json
+          public_key_sha256="$(jq -r '.publicKeySha256' work/build-result.json)"
+          python packaging/release_tools/verify_windows_release.py \
+            --zip "$(jq -r '.offlineZip' work/build-result.json)" \
+            --schema packaging/release-manifest.schema.json \
+            --expected-public-key-sha256 "$public_key_sha256"
+
+      - name: 生成 SBOM 包、资产摘要和顶层签名
+        shell: bash
+        env:
+          VERSION: ${{ needs.verify-release.outputs.version }}
+          PUBLISHED_AT: ${{ needs.verify-release.outputs.published_at }}
+        run: |
+          set -euo pipefail
+          offline_zip="$(jq -r '.offlineZip' work/build-result.json)"
+          cp "$offline_zip" release-assets/
+          cp work/third-party-licenses.html "release-assets/Kanyikan-v$VERSION-third-party-licenses.html"
+          python packaging/release_tools/finalize_release_assets.py sbom-zip \
+            --version "$VERSION" \
+            --published-at "$PUBLISHED_AT" \
+            --sbom backend=supply/supply-backend/backend.spdx.json \
+            --sbom frontend=supply/supply-frontend/frontend.spdx.json \
+            --sbom nginx=supply/supply-nginx/nginx.spdx.json \
+            --sbom postgres=supply/supply-postgres/postgres.spdx.json \
+            --sbom redis=supply/supply-redis/redis.spdx.json \
+            --sbom browserless=supply/supply-browserless/browserless.spdx.json \
+            --output-directory release-assets
+          python packaging/release_tools/finalize_release_assets.py sign-checksums \
+            --asset "release-assets/$(basename "$offline_zip")" \
+            --asset "release-assets/Kanyikan-v$VERSION-third-party-licenses.html" \
+            --asset "release-assets/Kanyikan-v$VERSION-SBOM.zip" \
+            --private-key work/keys/private.pem \
+            --output-directory release-assets
+          python packaging/release_tools/finalize_release_assets.py verify-checksums \
+            --checksums release-assets/SHA256SUMS \
+            --signature release-assets/SHA256SUMS.sig \
+            --public-key work/keys/public.pem \
+            --asset-directory release-assets
+
+      - name: 记录候选元数据并销毁私钥副本
+        id: candidate_metadata
+        shell: bash
+        env:
+          VERSION: ${{ needs.verify-release.outputs.version }}
+        run: |
+          set -euo pipefail
+          offline_zip_name="$(basename "$(jq -r '.offlineZip' work/build-result.json)")"
+          public_key_sha256="$(jq -r '.publicKeySha256' work/build-result.json)"
+          jq -n \
+            --arg tag "$GITHUB_REF_NAME" \
+            --arg sourceCommit "$GITHUB_SHA" \
+            --arg releaseVersion "$VERSION" \
+            --arg formalReleaseBlockedBy "ONLINE_PACKAGE_CONTRACT" \
+            '{tag:$tag,sourceCommit:$sourceCommit,releaseVersion:$releaseVersion,formalReleaseBlockedBy:$formalReleaseBlockedBy}' \
+            > release-assets/candidate-status.json
+          rm -f work/keys/private.pem
+          echo "offline_zip_name=$offline_zip_name" >> "$GITHUB_OUTPUT"
+          echo "public_key_sha256=$public_key_sha256" >> "$GITHUB_OUTPUT"
+
+      - name: 为候选资产生成 GitHub 来源证明
+        uses: actions/attest@v4
+        with:
+          subject-path: release-assets/*
+
+      - name: 上传不可发布的完整候选资产
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-candidate
+          path: release-assets
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 7
+
+  windows-clean-offline-e2e:
+    needs: assemble-offline-candidate
+    runs-on: [self-hosted, Windows, X64, kanyikan-clean-e2e]
+    timeout-minutes: 180
+    permissions:
+      actions: read
+      contents: read
+    strategy:
+      fail-fast: false
+      max-parallel: 1
+      matrix:
+        round: [1, 2, 3]
+
+    steps:
+      - name: 检出受测源码
+        uses: actions/checkout@v4
+
+      - name: 下载离线候选包
+        uses: actions/download-artifact@v4
+        with:
+          name: release-candidate
+          path: release-assets
+
+      - name: 复核专用 Runner 基础设施契约
+        shell: powershell
+        run: |
+          $ErrorActionPreference = 'Stop'
+          if ([Environment]::GetEnvironmentVariable('KANYIKAN_CLEAN_E2E', 'Machine') -cne '1') { throw '缺少机器级专用 E2E 标记。' }
+          foreach ($name in @('KANYIKAN_ENTER_OFFLINE_SCRIPT', 'KANYIKAN_EXIT_OFFLINE_SCRIPT', 'KANYIKAN_INFRASTRUCTURE_HOOKS_ROOT')) {
+            if ([string]::IsNullOrWhiteSpace([Environment]::GetEnvironmentVariable($name, 'Process'))) { throw "Runner 缺少环境变量：$name" }
+          }
+
+      - name: 执行完全断网安装、运维与卸载 E2E
+        shell: powershell
+        env:
+          EXPECTED_PUBLIC_KEY_SHA256: ${{ needs.assemble-offline-candidate.outputs.public_key_sha256 }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $zip = @(Get-ChildItem -LiteralPath 'release-assets' -File -Filter 'Kanyikan-v*-windows-amd64-offline.zip')
+          if ($zip.Count -ne 1) { throw '候选资产中离线 ZIP 数量不是 1。' }
+          & .\packaging\windows\e2e\Invoke-CleanOfflineInstallE2E.ps1 `
+            -OfflineZip $zip[0].FullName `
+            -ExpectedPublicKeySha256 $env:EXPECTED_PUBLIC_KEY_SHA256 `
+            -EnterOfflineScript $env:KANYIKAN_ENTER_OFFLINE_SCRIPT `
+            -ExitOfflineScript $env:KANYIKAN_EXIT_OFFLINE_SCRIPT `
+            -EvidencePath "evidence\windows-clean-round-${{ matrix.round }}.json"
+
+      - name: 首轮执行预检、篡改与三阶段中断恢复 E2E
+        if: matrix.round == 1
+        shell: powershell
+        env:
+          EXPECTED_PUBLIC_KEY_SHA256: ${{ needs.assemble-offline-candidate.outputs.public_key_sha256 }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $zip = @(Get-ChildItem -LiteralPath 'release-assets' -File -Filter 'Kanyikan-v*-windows-amd64-offline.zip')
+          & .\packaging\windows\e2e\Invoke-NegativeInstallE2E.ps1 `
+            -OfflineZip $zip[0].FullName `
+            -ExpectedPublicKeySha256 $env:EXPECTED_PUBLIC_KEY_SHA256 `
+            -InfrastructureHooksRoot $env:KANYIKAN_INFRASTRUCTURE_HOOKS_ROOT `
+            -EvidencePath 'evidence\windows-negative.json'
+
+      - name: 上传独立 Windows 验收证据
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-e2e-round-${{ matrix.round }}
+          path: evidence
+          if-no-files-found: error
+          retention-days: 30
+
+  release-readiness:
+    needs: windows-clean-offline-e2e
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: 保持正式发布关闭直至在线包契约确认
+        shell: bash
+        run: |
+          echo "六镜像供应链门禁、离线候选包和三轮 Windows E2E 已进入工作流。"
+          echo "在线包契约未确认，工作流不会创建 GitHub Release。"

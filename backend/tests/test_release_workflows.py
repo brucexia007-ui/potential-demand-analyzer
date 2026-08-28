@@ -135,14 +135,17 @@ def test_formal_release_waits_for_three_clean_windows_offline_rounds() -> None:
     assert "uniqueGenerationCount" in workflow
 
 
-def test_release_runbook_declares_secrets_runner_hooks_evidence_and_no_publish_boundary() -> None:
+def test_release_runbook_declares_single_runner_rotation_hooks_evidence_and_publish_boundary() -> None:
     runbook = RELEASE_RUNBOOK.read_text(encoding="utf-8")
 
     for value in (
         "WINDOWS_RELEASE_PRIVATE_KEY_PEM",
         "WINDOWS_RELEASE_PUBLIC_KEY_PEM",
         "KANYIKAN_CLEAN_E2E=1",
-        "self-hosted, Windows, X64, kanyikan-clean-e2e",
+        "kanyikan-clean-e2e-round-1",
+        "KANYIKAN_CLEAN_E2E_GENERATION_ID",
+        "KANYIKAN_CLEAN_SNAPSHOT_SHA256",
+        "KANYIKAN_CLEAN_E2E_ROUND",
         "KANYIKAN_ENTER_OFFLINE_SCRIPT",
         "KANYIKAN_EXIT_OFFLINE_SCRIPT",
         "KANYIKAN_INFRASTRUCTURE_HOOKS_ROOT",
@@ -151,10 +154,12 @@ def test_release_runbook_declares_secrets_runner_hooks_evidence_and_no_publish_b
         "Enter-DiskInsufficient.ps1",
         "release-candidate",
         "windows-e2e-round-1",
-        "ONLINE_PACKAGE_CONTRACT",
+        "--ephemeral",
+        "恢复黄金快照",
+        "GitHub Release",
     ):
         assert value in runbook
-    assert "不得创建 GitHub Release" in runbook
+    assert "ONLINE_PACKAGE_CONTRACT" not in runbook
     assert "不得输出私钥" in runbook
 
 
@@ -167,11 +172,13 @@ def test_phase_audit_separates_automated_evidence_from_unverified_release_gates(
         "39/39",
         "IMPLEMENTED_AUTOMATED_VERIFIED",
         "IMPLEMENTED_NOT_RUNTIME_VERIFIED",
-        "MISSING_DECISION",
         "EXTERNAL_NOT_RUN",
-        "ONLINE_PACKAGE_CONTRACT",
         "NO-GO",
     ):
         assert value in audit
+    assert "MISSING_DECISION" not in audit
+    assert "ONLINE_PACKAGE_CONTRACT" not in audit
+    assert "Kanyikan-vX.Y.Z-windows-amd64-online.zip" in audit
+    assert "一台 Windows 11" in audit
     assert "真实 Windows E2E：PASS" not in audit
     assert "Phase 3～6：完成" not in audit

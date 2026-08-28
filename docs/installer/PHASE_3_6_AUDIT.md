@@ -4,7 +4,7 @@
 
 审计时间：2026-08-28（Asia/Shanghai）
 
-结论：**NO-GO**。Phase 3～5 的源代码与自动化契约已经实现并通过；Phase 6 的离线候选构建、供应链门禁和 Windows E2E 编排已实现，但在线包产品契约尚未确认，Tag 工作流尚未在真实 GitHub 环境执行，三轮独立纯净 Windows 11 断网验收也没有运行证据。因此不能把当前状态描述为全部完成，不能更新真实 Windows E2E 条目为 PASS，也不能创建正式 Release。
+结论：**NO-GO**。Phase 3～5 的源代码与自动化契约已经实现并通过；Phase 6 的在线/离线候选构建、供应链门禁、单机三轮快照复原验收和草稿后公开 GitHub Release 编排已实现，但 Tag 工作流尚未在真实 GitHub 环境执行，一台 Windows 11 的三轮完全断网验收也没有运行证据。因此不能把当前状态描述为全部完成，不能更新真实 Windows E2E 条目为 PASS，也不能声称正式 Release 已创建。
 
 ## 1. 状态口径
 
@@ -12,7 +12,6 @@
 | --- | --- |
 | `IMPLEMENTED_AUTOMATED_VERIFIED` | 源码存在，直接自动化测试已执行通过；结论范围不超过测试覆盖。 |
 | `IMPLEMENTED_NOT_RUNTIME_VERIFIED` | 实现和契约测试存在，但要求的真实平台、外部服务或完整流水线没有运行证据。 |
-| `MISSING_DECISION` | 产品定义会改变制品或用户流程，不能由实现方擅自选择。 |
 | `EXTERNAL_NOT_RUN` | 依赖专用外部环境，当前没有可核验的实际运行记录。 |
 
 ## 2. 本次直接执行证据
@@ -109,9 +108,9 @@
 | 后端非集成回归、前端安全契约、生产构建和 Chromium E2E | 本机隔离环境 1939/1939、1/1、构建成功、108/108 且禁用重试 | `IMPLEMENTED_AUTOMATED_VERIFIED` |
 | 端口占用、Docker 停止、Windows Containers、低磁盘、manifest/镜像损坏 | 负向 E2E 编排、精确退出码与无副作用检查已实现 | `IMPLEMENTED_NOT_RUNTIME_VERIFIED` |
 | `IMAGES_LOADED`、`CONFIG_CREATED`、`SERVICES_STARTING` 中断重试及重复安装不重置密钥 | 中断进程、重试、认证冒烟和身份摘要编排已实现 | `IMPLEMENTED_NOT_RUNTIME_VERIFIED` |
-| 三轮独立纯净 Windows 11 完全断网 E2E | 工作流矩阵与证据上传已实现；runner 与证据不存在 | `EXTERNAL_NOT_RUN` |
-| 在线发行包 | 产品定义未确认；候选状态明确记录 `ONLINE_PACKAGE_CONTRACT` | `MISSING_DECISION` |
-| 正式 GitHub Release | 工作流故意没有 `gh release create`，以免绕过在线包和真实 E2E | `MISSING_DECISION` |
+| 三轮独立纯净 Windows 11 完全断网 E2E | 一台 Windows 11 经三次黄金快照复原、round 标签、ephemeral 注册、消费标记和代次汇总的门禁已实现；runner 与证据不存在 | `EXTERNAL_NOT_RUN` |
+| 在线发行包 | `Kanyikan-vX.Y.Z-windows-amd64-online.zip` 构建器、独立验证器及固定信任锚/下载/顶层 RSA/离线 ZIP SHA256/同安装器契约已实现并测试 | `IMPLEMENTED_AUTOMATED_VERIFIED` |
+| 正式 GitHub Release | 三轮证据通过后创建草稿、上传在线/离线/SBOM/许可证/摘要/签名并公开的作业已实现，尚未在 GitHub 执行 | `IMPLEMENTED_NOT_RUNTIME_VERIFIED` |
 
 ## 7. 已覆盖的关键边缘情况
 
@@ -125,10 +124,9 @@
 
 ## 8. 解除 NO-GO 的必要顺序
 
-1. 产品负责人确认在线包定义。推荐方案仍是：网络引导包下载完整离线 ZIP，校验顶层 RSA 签名和 SHA256 后调用同一安装器；不得在确认前实现另一条安装协议。
-2. 实现在线包构建器、独立验证器和篡改/下载失败测试，把在线 ZIP 纳入 `SHA256SUMS` 与签名。
-3. 为仓库配置配对的 RSA Secrets，并准备三台带规定标签、机器标记和 Hook 的一次性 Windows 11 runner。
-4. 推送候选 Tag，保存六镜像签名/证明、`release-candidate`、三轮 Windows JSON 和脱敏输出。
+1. 为仓库配置配对的 RSA Secrets，并准备一台带黄金快照、断网/负向 Hook 的 Windows 11 虚拟机。
+2. 恢复黄金快照，以 round 1 标签和新的 generation UUID 注册 ephemeral runner；第一轮完成后关机。
+3. 对 round 2、round 3 分别重新恢复同一黄金快照、生成新 UUID 并重新注册，禁止直接复用上一轮系统状态。
+4. 推送候选 Tag，保存六镜像签名/证明、`release-candidate`、三轮 Windows JSON、快照轮转 JSON 和脱敏输出；确认草稿 Release 仅在全部资产上传后公开。
 5. 使用两套正式版本执行更新成功、迁移/健康失败回滚成功和回滚失败三类真实 Windows 场景。
 6. 本机全仓后端非集成、前端构建和 108 条浏览器回归已完成；候选 Tag 仍须在 GitHub 工作流中重跑相同门禁并保存日志。根据实际外部证据更新 `ACCEPTANCE_MATRIX.md`，未执行的真实 Windows E2E 条目不得写 PASS。
-7. 只有全部 P0/P1 发布门通过后，才允许新增正式 GitHub Release 作业并解除 NO-GO。

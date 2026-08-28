@@ -222,6 +222,18 @@ try {
         try { Test-KanyikanReleasePackage -PackageRoot $package.root -TrustedPublicKeySha256 $package.trustedHash | Out-Null } catch { $threw = $_.Exception.Message.Contains('冒烟检查') }
         Assert-True $threw '冒烟检查顺序被修改的发行包未被拒绝。'
     }
+
+    Invoke-TestCase '发行清单试图覆盖本机生成配置时拒绝' {
+        $package = New-TestPackage (Join-Path $testRoot 'reserved-generated-path')
+        $package.manifest.files[6].path = 'config/system.env'
+        $utf8 = New-Object Text.UTF8Encoding($false)
+        $manifestPath = Join-Path $package.root 'release-manifest.json'
+        [IO.File]::WriteAllText($manifestPath, ($package.manifest | ConvertTo-Json -Depth 12), $utf8)
+        [IO.File]::WriteAllBytes((Join-Path $package.root 'release-manifest.sig'), [KanyikanTestSigning]::Sign($package.privateKey, [IO.File]::ReadAllBytes($manifestPath)))
+        $threw = $false
+        try { Test-KanyikanReleasePackage -PackageRoot $package.root -TrustedPublicKeySha256 $package.trustedHash | Out-Null } catch { $threw = $_.Exception.Message.Contains('安装器生成路径') }
+        Assert-True $threw '覆盖本机生成配置的发行清单未被拒绝。'
+    }
 }
 finally {
     if ([IO.Directory]::Exists($testRoot)) { [IO.Directory]::Delete($testRoot, $true) }

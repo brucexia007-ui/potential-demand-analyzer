@@ -433,6 +433,18 @@
       "maxLength": 240,
       "pattern": "^(?!/)(?!.*\\\\)(?!.*(?:^|/)\\.\\.?(?:/|$))(?!.*//)(?!.*\/$)[^:<>\"|?*\\u0000-\\u001f]+$"
     },
+    "releaseAssetPath": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/relativePackagePath"
+        },
+        {
+          "not": {
+            "pattern": "^(?:(?:state|data|logs|support)(?:/|$)|config/(?:system\\.env$|certs(?:/|$)))"
+          }
+        }
+      ]
+    },
     "file": {
       "type": "object",
       "additionalProperties": false,
@@ -444,7 +456,7 @@
       ],
       "properties": {
         "path": {
-          "$ref": "#/$defs/relativePackagePath"
+          "$ref": "#/$defs/releaseAssetPath"
         },
         "role": {
           "enum": [

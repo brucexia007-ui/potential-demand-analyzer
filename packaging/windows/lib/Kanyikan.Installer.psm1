@@ -694,6 +694,15 @@ function Assert-KanyikanPackageRelativePath {
     }
 }
 
+function Assert-KanyikanReleaseAssetPath {
+    param([Parameter(Mandatory = $true)][string]$Path)
+
+    Assert-KanyikanPackageRelativePath -Path $Path
+    if ($Path -match '^(?i:(?:state|data|logs|support)(?:/|$)|config/(?:system\.env$|certs(?:/|$)))') {
+        throw "发行文件不得覆盖安装器生成路径：$Path"
+    }
+}
+
 function Assert-KanyikanExactProperties {
     param(
         [Parameter(Mandatory = $true)]
@@ -766,7 +775,7 @@ function Assert-KanyikanReleaseManifest {
     $seenFiles = @{}
     foreach ($file in @($Manifest.files)) {
         Assert-KanyikanExactProperties -Value $file -Names @('path', 'role', 'sizeBytes', 'sha256') -Context 'files[]'
-        Assert-KanyikanPackageRelativePath -Path ([string]$file.path)
+        Assert-KanyikanReleaseAssetPath -Path ([string]$file.path)
         if ($seenFiles.ContainsKey([string]$file.path)) { throw "发行文件路径重复：$($file.path)" }
         $seenFiles[[string]$file.path] = $true
         if ($file.sizeBytes -lt 1 -or [string]$file.sha256 -notmatch '^[0-9a-f]{64}$') { throw "发行文件摘要元数据不合法：$($file.path)" }

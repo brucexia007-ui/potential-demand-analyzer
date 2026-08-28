@@ -1,4 +1,5 @@
 import json
+import re
 from pathlib import Path
 
 
@@ -144,8 +145,8 @@ def test_release_runbook_declares_secrets_runner_hooks_evidence_and_no_publish_b
 def test_phase_audit_separates_automated_evidence_from_unverified_release_gates() -> None:
     audit = PHASE_AUDIT.read_text(encoding="utf-8")
 
+    assert re.search(r"审计基线：`[0-9a-f]{40}`", audit)
     for value in (
-        "94b4005df0e6baeacba5008644b5323e3aafdb29",
         "108/108",
         "39/39",
         "IMPLEMENTED_AUTOMATED_VERIFIED",

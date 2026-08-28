@@ -1,0 +1,838 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://kanyikan.local/schemas/release-manifest.schema.json",
+  "title": "Kanyikan Windows amd64 offline release manifest",
+  "description": "Kanyikan V1 Windows 本地设备离线发行清单。签名文件对清单原始字节签名，因此清单内不得包含自身摘要或任何秘密。",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "product",
+    "release",
+    "target",
+    "requirements",
+    "entrypoint",
+    "tls",
+    "compose",
+    "resources",
+    "files",
+    "images",
+    "signing"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "product": {
+      "const": "Kanyikan"
+    },
+    "release": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "version",
+        "publishedAt",
+        "sourceCommit",
+        "packageType"
+      ],
+      "properties": {
+        "version": {
+          "$ref": "#/$defs/semanticVersion"
+        },
+        "publishedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "sourceCommit": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        },
+        "packageType": {
+          "const": "offline"
+        }
+      }
+    },
+    "target": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "os",
+        "architecture",
+        "dockerPlatform",
+        "deploymentProfile"
+      ],
+      "properties": {
+        "os": {
+          "const": "windows"
+        },
+        "architecture": {
+          "const": "amd64"
+        },
+        "dockerPlatform": {
+          "const": "linux/amd64"
+        },
+        "deploymentProfile": {
+          "const": "local_appliance"
+        }
+      }
+    },
+    "requirements": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "windowsEditions",
+        "powershellMinimumVersion",
+        "dockerDesktopRequired",
+        "composeMajorVersion",
+        "minimumCpuCores",
+        "minimumMemoryBytes",
+        "minimumFreeDiskBytes"
+      ],
+      "properties": {
+        "windowsEditions": {
+          "type": "array",
+          "prefixItems": [
+            {
+              "const": "10"
+            },
+            {
+              "const": "11"
+            }
+          ],
+          "items": false,
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "powershellMinimumVersion": {
+          "const": "5.1"
+        },
+        "dockerDesktopRequired": {
+          "const": true
+        },
+        "composeMajorVersion": {
+          "const": 2
+        },
+        "minimumCpuCores": {
+          "const": 4
+        },
+        "minimumMemoryBytes": {
+          "const": 8589934592
+        },
+        "minimumFreeDiskBytes": {
+          "const": 21474836480
+        }
+      }
+    },
+    "entrypoint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "scheme",
+        "host",
+        "port",
+        "path"
+      ],
+      "properties": {
+        "scheme": {
+          "const": "https"
+        },
+        "host": {
+          "const": "127.0.0.1"
+        },
+        "port": {
+          "const": 10443
+        },
+        "path": {
+          "const": "/"
+        }
+      }
+    },
+    "tls": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "leafValidityDays",
+        "caValidityDays"
+      ],
+      "properties": {
+        "leafValidityDays": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 825
+        },
+        "caValidityDays": {
+          "type": "integer",
+          "minimum": 825,
+          "maximum": 3650
+        }
+      }
+    },
+    "compose": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "projectName",
+        "pullPolicy",
+        "services"
+      ],
+      "properties": {
+        "path": {
+          "const": "compose.release.yml"
+        },
+        "projectName": {
+          "const": "kanyikan"
+        },
+        "pullPolicy": {
+          "const": "never"
+        },
+        "services": {
+          "type": "array",
+          "minItems": 10,
+          "maxItems": 10,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "postgres",
+              "redis",
+              "backend",
+              "worker",
+              "crawler",
+              "beat",
+              "outbox-relay",
+              "frontend",
+              "nginx",
+              "browserless"
+            ]
+          }
+        }
+      }
+    },
+    "resources": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "namedVolumes"
+      ],
+      "properties": {
+        "namedVolumes": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "postgres",
+            "redis",
+            "skills"
+          ],
+          "properties": {
+            "postgres": {
+              "const": "kanyikan_postgres_data"
+            },
+            "redis": {
+              "const": "kanyikan_redis_data"
+            },
+            "skills": {
+              "const": "kanyikan_skills_data"
+            }
+          }
+        }
+      }
+    },
+    "files": {
+      "type": "array",
+      "minItems": 12,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/file"
+      },
+      "allOf": [
+        {
+          "$ref": "#/$defs/requiresInstallCmd"
+        },
+        {
+          "$ref": "#/$defs/requiresController"
+        },
+        {
+          "$ref": "#/$defs/requiresModule"
+        },
+        {
+          "$ref": "#/$defs/requiresCompose"
+        },
+        {
+          "$ref": "#/$defs/requiresImageArchive"
+        },
+        {
+          "$ref": "#/$defs/requiresEnvTemplate"
+        },
+        {
+          "$ref": "#/$defs/requiresQuickStart"
+        },
+        {
+          "$ref": "#/$defs/requiresTroubleshooting"
+        },
+        {
+          "$ref": "#/$defs/requiresThirdPartyLicenses"
+        },
+        {
+          "$ref": "#/$defs/requiresPublicKey"
+        },
+        {
+          "$ref": "#/$defs/requiresVersionFile"
+        },
+        {
+          "$ref": "#/$defs/requiresLicense"
+        }
+      ]
+    },
+    "images": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "backend",
+        "frontend",
+        "postgres",
+        "redis",
+        "nginx",
+        "browserless"
+      ],
+      "properties": {
+        "backend": {
+          "$ref": "#/$defs/backendImage"
+        },
+        "frontend": {
+          "$ref": "#/$defs/frontendImage"
+        },
+        "postgres": {
+          "$ref": "#/$defs/postgresImage"
+        },
+        "redis": {
+          "$ref": "#/$defs/redisImage"
+        },
+        "nginx": {
+          "$ref": "#/$defs/nginxImage"
+        },
+        "browserless": {
+          "$ref": "#/$defs/browserlessImage"
+        }
+      }
+    },
+    "signing": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "algorithm",
+        "keyId",
+        "publicKeySha256",
+        "publicKeyPath",
+        "signaturePath"
+      ],
+      "properties": {
+        "algorithm": {
+          "const": "RSASSA-PKCS1-v1_5-SHA256"
+        },
+        "keyId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[A-Za-z0-9._-]+$"
+        },
+        "publicKeySha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "publicKeyPath": {
+          "const": "public-key.pem"
+        },
+        "signaturePath": {
+          "const": "release-manifest.sig"
+        }
+      }
+    }
+  },
+  "$defs": {
+    "semanticVersion": {
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)(?:-[0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*)?(?:\\+[0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*)?$"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "digest": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "relativePackagePath": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 240,
+      "pattern": "^(?!/)(?!.*\\\\)(?!.*(?:^|/)\\.\\.?(?:/|$))(?!.*//)(?!.*\/$)[^:<>\"|?*\\u0000-\\u001f]+$"
+    },
+    "file": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "role",
+        "sizeBytes",
+        "sha256"
+      ],
+      "properties": {
+        "path": {
+          "$ref": "#/$defs/relativePackagePath"
+        },
+        "role": {
+          "enum": [
+            "entrypoint",
+            "controller",
+            "module",
+            "compose",
+            "image_archive",
+            "config_template",
+            "documentation",
+            "public_key",
+            "version",
+            "license"
+          ]
+        },
+        "sizeBytes": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    },
+    "imageBase": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "reference",
+        "digest",
+        "imageId",
+        "platform",
+        "archivePath",
+        "composeServices"
+      ],
+      "properties": {
+        "reference": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._/:~-]*@sha256:[0-9a-f]{64}$"
+        },
+        "digest": {
+          "$ref": "#/$defs/digest"
+        },
+        "imageId": {
+          "$ref": "#/$defs/digest"
+        },
+        "platform": {
+          "const": "linux/amd64"
+        },
+        "archivePath": {
+          "const": "images/kanyikan-images-windows-amd64.tar"
+        },
+        "composeServices": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true
+        }
+      }
+    },
+    "backendImage": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/imageBase"
+        },
+        {
+          "properties": {
+            "composeServices": {
+              "type": "array",
+              "minItems": 5,
+              "maxItems": 5,
+              "uniqueItems": true,
+              "items": {
+                "enum": [
+                  "backend",
+                  "worker",
+                  "crawler",
+                  "beat",
+                  "outbox-relay"
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "frontendImage": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/imageBase"
+        },
+        {
+          "$ref": "#/$defs/frontendService"
+        }
+      ]
+    },
+    "postgresImage": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/imageBase"
+        },
+        {
+          "$ref": "#/$defs/postgresService"
+        }
+      ]
+    },
+    "redisImage": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/imageBase"
+        },
+        {
+          "$ref": "#/$defs/redisService"
+        }
+      ]
+    },
+    "nginxImage": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/imageBase"
+        },
+        {
+          "$ref": "#/$defs/nginxService"
+        }
+      ]
+    },
+    "browserlessImage": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/imageBase"
+        },
+        {
+          "$ref": "#/$defs/browserlessService"
+        }
+      ]
+    },
+    "frontendService": {
+      "$ref": "#/$defs/singleFrontendService"
+    },
+    "postgresService": {
+      "$ref": "#/$defs/singlePostgresService"
+    },
+    "redisService": {
+      "$ref": "#/$defs/singleRedisService"
+    },
+    "nginxService": {
+      "$ref": "#/$defs/singleNginxService"
+    },
+    "browserlessService": {
+      "$ref": "#/$defs/singleBrowserlessService"
+    },
+    "singleFrontendService": {
+      "properties": {
+        "composeServices": {
+          "$ref": "#/$defs/onlyFrontend"
+        }
+      }
+    },
+    "singlePostgresService": {
+      "properties": {
+        "composeServices": {
+          "$ref": "#/$defs/onlyPostgres"
+        }
+      }
+    },
+    "singleRedisService": {
+      "properties": {
+        "composeServices": {
+          "$ref": "#/$defs/onlyRedis"
+        }
+      }
+    },
+    "singleNginxService": {
+      "properties": {
+        "composeServices": {
+          "$ref": "#/$defs/onlyNginx"
+        }
+      }
+    },
+    "singleBrowserlessService": {
+      "properties": {
+        "composeServices": {
+          "$ref": "#/$defs/onlyBrowserless"
+        }
+      }
+    },
+    "onlyFrontend": {
+      "type": "array",
+      "prefixItems": [
+        {
+          "const": "frontend"
+        }
+      ],
+      "items": false,
+      "minItems": 1,
+      "maxItems": 1
+    },
+    "onlyPostgres": {
+      "type": "array",
+      "prefixItems": [
+        {
+          "const": "postgres"
+        }
+      ],
+      "items": false,
+      "minItems": 1,
+      "maxItems": 1
+    },
+    "onlyRedis": {
+      "type": "array",
+      "prefixItems": [
+        {
+          "const": "redis"
+        }
+      ],
+      "items": false,
+      "minItems": 1,
+      "maxItems": 1
+    },
+    "onlyNginx": {
+      "type": "array",
+      "prefixItems": [
+        {
+          "const": "nginx"
+        }
+      ],
+      "items": false,
+      "minItems": 1,
+      "maxItems": 1
+    },
+    "onlyBrowserless": {
+      "type": "array",
+      "prefixItems": [
+        {
+          "const": "browserless"
+        }
+      ],
+      "items": false,
+      "minItems": 1,
+      "maxItems": 1
+    },
+    "requiresInstallCmd": {
+      "contains": {
+        "properties": {
+          "path": {
+            "const": "install.cmd"
+          },
+          "role": {
+            "const": "entrypoint"
+          }
+        },
+        "required": [
+          "path",
+          "role"
+        ]
+      },
+      "minContains": 1,
+      "maxContains": 1
+    },
+    "requiresController": {
+      "contains": {
+        "properties": {
+          "path": {
+            "const": "kanyikan.ps1"
+          },
+          "role": {
+            "const": "controller"
+          }
+        },
+        "required": [
+          "path",
+          "role"
+        ]
+      },
+      "minContains": 1,
+      "maxContains": 1
+    },
+    "requiresModule": {
+      "contains": {
+        "properties": {
+          "path": {
+            "const": "lib/Kanyikan.Installer.psm1"
+          },
+          "role": {
+            "const": "module"
+          }
+        },
+        "required": [
+          "path",
+          "role"
+        ]
+      },
+      "minContains": 1,
+      "maxContains": 1
+    },
+    "requiresCompose": {
+      "contains": {
+        "properties": {
+          "path": {
+            "const": "compose.release.yml"
+          },
+          "role": {
+            "const": "compose"
+          }
+        },
+        "required": [
+          "path",
+          "role"
+        ]
+      },
+      "minContains": 1,
+      "maxContains": 1
+    },
+    "requiresImageArchive": {
+      "contains": {
+        "properties": {
+          "path": {
+            "const": "images/kanyikan-images-windows-amd64.tar"
+          },
+          "role": {
+            "const": "image_archive"
+          }
+        },
+        "required": [
+          "path",
+          "role"
+        ]
+      },
+      "minContains": 1,
+      "maxContains": 1
+    },
+    "requiresEnvTemplate": {
+      "contains": {
+        "properties": {
+          "path": {
+            "const": "config/system.env.template"
+          },
+          "role": {
+            "const": "config_template"
+          }
+        },
+        "required": [
+          "path",
+          "role"
+        ]
+      },
+      "minContains": 1,
+      "maxContains": 1
+    },
+    "requiresQuickStart": {
+      "contains": {
+        "properties": {
+          "path": {
+            "const": "docs/快速安装说明.md"
+          },
+          "role": {
+            "const": "documentation"
+          }
+        },
+        "required": [
+          "path",
+          "role"
+        ]
+      },
+      "minContains": 1,
+      "maxContains": 1
+    },
+    "requiresTroubleshooting": {
+      "contains": {
+        "properties": {
+          "path": {
+            "const": "docs/故障排查.md"
+          },
+          "role": {
+            "const": "documentation"
+          }
+        },
+        "required": [
+          "path",
+          "role"
+        ]
+      },
+      "minContains": 1,
+      "maxContains": 1
+    },
+    "requiresThirdPartyLicenses": {
+      "contains": {
+        "properties": {
+          "path": {
+            "const": "docs/第三方许可证.html"
+          },
+          "role": {
+            "const": "documentation"
+          }
+        },
+        "required": [
+          "path",
+          "role"
+        ]
+      },
+      "minContains": 1,
+      "maxContains": 1
+    },
+    "requiresPublicKey": {
+      "contains": {
+        "properties": {
+          "path": {
+            "const": "public-key.pem"
+          },
+          "role": {
+            "const": "public_key"
+          }
+        },
+        "required": [
+          "path",
+          "role"
+        ]
+      },
+      "minContains": 1,
+      "maxContains": 1
+    },
+    "requiresVersionFile": {
+      "contains": {
+        "properties": {
+          "path": {
+            "const": "VERSION"
+          },
+          "role": {
+            "const": "version"
+          }
+        },
+        "required": [
+          "path",
+          "role"
+        ]
+      },
+      "minContains": 1,
+      "maxContains": 1
+    },
+    "requiresLicense": {
+      "contains": {
+        "properties": {
+          "path": {
+            "const": "LICENSE"
+          },
+          "role": {
+            "const": "license"
+          }
+        },
+        "required": [
+          "path",
+          "role"
+        ]
+      },
+      "minContains": 1,
+      "maxContains": 1
+    }
+  }
+}

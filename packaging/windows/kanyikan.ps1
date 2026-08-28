@@ -240,5 +240,15 @@ switch -CaseSensitive ($Command.ToLowerInvariant()) {
         Write-KanyikanResult -Level '保护备份' -Message $protection.path
         exit 0
     }
+    'doctor' {
+        $script:Stage = 'DOCTOR'
+        try { $report = Get-KanyikanDoctorReport -InstallRoot $script:InstallRoot }
+        catch { Stop-KanyikanCommand -ExitCode 90 -Reason $_.Exception.Message -NextStep '请检查安装状态与 Docker Desktop。' }
+        Write-KanyikanResult -Level '诊断时间' -Message $report.generatedAt
+        Write-KanyikanResult -Level '安装状态' -Message $report.installState
+        foreach ($check in $report.checks) { Write-KanyikanResult -Level $check.status -Message "$($check.name)：$($check.detail)" }
+        Write-KanyikanResult -Level '入口' -Message $report.entrypoint
+        exit 0
+    }
     default { Write-Host "[失败] 未知或尚未实现的命令：$Command"; exit 10 }
 }

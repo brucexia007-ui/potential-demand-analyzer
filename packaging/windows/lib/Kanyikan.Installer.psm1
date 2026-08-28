@@ -436,9 +436,17 @@ function Invoke-KanyikanDockerCommand {
         [string[]]$Arguments
     )
 
-    $output = & docker.exe @Arguments 2>&1
+    $previousErrorActionPreference = $ErrorActionPreference
+    $ErrorActionPreference = 'Continue'
+    try {
+        $output = & docker.exe @Arguments 2>&1
+        $exitCode = $LASTEXITCODE
+    }
+    finally {
+        $ErrorActionPreference = $previousErrorActionPreference
+    }
     return [pscustomobject]@{
-        exitCode = $LASTEXITCODE
+        exitCode = $exitCode
         output = (@($output) -join [Environment]::NewLine).Trim()
     }
 }
@@ -446,7 +454,9 @@ function Invoke-KanyikanDockerCommand {
 function Get-KanyikanHostFacts {
     param(
         [Parameter(Mandatory = $true)]
-        [string]$InstallRoot
+        [string]$InstallRoot,
+
+        [switch]$ReadOnly
     )
 
     $normalizedRoot = Get-KanyikanNormalizedPath -Path $InstallRoot
@@ -482,6 +492,7 @@ function Get-KanyikanHostFacts {
 
     $installRootWritable = $false
     try {
+        if ($ReadOnly) { throw [OperationCanceledException]::new('只读诊断不执行写入探测') }
         if ([System.IO.Directory]::Exists($normalizedRoot)) {
             $probePath = [System.IO.Path]::Combine(
                 $normalizedRoot,
@@ -559,7 +570,7 @@ function Get-KanyikanHostFacts {
         memoryBytes = $memoryBytes
         freeDiskBytes = $freeDiskBytes
         portAvailable = $portAvailable
-        installRootWritable = $installRootWritable
+        installRootWritable = if ($ReadOnly) { $null } else { $installRootWritable }
         dockerProxyEnabled = $dockerProxyEnabled
     }
 }
@@ -1581,6 +1592,57 @@ function Invoke-KanyikanRestore {
     return $metadata
 }
 
+function Get-KanyikanDoctorReport {
+    param([Parameter(Mandatory = $true)][string]$InstallRoot)
+
+    $root = Get-KanyikanNormalizedPath -Path $InstallRoot
+    $state = Read-KanyikanInstallState -InstallRoot $root
+    $hostFacts = Get-KanyikanHostFacts -InstallRoot $root -ReadOnly
+    $checks = @(
+        [pscustomobject]@{ name = 'Windows 10/11 x64'; status = if ($hostFacts.isWindows -and $hostFacts.windowsMajorVersion -eq 10 -and $hostFacts.architecture -ceq 'AMD64') { '通过' } else { '失败' }; detail = $hostFacts.architecture },
+        [pscustomobject]@{ name = 'Docker Desktop'; status = if ($hostFacts.dockerDesktopInstalled) { '通过' } else { '失败' }; detail = '仅检查安装状态' },
+        [pscustomobject]@{ name = 'Docker Engine'; status = if ($hostFacts.dockerEngineAvailable) { '通过' } else { '失败' }; detail = [string]$hostFacts.dockerOsType },
+        [pscustomobject]@{ name = 'Docker Compose v2'; status = if ($hostFacts.composeMajorVersion -eq 2) { '通过' } else { '失败' }; detail = [string]$hostFacts.composeMajorVersion },
+        [pscustomobject]@{ name = 'Docker Proxy'; status = if ($hostFacts.dockerProxyEnabled) { '已启用' } else { '未启用' }; detail = '代理地址与凭据不采集' },
+        [pscustomobject]@{ name = 'Execution Provider'; status = '未配置或未检查'; detail = '请登录后在设置页查看；不影响 Bootstrap Ready' }
+    )
+    if ($state.currentState -cne 'NEW') {
+        try {
+            $release = Test-KanyikanReleasePackage -PackageRoot $root -TrustedPublicKeySha256 ([string]$state.releasePublicKeySha256)
+            $checks += [pscustomobject]@{ name = '发行包'; status = '通过'; detail = [string]$release.version }
+        }
+        catch { $checks += [pscustomobject]@{ name = '发行包'; status = '失败'; detail = Protect-KanyikanText -Text $_.Exception.Message; }; $release = $null }
+        if ($null -ne $release) {
+            try { [void](Test-KanyikanReleaseImagesPresent -Manifest $release.manifest); $checks += [pscustomobject]@{ name = '六个镜像'; status = '通过'; detail = '身份、RepoDigest、linux/amd64' } }
+            catch { $checks += [pscustomobject]@{ name = '六个镜像'; status = '失败'; detail = Protect-KanyikanText -Text $_.Exception.Message } }
+            try {
+                if (-not (Test-KanyikanSystemEnvironment -Path ([System.IO.Path]::Combine($root, 'config', 'system.env')) -Manifest $release.manifest)) { throw 'system.env 内容或 ACL 不合格。' }
+                $checks += [pscustomobject]@{ name = '系统配置'; status = '通过'; detail = '必需键与 ACL 合格' }
+            }
+            catch { $checks += [pscustomobject]@{ name = '系统配置'; status = '失败'; detail = Protect-KanyikanText -Text $_.Exception.Message } }
+            try { [void](Test-KanyikanLocalCertificate -Manifest $release.manifest -CertificateDirectory ([System.IO.Path]::Combine($root, 'config', 'certs'))); $checks += [pscustomobject]@{ name = '本地 TLS'; status = '通过'; detail = 'SAN、用途、有效期、私钥与 ACL' } }
+            catch { $checks += [pscustomobject]@{ name = '本地 TLS'; status = '失败'; detail = Protect-KanyikanText -Text $_.Exception.Message } }
+        }
+        try {
+            $serviceResult = Test-KanyikanServiceFacts -Facts @(Get-KanyikanServiceFacts -InstallRoot $root)
+            $checks += [pscustomobject]@{ name = '十个服务与唯一端口'; status = if ($serviceResult.passed) { '通过' } else { '失败' }; detail = if ($serviceResult.passed) { '全部健康' } else { $serviceResult.reason } }
+        }
+        catch { $checks += [pscustomobject]@{ name = '十个服务与唯一端口'; status = '失败'; detail = Protect-KanyikanText -Text $_.Exception.Message } }
+        if ([System.IO.File]::Exists([System.IO.Path]::Combine($root, 'config', 'certs', 'localhost.crt'))) {
+            $endpoint = Test-KanyikanBootstrapEndpoints -LeafCertificatePath ([System.IO.Path]::Combine($root, 'config', 'certs', 'localhost.crt'))
+            $checks += [pscustomobject]@{ name = 'Bootstrap Endpoints'; status = if ($endpoint.passed) { '通过' } else { '失败' }; detail = if ($endpoint.passed) { '/health 与 /ready' } else { $endpoint.reason } }
+        }
+    }
+    return [pscustomobject][ordered]@{
+        generatedAt = [DateTime]::UtcNow.ToString('o')
+        productVersion = $state.productVersion
+        installState = $state.currentState
+        entrypoint = 'https://127.0.0.1:10443'
+        capacities = [pscustomobject]@{ cpuCores = $hostFacts.cpuCores; memoryBytes = $hostFacts.memoryBytes; freeDiskBytes = $hostFacts.freeDiskBytes }
+        checks = $checks
+    }
+}
+
 Export-ModuleMember -Function @(
     'Get-KanyikanCertificateDockerArguments',
     'Get-KanyikanBackupArguments',
@@ -1589,6 +1651,7 @@ Export-ModuleMember -Function @(
     'Get-KanyikanLocalCaThumbprint',
     'Get-KanyikanStatePath',
     'Get-KanyikanHostFacts',
+    'Get-KanyikanDoctorReport',
     'Get-KanyikanRestoreArguments',
     'Get-KanyikanInspectedImages',
     'Get-KanyikanServiceFacts',

@@ -764,15 +764,108 @@ function Test-KanyikanReleasePackage {
     }
 }
 
+function Test-KanyikanLoadedImageFacts {
+    param(
+        [Parameter(Mandatory = $true)]
+        [psobject]$Manifest,
+
+        [Parameter(Mandatory = $true)]
+        [string[]]$LoadedReferences,
+
+        [Parameter(Mandatory = $true)]
+        [psobject[]]$InspectedImages
+    )
+
+    $imageNames = @('backend', 'frontend', 'postgres', 'redis', 'nginx', 'browserless')
+    $expectedReferences = @($imageNames | ForEach-Object { [string]$Manifest.images.$_.reference })
+    $uniqueLoadedReferences = @($LoadedReferences | Sort-Object -Unique)
+    if ($uniqueLoadedReferences.Count -ne 6) {
+        throw "离线镜像包必须恰好加载 6 个镜像，实际为 $($uniqueLoadedReferences.Count) 个。"
+    }
+    foreach ($reference in $uniqueLoadedReferences) {
+        if ($expectedReferences -cnotcontains $reference) { throw "离线镜像包包含未声明镜像：$reference" }
+    }
+    foreach ($reference in $expectedReferences) {
+        if ($uniqueLoadedReferences -cnotcontains $reference) { throw "离线镜像包缺少声明镜像：$reference" }
+    }
+
+    $verifiedImages = @()
+    foreach ($imageName in $imageNames) {
+        $expected = $Manifest.images.$imageName
+        $matches = @($InspectedImages | Where-Object { $_.reference -ceq [string]$expected.reference })
+        if ($matches.Count -ne 1) { throw "无法唯一核对镜像：$imageName" }
+        $actual = $matches[0]
+        if ([string]$actual.imageId -cne [string]$expected.imageId) { throw "镜像 ID 不匹配：$imageName" }
+        if ([string]$actual.os -cne 'linux' -or [string]$actual.architecture -cne 'amd64') { throw "镜像平台不是 linux/amd64：$imageName" }
+        if (@($actual.repoDigests) -cnotcontains [string]$expected.reference) { throw "镜像 RepoDigest 不匹配：$imageName" }
+        $verifiedImages += [pscustomobject][ordered]@{
+            name = $imageName
+            reference = [string]$expected.reference
+            imageId = [string]$actual.imageId
+            platform = 'linux/amd64'
+        }
+    }
+    return $verifiedImages
+}
+
+function Import-KanyikanReleaseImages {
+    param(
+        [Parameter(Mandatory = $true)]
+        [psobject]$Manifest,
+
+        [Parameter(Mandatory = $true)]
+        [string]$PackageRoot
+    )
+
+    $root = Get-KanyikanNormalizedPath -Path $PackageRoot
+    $archivePath = [System.IO.Path]::Combine(
+        $root,
+        ([string]$Manifest.images.backend.archivePath).Replace('/', [System.IO.Path]::DirectorySeparatorChar)
+    )
+    $loadResult = Invoke-KanyikanDockerCommand -Arguments @('load', '--input', $archivePath)
+    if ($loadResult.exitCode -ne 0) { throw "docker load 失败：$(Protect-KanyikanText -Text $loadResult.output)" }
+
+    $loadedReferences = @()
+    foreach ($line in ($loadResult.output -split '\r?\n')) {
+        if ($line -match '^Loaded image:\s+(.+@sha256:[0-9a-f]{64})$') {
+            $loadedReferences += $Matches[1].Trim()
+        }
+        elseif ($line -match '^Loaded image ID:') {
+            throw '离线镜像包包含无法映射到声明 RepoDigest 的镜像。'
+        }
+    }
+
+    $inspectedImages = @()
+    foreach ($imageName in @('backend', 'frontend', 'postgres', 'redis', 'nginx', 'browserless')) {
+        $reference = [string]$Manifest.images.$imageName.reference
+        $inspectResult = Invoke-KanyikanDockerCommand -Arguments @(
+            'image', 'inspect', $reference, '--format', '{{json .}}'
+        )
+        if ($inspectResult.exitCode -ne 0) { throw "无法检查已加载镜像：$imageName" }
+        try { $inspect = $inspectResult.output | ConvertFrom-Json }
+        catch { throw "Docker 返回了无法解析的镜像信息：$imageName" }
+        $inspectedImages += [pscustomobject]@{
+            reference = $reference
+            imageId = [string]$inspect.Id
+            os = [string]$inspect.Os
+            architecture = [string]$inspect.Architecture
+            repoDigests = @($inspect.RepoDigests)
+        }
+    }
+    return Test-KanyikanLoadedImageFacts -Manifest $Manifest -LoadedReferences $loadedReferences -InspectedImages $inspectedImages
+}
+
 Export-ModuleMember -Function @(
     'Get-KanyikanInstallStates',
     'Get-KanyikanStatePath',
     'Get-KanyikanHostFacts',
+    'Import-KanyikanReleaseImages',
     'Invoke-KanyikanPreflight',
     'New-KanyikanInstallState',
     'Read-KanyikanInstallState',
     'Set-KanyikanInstallState',
     'Set-KanyikanInstallFailure',
     'Test-KanyikanPreflightFacts',
+    'Test-KanyikanLoadedImageFacts',
     'Test-KanyikanReleasePackage'
 )

@@ -877,6 +877,13 @@ function Import-KanyikanReleaseImages {
         }
     }
 
+    $inspectedImages = Get-KanyikanInspectedImages -Manifest $Manifest
+    return Test-KanyikanLoadedImageFacts -Manifest $Manifest -LoadedReferences $loadedReferences -InspectedImages $inspectedImages
+}
+
+function Get-KanyikanInspectedImages {
+    param([Parameter(Mandatory = $true)][psobject]$Manifest)
+
     $inspectedImages = @()
     foreach ($imageName in @('backend', 'frontend', 'postgres', 'redis', 'nginx', 'browserless')) {
         $reference = [string]$Manifest.images.$imageName.reference
@@ -894,7 +901,13 @@ function Import-KanyikanReleaseImages {
             repoDigests = @($inspect.RepoDigests)
         }
     }
-    return Test-KanyikanLoadedImageFacts -Manifest $Manifest -LoadedReferences $loadedReferences -InspectedImages $inspectedImages
+    return $inspectedImages
+}
+
+function Test-KanyikanReleaseImagesPresent {
+    param([Parameter(Mandatory = $true)][psobject]$Manifest)
+    $references = @('backend', 'frontend', 'postgres', 'redis', 'nginx', 'browserless') | ForEach-Object { [string]$Manifest.images.$_.reference }
+    return Test-KanyikanLoadedImageFacts -Manifest $Manifest -LoadedReferences $references -InspectedImages @(Get-KanyikanInspectedImages -Manifest $Manifest)
 }
 
 function ConvertFrom-KanyikanSecureString {
@@ -1418,6 +1431,7 @@ Export-ModuleMember -Function @(
     'Get-KanyikanLocalCaThumbprint',
     'Get-KanyikanStatePath',
     'Get-KanyikanHostFacts',
+    'Get-KanyikanInspectedImages',
     'Get-KanyikanServiceFacts',
     'Import-KanyikanReleaseImages',
     'Install-KanyikanLocalRootTrust',
@@ -1436,6 +1450,7 @@ Export-ModuleMember -Function @(
     'Test-KanyikanLoadedImageFacts',
     'Test-KanyikanLocalCertificate',
     'Test-KanyikanReleasePackage',
+    'Test-KanyikanReleaseImagesPresent',
     'Test-KanyikanRestrictedFileAcl',
     'Test-KanyikanSystemEnvironment',
     'Test-KanyikanServiceFacts',

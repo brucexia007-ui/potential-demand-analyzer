@@ -78,5 +78,13 @@ Invoke-TestCase 'RepoDigest 漂移时拒绝' {
     Assert-True $threw 'RepoDigest 漂移未被拒绝。'
 }
 
+Invoke-TestCase '已加载镜像复核命令已公开且不会调用 load' {
+    $command = Get-Command Test-KanyikanReleaseImagesPresent
+    Assert-True ($null -ne $command) '缺少已加载镜像复核命令。'
+    $definition = $command.Definition
+    Assert-True (-not $definition.Contains("'load'")) '复核命令会再次加载镜像。'
+    Assert-True ($definition.Contains('Get-KanyikanInspectedImages')) '复核命令未检查 Docker 中的实际镜像。'
+}
+
 Write-Host "RESULT passed=$script:Passed failed=$script:Failed"
 if ($script:Failed -gt 0) { exit 1 }

@@ -723,7 +723,7 @@ function Assert-KanyikanReleaseManifest {
 
     Assert-KanyikanExactProperties -Value $Manifest -Names @(
         'schemaVersion', 'product', 'release', 'target', 'requirements', 'entrypoint',
-        'tls', 'compose', 'resources', 'files', 'images', 'signing'
+        'tls', 'compose', 'resources', 'files', 'images', 'upgrade', 'signing'
     ) -Context 'manifest'
     if ($Manifest.schemaVersion -ne 1 -or $Manifest.product -cne 'Kanyikan') { throw 'manifest 产品或契约版本不合法。' }
 
@@ -788,6 +788,22 @@ function Assert-KanyikanReleaseManifest {
         $actualServices = @($image.composeServices)
         if ($actualServices.Count -ne $imageServices[$imageName].Count) { throw "镜像 $imageName 服务映射不合法。" }
         foreach ($service in $imageServices[$imageName]) { if ($actualServices -notcontains $service) { throw "镜像 $imageName 缺少服务映射 $service。" } }
+    }
+
+    Assert-KanyikanExactProperties -Value $Manifest.upgrade -Names @('supportedFrom', 'migration', 'smokeTests') -Context 'upgrade'
+    $seenSourceVersions = @{}
+    foreach ($sourceVersion in @($Manifest.upgrade.supportedFrom)) {
+        if ([string]$sourceVersion -notmatch '^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(?:-[0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*)?(?:\+[0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*)?$') { throw "upgrade.supportedFrom 包含非法版本：$sourceVersion" }
+        if ($seenSourceVersions.ContainsKey([string]$sourceVersion)) { throw "upgrade.supportedFrom 包含重复版本：$sourceVersion" }
+        $seenSourceVersions[[string]$sourceVersion] = $true
+    }
+    Assert-KanyikanExactProperties -Value $Manifest.upgrade.migration -Names @('strategy', 'requiresFullBackup', 'rollbackStrategy') -Context 'upgrade.migration'
+    if (@('none', 'alembic_upgrade_head') -cnotcontains [string]$Manifest.upgrade.migration.strategy -or $Manifest.upgrade.migration.requiresFullBackup -ne $true -or $Manifest.upgrade.migration.rollbackStrategy -cne 'restore_full_backup') { throw '升级迁移或回滚策略不合法。' }
+    $expectedSmokeTests = @('https_health', 'https_ready', 'admin_login', 'core_api')
+    $actualSmokeTests = @($Manifest.upgrade.smokeTests)
+    if ($actualSmokeTests.Count -ne $expectedSmokeTests.Count) { throw '升级冒烟检查契约不合法。' }
+    for ($index = 0; $index -lt $expectedSmokeTests.Count; $index++) {
+        if ([string]$actualSmokeTests[$index] -cne $expectedSmokeTests[$index]) { throw '升级冒烟检查契约不合法。' }
     }
 
     Assert-KanyikanExactProperties -Value $Manifest.signing -Names @('algorithm', 'keyId', 'publicKeySha256', 'publicKeyPath', 'signaturePath') -Context 'signing'

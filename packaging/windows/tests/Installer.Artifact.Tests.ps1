@@ -141,6 +141,7 @@ function New-TestPackage {
         resources = [ordered]@{ namedVolumes = [ordered]@{ postgres = 'kanyikan_postgres_data'; redis = 'kanyikan_redis_data'; snapshots = 'kanyikan_snapshots_data'; skills = 'kanyikan_skills_data' } }
         files = $fileEntries
         images = [ordered]@{ backend = New-Image @('backend', 'worker', 'crawler', 'beat', 'outbox-relay'); frontend = New-Image @('frontend'); postgres = New-Image @('postgres'); redis = New-Image @('redis'); nginx = New-Image @('nginx'); browserless = New-Image @('browserless') }
+        upgrade = [ordered]@{ supportedFrom = @(); migration = [ordered]@{ strategy = 'none'; requiresFullBackup = $true; rollbackStrategy = 'restore_full_backup' }; smokeTests = @('https_health', 'https_ready', 'admin_login', 'core_api') }
         signing = [ordered]@{ algorithm = 'RSASSA-PKCS1-v1_5-SHA256'; keyId = 'test-key'; publicKeySha256 = $publicKeyHash; publicKeyPath = 'public-key.pem'; signaturePath = 'release-manifest.sig' }
     }
     $utf8 = New-Object Text.UTF8Encoding($false)
@@ -196,6 +197,30 @@ try {
         $threw = $false
         try { Test-KanyikanReleasePackage -PackageRoot $package.root -TrustedPublicKeySha256 $package.trustedHash | Out-Null } catch { $threw = $_.Exception.Message.Contains('非法相对路径') }
         Assert-True $threw '危险路径未被拒绝。'
+    }
+
+    Invoke-TestCase '缺少升级契约时拒绝' {
+        $package = New-TestPackage (Join-Path $testRoot 'missing-upgrade')
+        $package.manifest.Remove('upgrade')
+        $utf8 = New-Object Text.UTF8Encoding($false)
+        $manifestPath = Join-Path $package.root 'release-manifest.json'
+        [IO.File]::WriteAllText($manifestPath, ($package.manifest | ConvertTo-Json -Depth 12), $utf8)
+        [IO.File]::WriteAllBytes((Join-Path $package.root 'release-manifest.sig'), [KanyikanTestSigning]::Sign($package.privateKey, [IO.File]::ReadAllBytes($manifestPath)))
+        $threw = $false
+        try { Test-KanyikanReleasePackage -PackageRoot $package.root -TrustedPublicKeySha256 $package.trustedHash | Out-Null } catch { $threw = $_.Exception.Message.Contains('缺少字段 upgrade') }
+        Assert-True $threw '缺少升级契约的发行包未被拒绝。'
+    }
+
+    Invoke-TestCase '升级冒烟检查顺序被修改时拒绝' {
+        $package = New-TestPackage (Join-Path $testRoot 'wrong-smoke-order')
+        $package.manifest.upgrade.smokeTests = @('https_ready', 'https_health', 'admin_login', 'core_api')
+        $utf8 = New-Object Text.UTF8Encoding($false)
+        $manifestPath = Join-Path $package.root 'release-manifest.json'
+        [IO.File]::WriteAllText($manifestPath, ($package.manifest | ConvertTo-Json -Depth 12), $utf8)
+        [IO.File]::WriteAllBytes((Join-Path $package.root 'release-manifest.sig'), [KanyikanTestSigning]::Sign($package.privateKey, [IO.File]::ReadAllBytes($manifestPath)))
+        $threw = $false
+        try { Test-KanyikanReleasePackage -PackageRoot $package.root -TrustedPublicKeySha256 $package.trustedHash | Out-Null } catch { $threw = $_.Exception.Message.Contains('冒烟检查') }
+        Assert-True $threw '冒烟检查顺序被修改的发行包未被拒绝。'
     }
 }
 finally {

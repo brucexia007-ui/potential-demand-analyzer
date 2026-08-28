@@ -188,6 +188,7 @@ function New-KanyikanInstallState {
         }
         images = @()
         caThumbprint = $null
+        caTrusted = $false
         lastFailure = $null
     }
 }
@@ -243,6 +244,7 @@ function Assert-KanyikanInstallState {
         'resources',
         'images',
         'caThumbprint',
+        'caTrusted',
         'lastFailure'
     )
     foreach ($propertyName in $requiredProperties) {

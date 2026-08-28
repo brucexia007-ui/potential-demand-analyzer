@@ -50,6 +50,7 @@ try {
         [System.IO.Directory]::CreateDirectory($root) | Out-Null
         $state = Read-KanyikanInstallState -InstallRoot $root
         Assert-True ($state.currentState -ceq 'NEW') '初始状态不是 NEW。'
+        Assert-True (-not $state.caTrusted) '初始状态错误标记为已信任 CA。'
         Assert-True (-not [System.IO.File]::Exists((Get-KanyikanStatePath -InstallRoot $root))) '读取初始状态产生了持久副作用。'
     }
 

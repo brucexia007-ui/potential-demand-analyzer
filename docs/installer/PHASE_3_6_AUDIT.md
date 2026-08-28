@@ -1,6 +1,6 @@
 # Phase 3～6 实现与证据审计
 
-审计基线：`65bc53aadb85271bf44db63754720350e4fff975`
+审计基线：`3fb1b2ffcdc9f907cb96c30d67b7ebc952fa6462`
 
 审计时间：2026-08-28（Asia/Shanghai）
 
@@ -67,6 +67,16 @@
 
 证据强度：`IMPLEMENTED_AUTOMATED_VERIFIED`。本机浏览器结果不替代 Tag 工作流在 GitHub 托管环境中的实际执行记录。
 
+### GitHub main CI
+
+运行：`33171589490`，commit `3fb1b2ffcdc9f907cb96c30d67b7ebc952fa6462`。
+
+结果：前端依赖安全契约与生产构建成功；后端使用 Python 3.11、PostgreSQL 16/pgvector 与 Redis 完成 `pip-audit` 和全量测试，1982 条通过、5 条跳过、0 失败、8 条警告，应用覆盖率 81%。
+
+前两次远端运行作为失败复现证据保留：`33170171376` 被 `pypdf 6.14.2` 的两项已知漏洞阻断，升级到 6.16.2 后 `pip-audit` 通过；`33170591361` 随后暴露测试环境缺少 `jsonschema`，通过新增精确固定的 `backend/requirements-test.txt` 并让 CI/Tag 工作流共同安装后修复。
+
+证据强度：main 分支 CI 为 `IMPLEMENTED_AUTOMATED_VERIFIED`；它不替代 Tag 发行、供应链签名和三轮 Windows 断网 E2E。
+
 ## 3. Phase 3
 
 | 要求 | 当前证据 | 状态 |
@@ -108,7 +118,7 @@
 | 六镜像 SPDX SBOM、第三方许可证、Grype Critical/High 门禁与时效豁免 | 生成器、评估器与工作流契约测试 | `IMPLEMENTED_AUTOMATED_VERIFIED` |
 | 六镜像 Cosign 签名、SBOM 证明、GitHub 来源证明 | Tag 工作流已接线，尚未在 GitHub 执行 | `IMPLEMENTED_NOT_RUNTIME_VERIFIED` |
 | 离线 ZIP、SBOM ZIP、许可证、`SHA256SUMS` 和 RSA 顶层签名 | 生成器及独立验签测试；候选工作流已接线 | `IMPLEMENTED_AUTOMATED_VERIFIED` |
-| 后端非集成回归、前端安全契约、生产构建和 Chromium E2E | 本机隔离环境 1939/1939、1/1、构建成功、108/108 且禁用重试 | `IMPLEMENTED_AUTOMATED_VERIFIED` |
+| 后端回归、前端安全契约、生产构建和 Chromium E2E | 本机隔离回归通过；GitHub main CI 1982 passed/5 skipped、覆盖率 81%，前端构建成功；本机 Chromium 108/108 且禁用重试 | `IMPLEMENTED_AUTOMATED_VERIFIED` |
 | 端口占用、Docker 停止、Windows Containers、低磁盘、manifest/镜像损坏 | 负向 E2E 编排、精确退出码与无副作用检查已实现 | `IMPLEMENTED_NOT_RUNTIME_VERIFIED` |
 | `IMAGES_LOADED`、`CONFIG_CREATED`、`SERVICES_STARTING` 中断重试及重复安装不重置密钥 | 中断进程、重试、认证冒烟和身份摘要编排已实现 | `IMPLEMENTED_NOT_RUNTIME_VERIFIED` |
 | 三轮独立纯净 Windows 11 完全断网 E2E | 一台 Windows 11 经三次黄金快照复原、round 标签、ephemeral 注册、消费标记和代次汇总的门禁已实现；runner 与证据不存在 | `EXTERNAL_NOT_RUN` |

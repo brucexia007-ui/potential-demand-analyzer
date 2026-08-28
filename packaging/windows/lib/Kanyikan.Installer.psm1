@@ -14,6 +14,14 @@ public static class KanyikanNativeMethods
         string newFileName,
         int flags
     );
+
+    [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    public static extern bool CreateHardLink(
+        string fileName,
+        string existingFileName,
+        IntPtr securityAttributes
+    );
 }
 '@
 }
@@ -1007,6 +1015,168 @@ function Expand-KanyikanUpdatePackage {
     }
     finally {
         if ($null -ne $archive) { $archive.Dispose() }
+    }
+}
+
+function Get-KanyikanReleaseAssetRelativePaths {
+    param([Parameter(Mandatory = $true)][psobject]$Manifest)
+
+    $paths = @(@($Manifest.files) | ForEach-Object { [string]$_.path })
+    $paths += @('release-manifest.json', 'release-manifest.sig', 'manifest.sha256')
+    $seen = @{}
+    foreach ($path in $paths) {
+        Assert-KanyikanReleaseAssetPath -Path $path
+        if ($seen.ContainsKey($path)) { throw "发行资产路径重复：$path" }
+        $seen[$path] = $true
+    }
+    return @($paths)
+}
+
+function Assert-KanyikanUpdateTransactionPath {
+    param(
+        [Parameter(Mandatory = $true)][string]$InstallRoot,
+        [Parameter(Mandatory = $true)][string]$Path
+    )
+
+    $root = Get-KanyikanNormalizedPath -Path $InstallRoot
+    $transactionRoot = [System.IO.Path]::Combine($root, 'state', 'update-transactions')
+    $candidate = Get-KanyikanNormalizedPath -Path $Path
+    $prefix = $transactionRoot + [System.IO.Path]::DirectorySeparatorChar
+    if (-not $candidate.StartsWith($prefix, [StringComparison]::OrdinalIgnoreCase)) { throw '更新资产快照必须位于 state/update-transactions 内。' }
+    return $candidate
+}
+
+function New-KanyikanHardLinkOrCopy {
+    param(
+        [Parameter(Mandatory = $true)][string]$SourcePath,
+        [Parameter(Mandatory = $true)][string]$DestinationPath
+    )
+
+    [System.IO.Directory]::CreateDirectory([System.IO.Path]::GetDirectoryName($DestinationPath)) | Out-Null
+    if (-not [KanyikanNativeMethods]::CreateHardLink($DestinationPath, $SourcePath, [IntPtr]::Zero)) {
+        [System.IO.File]::Copy($SourcePath, $DestinationPath, $false)
+    }
+}
+
+function New-KanyikanReleaseAssetSnapshot {
+    param(
+        [Parameter(Mandatory = $true)][string]$InstallRoot,
+        [Parameter(Mandatory = $true)][psobject]$CurrentManifest,
+        [Parameter(Mandatory = $true)][string]$SnapshotRoot
+    )
+
+    $root = Get-KanyikanNormalizedPath -Path $InstallRoot
+    $snapshot = Assert-KanyikanUpdateTransactionPath -InstallRoot $root -Path $SnapshotRoot
+    if ([System.IO.Directory]::Exists($snapshot) -or [System.IO.File]::Exists($snapshot)) { throw "更新资产快照已存在：$snapshot" }
+    $paths = @(Get-KanyikanReleaseAssetRelativePaths -Manifest $CurrentManifest)
+    foreach ($relativePath in $paths) {
+        $sourcePath = [System.IO.Path]::Combine($root, $relativePath.Replace('/', [System.IO.Path]::DirectorySeparatorChar))
+        if (-not [System.IO.File]::Exists($sourcePath)) { throw "当前发行资产缺失：$relativePath" }
+        if (([System.IO.File]::GetAttributes($sourcePath) -band [System.IO.FileAttributes]::ReparsePoint) -ne 0) { throw "当前发行资产不得是重解析点：$relativePath" }
+    }
+
+    [System.IO.Directory]::CreateDirectory($snapshot) | Out-Null
+    try {
+        foreach ($relativePath in $paths) {
+            $sourcePath = [System.IO.Path]::Combine($root, $relativePath.Replace('/', [System.IO.Path]::DirectorySeparatorChar))
+            $snapshotPath = [System.IO.Path]::Combine($snapshot, $relativePath.Replace('/', [System.IO.Path]::DirectorySeparatorChar))
+            New-KanyikanHardLinkOrCopy -SourcePath $sourcePath -DestinationPath $snapshotPath
+        }
+        return $snapshot
+    }
+    catch {
+        if ([System.IO.Directory]::Exists($snapshot)) { [System.IO.Directory]::Delete($snapshot, $true) }
+        throw
+    }
+}
+
+function Set-KanyikanReleaseAssets {
+    param(
+        [Parameter(Mandatory = $true)][string]$InstallRoot,
+        [Parameter(Mandatory = $true)][string]$PackageRoot,
+        [Parameter(Mandatory = $true)][psobject]$CurrentManifest,
+        [Parameter(Mandatory = $true)][psobject]$NewManifest
+    )
+
+    $root = Get-KanyikanNormalizedPath -Path $InstallRoot
+    $package = Get-KanyikanNormalizedPath -Path $PackageRoot
+    $newPaths = @(Get-KanyikanReleaseAssetRelativePaths -Manifest $NewManifest)
+    $currentPaths = @(Get-KanyikanReleaseAssetRelativePaths -Manifest $CurrentManifest)
+    foreach ($relativePath in $newPaths) {
+        $sourcePath = [System.IO.Path]::Combine($package, $relativePath.Replace('/', [System.IO.Path]::DirectorySeparatorChar))
+        if (-not [System.IO.File]::Exists($sourcePath)) { throw "新发行资产缺失：$relativePath" }
+        if (([System.IO.File]::GetAttributes($sourcePath) -band [System.IO.FileAttributes]::ReparsePoint) -ne 0) { throw "新发行资产不得是重解析点：$relativePath" }
+    }
+
+    foreach ($relativePath in $newPaths) {
+        $sourcePath = [System.IO.Path]::Combine($package, $relativePath.Replace('/', [System.IO.Path]::DirectorySeparatorChar))
+        $destinationPath = [System.IO.Path]::Combine($root, $relativePath.Replace('/', [System.IO.Path]::DirectorySeparatorChar))
+        [System.IO.Directory]::CreateDirectory([System.IO.Path]::GetDirectoryName($destinationPath)) | Out-Null
+        $temporaryPath = "$destinationPath.update.$([Guid]::NewGuid().ToString('N')).tmp"
+        try {
+            New-KanyikanHardLinkOrCopy -SourcePath $sourcePath -DestinationPath $temporaryPath
+            if (-not [KanyikanNativeMethods]::MoveFileEx($temporaryPath, $destinationPath, (0x1 -bor 0x8))) {
+                throw (New-Object ComponentModel.Win32Exception([Runtime.InteropServices.Marshal]::GetLastWin32Error()))
+            }
+        }
+        finally { if ([System.IO.File]::Exists($temporaryPath)) { [System.IO.File]::Delete($temporaryPath) } }
+    }
+    foreach ($relativePath in $currentPaths) {
+        if ($newPaths -cnotcontains $relativePath) {
+            $obsoletePath = [System.IO.Path]::Combine($root, $relativePath.Replace('/', [System.IO.Path]::DirectorySeparatorChar))
+            if ([System.IO.File]::Exists($obsoletePath)) { [System.IO.File]::Delete($obsoletePath) }
+        }
+    }
+}
+
+function Restore-KanyikanReleaseAssets {
+    param(
+        [Parameter(Mandatory = $true)][string]$InstallRoot,
+        [Parameter(Mandatory = $true)][string]$SnapshotRoot,
+        [Parameter(Mandatory = $true)][psobject]$PreviousManifest,
+        [Parameter(Mandatory = $true)][psobject]$FailedManifest
+    )
+
+    $root = Get-KanyikanNormalizedPath -Path $InstallRoot
+    $snapshot = Assert-KanyikanUpdateTransactionPath -InstallRoot $root -Path $SnapshotRoot
+    if (-not [System.IO.Directory]::Exists($snapshot)) { throw '更新资产快照不存在。' }
+    $previousPaths = @(Get-KanyikanReleaseAssetRelativePaths -Manifest $PreviousManifest)
+    $failedPaths = @(Get-KanyikanReleaseAssetRelativePaths -Manifest $FailedManifest)
+    foreach ($relativePath in $previousPaths) {
+        $snapshotPath = [System.IO.Path]::Combine($snapshot, $relativePath.Replace('/', [System.IO.Path]::DirectorySeparatorChar))
+        if (-not [System.IO.File]::Exists($snapshotPath)) { throw "更新资产快照缺失：$relativePath" }
+    }
+    foreach ($relativePath in $previousPaths) {
+        $snapshotPath = [System.IO.Path]::Combine($snapshot, $relativePath.Replace('/', [System.IO.Path]::DirectorySeparatorChar))
+        $destinationPath = [System.IO.Path]::Combine($root, $relativePath.Replace('/', [System.IO.Path]::DirectorySeparatorChar))
+        [System.IO.Directory]::CreateDirectory([System.IO.Path]::GetDirectoryName($destinationPath)) | Out-Null
+        $temporaryPath = "$destinationPath.rollback.$([Guid]::NewGuid().ToString('N')).tmp"
+        try {
+            New-KanyikanHardLinkOrCopy -SourcePath $snapshotPath -DestinationPath $temporaryPath
+            if (-not [KanyikanNativeMethods]::MoveFileEx($temporaryPath, $destinationPath, (0x1 -bor 0x8))) {
+                throw (New-Object ComponentModel.Win32Exception([Runtime.InteropServices.Marshal]::GetLastWin32Error()))
+            }
+        }
+        finally { if ([System.IO.File]::Exists($temporaryPath)) { [System.IO.File]::Delete($temporaryPath) } }
+    }
+    foreach ($relativePath in $failedPaths) {
+        if ($previousPaths -cnotcontains $relativePath) {
+            $failedPath = [System.IO.Path]::Combine($root, $relativePath.Replace('/', [System.IO.Path]::DirectorySeparatorChar))
+            if ([System.IO.File]::Exists($failedPath)) { [System.IO.File]::Delete($failedPath) }
+        }
+    }
+}
+
+function Remove-KanyikanReleaseAssetSnapshot {
+    param(
+        [Parameter(Mandatory = $true)][string]$InstallRoot,
+        [Parameter(Mandatory = $true)][string]$SnapshotRoot
+    )
+
+    $snapshot = Assert-KanyikanUpdateTransactionPath -InstallRoot $InstallRoot -Path $SnapshotRoot
+    if ([System.IO.Directory]::Exists($snapshot)) {
+        Assert-KanyikanSafeRemovalTree -InstallRoot $InstallRoot -Path $snapshot
+        [System.IO.Directory]::Delete($snapshot, $true)
     }
 }
 
@@ -2070,13 +2240,17 @@ Export-ModuleMember -Function @(
     'Invoke-KanyikanValidateBackup',
     'Invoke-KanyikanPreflight',
     'New-KanyikanInstallState',
+    'New-KanyikanReleaseAssetSnapshot',
     'New-KanyikanLogFile',
     'New-KanyikanLocalCertificate',
     'Read-KanyikanAdminPassword',
     'Read-KanyikanInstallState',
     'Remove-KanyikanLocalRootTrust',
+    'Remove-KanyikanReleaseAssetSnapshot',
     'Resolve-KanyikanBackupDirectory',
+    'Restore-KanyikanReleaseAssets',
     'Set-KanyikanInstallState',
+    'Set-KanyikanReleaseAssets',
     'Set-KanyikanInstallFailure',
     'Set-KanyikanInstallationActive',
     'Set-KanyikanBackupAcl',

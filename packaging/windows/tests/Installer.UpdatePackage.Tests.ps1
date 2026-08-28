@@ -86,6 +86,43 @@ try {
         Assert-True $threw '多个顶层目录未被拒绝。'
         Assert-True (-not [IO.Directory]::Exists($destination)) '失败的 ZIP 留下了暂存目录。'
     }
+
+    Invoke-TestCase '发行资产可切换并从快照完整回滚' {
+        $installRoot = Join-Path $testRoot 'asset-install'
+        $packageRoot = Join-Path $testRoot 'asset-package'
+        [IO.Directory]::CreateDirectory((Join-Path $installRoot 'config')) | Out-Null
+        [IO.Directory]::CreateDirectory((Join-Path $installRoot 'docs')) | Out-Null
+        [IO.Directory]::CreateDirectory((Join-Path $packageRoot 'docs')) | Out-Null
+        $controlPaths = @('release-manifest.json', 'release-manifest.sig', 'manifest.sha256')
+        $oldFiles = @('compose.release.yml', 'docs/old.txt')
+        $newFiles = @('compose.release.yml', 'docs/new.txt')
+        foreach ($relativePath in $controlPaths + $oldFiles) {
+            [IO.File]::WriteAllText((Join-Path $installRoot $relativePath), "old:$relativePath")
+        }
+        foreach ($relativePath in $controlPaths + $newFiles) {
+            [IO.File]::WriteAllText((Join-Path $packageRoot $relativePath), "new:$relativePath")
+        }
+        [IO.File]::WriteAllText((Join-Path $installRoot 'config/system.env'), 'LOCAL_SECRET=preserved')
+        $oldManifest = [pscustomobject]@{ files = @($oldFiles | ForEach-Object { [pscustomobject]@{ path = $_ } }) }
+        $newManifest = [pscustomobject]@{ files = @($newFiles | ForEach-Object { [pscustomobject]@{ path = $_ } }) }
+        $snapshotRoot = Join-Path $installRoot 'state/update-transactions/tx-1/assets'
+
+        New-KanyikanReleaseAssetSnapshot -InstallRoot $installRoot -CurrentManifest $oldManifest -SnapshotRoot $snapshotRoot | Out-Null
+        Set-KanyikanReleaseAssets -InstallRoot $installRoot -PackageRoot $packageRoot -CurrentManifest $oldManifest -NewManifest $newManifest
+        Assert-True ([IO.File]::ReadAllText((Join-Path $installRoot 'compose.release.yml')).StartsWith('new:')) '未安装新 Compose。'
+        Assert-True (-not [IO.File]::Exists((Join-Path $installRoot 'docs/old.txt'))) '旧版独有资产未移除。'
+        Assert-True ([IO.File]::Exists((Join-Path $installRoot 'docs/new.txt'))) '新版独有资产未安装。'
+        Assert-True ([IO.File]::ReadAllText((Join-Path $installRoot 'config/system.env')) -ceq 'LOCAL_SECRET=preserved') '本机配置被覆盖。'
+
+        Restore-KanyikanReleaseAssets -InstallRoot $installRoot -SnapshotRoot $snapshotRoot -PreviousManifest $oldManifest -FailedManifest $newManifest
+        Assert-True ([IO.File]::ReadAllText((Join-Path $installRoot 'compose.release.yml')).StartsWith('old:')) '未恢复旧 Compose。'
+        Assert-True ([IO.File]::Exists((Join-Path $installRoot 'docs/old.txt'))) '旧版独有资产未恢复。'
+        Assert-True (-not [IO.File]::Exists((Join-Path $installRoot 'docs/new.txt'))) '失败版本独有资产未移除。'
+        Assert-True ([IO.File]::ReadAllText((Join-Path $installRoot 'config/system.env')) -ceq 'LOCAL_SECRET=preserved') '回滚修改了本机配置。'
+
+        Remove-KanyikanReleaseAssetSnapshot -InstallRoot $installRoot -SnapshotRoot $snapshotRoot
+        Assert-True (-not [IO.Directory]::Exists($snapshotRoot)) '成功清理快照失败。'
+    }
 }
 finally {
     if ([IO.Directory]::Exists($testRoot)) { [IO.Directory]::Delete($testRoot, $true) }

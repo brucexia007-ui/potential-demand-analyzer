@@ -221,6 +221,7 @@
           "required": [
             "postgres",
             "redis",
+            "snapshots",
             "skills"
           ],
           "properties": {
@@ -229,6 +230,9 @@
             },
             "redis": {
               "const": "kanyikan_redis_data"
+            },
+            "snapshots": {
+              "const": "kanyikan_snapshots_data"
             },
             "skills": {
               "const": "kanyikan_skills_data"

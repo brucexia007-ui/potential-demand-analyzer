@@ -134,7 +134,8 @@ Docker 资源使用固定 Compose project name `kanyikan`。持久数据分为�
 | --- | --- | --- | --- |
 | PostgreSQL | 项目专属 named volume | 保留 | 删除 |
 | Redis | 项目专属 named volume | 保留 | 删除 |
-| Skill 与快照 | 项目专属 named volume | 保留 | 删除 |
+| 证据快照 | 项目专属 `kanyikan_snapshots_data` named volume | 保留 | 删除 |
+| Skill 工作区 | 项目专属 `kanyikan_skills_data` named volume | 保留 | 删除 |
 | `system.env` 与证书 | 安装根目录 | 保留 | 删除 |
 | 安装状态 | 安装根目录 | 保留 | 删除 |
 | 备份、导出、诊断包 | 安装根目录 | 保留 | 删除前再次告警 |

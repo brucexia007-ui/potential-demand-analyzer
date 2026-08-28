@@ -565,7 +565,9 @@ function Get-KanyikanHostFacts {
 function Test-KanyikanPreflightFacts {
     param(
         [Parameter(Mandatory = $true)]
-        [psobject]$Facts
+        [psobject]$Facts,
+
+        [switch]$AllowOwnedEntrypoint
     )
 
     $checks = @(
@@ -579,7 +581,7 @@ function Test-KanyikanPreflightFacts {
         [pscustomobject]@{ name = 'CPU >= 4'; passed = ([int]$Facts.cpuCores -ge 4); exitCode = 22; remediation = '至少需要 4 个逻辑处理器。' },
         [pscustomobject]@{ name = 'Memory >= 8 GiB'; passed = ([int64]$Facts.memoryBytes -ge 8589934592L); exitCode = 22; remediation = '至少需要 8 GiB 物理内存。' },
         [pscustomobject]@{ name = 'Disk >= 20 GiB'; passed = ([int64]$Facts.freeDiskBytes -ge 21474836480L); exitCode = 22; remediation = '安装卷至少需要 20 GiB 可用空间。' },
-        [pscustomobject]@{ name = '127.0.0.1:10443 available'; passed = [bool]$Facts.portAvailable; exitCode = 22; remediation = '请释放本机 TCP 端口 10443；安装器不会结束占用进程。' },
+        [pscustomobject]@{ name = '127.0.0.1:10443 available'; passed = ([bool]$Facts.portAvailable -or $AllowOwnedEntrypoint); exitCode = 22; remediation = '请释放本机 TCP 端口 10443；安装器不会结束占用进程。' },
         [pscustomobject]@{ name = 'Install root writable'; passed = [bool]$Facts.installRootWritable; exitCode = 22; remediation = '请确认当前用户可写安装目录。' }
     )
 
@@ -597,11 +599,13 @@ function Test-KanyikanPreflightFacts {
 function Invoke-KanyikanPreflight {
     param(
         [Parameter(Mandatory = $true)]
-        [string]$InstallRoot
+        [string]$InstallRoot,
+
+        [switch]$AllowOwnedEntrypoint
     )
 
     $facts = Get-KanyikanHostFacts -InstallRoot $InstallRoot
-    return Test-KanyikanPreflightFacts -Facts $facts
+    return Test-KanyikanPreflightFacts -Facts $facts -AllowOwnedEntrypoint:$AllowOwnedEntrypoint
 }
 
 function Get-KanyikanFileSha256 {

@@ -116,5 +116,13 @@ Invoke-TestCase '代理只暴露启用状态' {
     Assert-True (-not $serialized.Contains('@')) '预检结果疑似泄露代理凭据。'
 }
 
+Invoke-TestCase '仅显式确认项目自有入口时允许端口占用' {
+    $facts = New-ValidFacts
+    $facts.portAvailable = $false
+    Assert-True (-not (Test-KanyikanPreflightFacts -Facts $facts).passed) '普通端口占用错误通过。'
+    $result = Test-KanyikanPreflightFacts -Facts $facts -AllowOwnedEntrypoint
+    Assert-True $result.passed '显式确认的项目自有入口未通过。'
+}
+
 Write-Host "RESULT passed=$script:Passed failed=$script:Failed"
 if ($script:Failed -gt 0) { exit 1 }

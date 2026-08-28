@@ -332,11 +332,190 @@ function Get-KanyikanInstallStates {
     return @($script:InstallStates)
 }
 
+function Invoke-KanyikanDockerCommand {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string[]]$Arguments
+    )
+
+    $output = & docker.exe @Arguments 2>&1
+    return [pscustomobject]@{
+        exitCode = $LASTEXITCODE
+        output = (@($output) -join [Environment]::NewLine).Trim()
+    }
+}
+
+function Get-KanyikanHostFacts {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$InstallRoot
+    )
+
+    $normalizedRoot = Get-KanyikanNormalizedPath -Path $InstallRoot
+    $architecture = if ([Environment]::GetEnvironmentVariable('PROCESSOR_ARCHITEW6432') -eq 'AMD64') {
+        'AMD64'
+    }
+    else {
+        [Environment]::GetEnvironmentVariable('PROCESSOR_ARCHITECTURE')
+    }
+    $isWindows = [Environment]::OSVersion.Platform -eq [PlatformID]::Win32NT
+    $windowsMajorVersion = [Environment]::OSVersion.Version.Major
+    $powerShellEdition = if (Test-Path variable:PSEdition) { $PSEdition } else { 'Desktop' }
+
+    $memoryBytes = 0L
+    if ($isWindows) {
+        try {
+            $computerSystem = Get-CimInstance -ClassName Win32_ComputerSystem -ErrorAction Stop
+            $memoryBytes = [int64]$computerSystem.TotalPhysicalMemory
+        }
+        catch {
+            $memoryBytes = 0L
+        }
+    }
+
+    $freeDiskBytes = 0L
+    try {
+        $pathRoot = [System.IO.Path]::GetPathRoot($normalizedRoot)
+        $freeDiskBytes = [int64](New-Object System.IO.DriveInfo($pathRoot)).AvailableFreeSpace
+    }
+    catch {
+        $freeDiskBytes = 0L
+    }
+
+    $installRootWritable = $false
+    try {
+        if ([System.IO.Directory]::Exists($normalizedRoot)) {
+            $probePath = [System.IO.Path]::Combine(
+                $normalizedRoot,
+                ".kanyikan-write-probe-$([Guid]::NewGuid().ToString('N')).tmp"
+            )
+            try {
+                [System.IO.File]::WriteAllBytes($probePath, [byte[]]@(75, 89, 75))
+                $installRootWritable = $true
+            }
+            finally {
+                if ([System.IO.File]::Exists($probePath)) {
+                    [System.IO.File]::Delete($probePath)
+                }
+            }
+        }
+    }
+    catch {
+        $installRootWritable = $false
+    }
+
+    $portAvailable = $true
+    try {
+        $listeners = [Net.NetworkInformation.IPGlobalProperties]::GetIPGlobalProperties().GetActiveTcpListeners()
+        $portAvailable = @($listeners | Where-Object { $_.Port -eq 10443 }).Count -eq 0
+    }
+    catch {
+        $portAvailable = $false
+    }
+
+    $dockerDesktopPath = [System.IO.Path]::Combine(
+        [Environment]::GetFolderPath([Environment+SpecialFolder]::ProgramFiles),
+        'Docker',
+        'Docker',
+        'Docker Desktop.exe'
+    )
+    $dockerDesktopInstalled = [System.IO.File]::Exists($dockerDesktopPath)
+    $dockerCliAvailable = $null -ne (Get-Command docker.exe -ErrorAction SilentlyContinue)
+    $dockerEngineAvailable = $false
+    $dockerOsType = $null
+    $composeMajorVersion = 0
+    $dockerProxyEnabled = $false
+
+    if ($dockerCliAvailable) {
+        $engine = Invoke-KanyikanDockerCommand -Arguments @('info', '--format', '{{.OSType}}')
+        if ($engine.exitCode -eq 0) {
+            $dockerEngineAvailable = $true
+            $dockerOsType = $engine.output.Trim().ToLowerInvariant()
+
+            $proxy = Invoke-KanyikanDockerCommand -Arguments @(
+                'info',
+                '--format',
+                '{{if or .HTTPProxy .HTTPSProxy}}true{{else}}false{{end}}'
+            )
+            $dockerProxyEnabled = $proxy.exitCode -eq 0 -and $proxy.output.Trim() -ceq 'true'
+        }
+
+        $compose = Invoke-KanyikanDockerCommand -Arguments @('compose', 'version', '--short')
+        if ($compose.exitCode -eq 0 -and $compose.output -match '^v?([0-9]+)\.') {
+            $composeMajorVersion = [int]$Matches[1]
+        }
+    }
+
+    return [pscustomobject][ordered]@{
+        isWindows = $isWindows
+        windowsMajorVersion = $windowsMajorVersion
+        architecture = $architecture
+        powerShellEdition = $powerShellEdition
+        powerShellVersion = $PSVersionTable.PSVersion
+        dockerDesktopInstalled = $dockerDesktopInstalled
+        dockerCliAvailable = $dockerCliAvailable
+        dockerEngineAvailable = $dockerEngineAvailable
+        dockerOsType = $dockerOsType
+        composeMajorVersion = $composeMajorVersion
+        cpuCores = [Environment]::ProcessorCount
+        memoryBytes = $memoryBytes
+        freeDiskBytes = $freeDiskBytes
+        portAvailable = $portAvailable
+        installRootWritable = $installRootWritable
+        dockerProxyEnabled = $dockerProxyEnabled
+    }
+}
+
+function Test-KanyikanPreflightFacts {
+    param(
+        [Parameter(Mandatory = $true)]
+        [psobject]$Facts
+    )
+
+    $checks = @(
+        [pscustomobject]@{ name = 'Windows 10/11 x64'; passed = ($Facts.isWindows -and $Facts.windowsMajorVersion -eq 10 -and $Facts.architecture -ceq 'AMD64'); exitCode = 20; remediation = '请使用 Windows 10/11 x64。' },
+        [pscustomobject]@{ name = 'Windows PowerShell 5.1+'; passed = ($Facts.powerShellEdition -ceq 'Desktop' -and $Facts.powerShellVersion -ge [Version]'5.1'); exitCode = 20; remediation = '请使用 Windows PowerShell 5.1 或更高版本。' },
+        [pscustomobject]@{ name = 'Docker Desktop'; passed = [bool]$Facts.dockerDesktopInstalled; exitCode = 21; remediation = '请安装 Docker Desktop 后重试。' },
+        [pscustomobject]@{ name = 'Docker CLI'; passed = [bool]$Facts.dockerCliAvailable; exitCode = 21; remediation = '请修复 Docker Desktop 安装，使 docker.exe 可用。' },
+        [pscustomobject]@{ name = 'Docker Engine'; passed = [bool]$Facts.dockerEngineAvailable; exitCode = 21; remediation = '请启动 Docker Desktop 并等待 Engine 就绪。' },
+        [pscustomobject]@{ name = 'Linux Containers'; passed = ([string]$Facts.dockerOsType -ceq 'linux'); exitCode = 21; remediation = '请将 Docker Desktop 切换为 Linux Containers。' },
+        [pscustomobject]@{ name = 'Docker Compose v2'; passed = ([int]$Facts.composeMajorVersion -eq 2); exitCode = 21; remediation = '请启用 Docker Compose v2。' },
+        [pscustomobject]@{ name = 'CPU >= 4'; passed = ([int]$Facts.cpuCores -ge 4); exitCode = 22; remediation = '至少需要 4 个逻辑处理器。' },
+        [pscustomobject]@{ name = 'Memory >= 8 GiB'; passed = ([int64]$Facts.memoryBytes -ge 8589934592L); exitCode = 22; remediation = '至少需要 8 GiB 物理内存。' },
+        [pscustomobject]@{ name = 'Disk >= 20 GiB'; passed = ([int64]$Facts.freeDiskBytes -ge 21474836480L); exitCode = 22; remediation = '安装卷至少需要 20 GiB 可用空间。' },
+        [pscustomobject]@{ name = '127.0.0.1:10443 available'; passed = [bool]$Facts.portAvailable; exitCode = 22; remediation = '请释放本机 TCP 端口 10443；安装器不会结束占用进程。' },
+        [pscustomobject]@{ name = 'Install root writable'; passed = [bool]$Facts.installRootWritable; exitCode = 22; remediation = '请确认当前用户可写安装目录。' }
+    )
+
+    $failedCheck = $checks | Where-Object { -not $_.passed } | Select-Object -First 1
+    return [pscustomobject][ordered]@{
+        passed = $null -eq $failedCheck
+        exitCode = if ($null -eq $failedCheck) { 0 } else { $failedCheck.exitCode }
+        failedCheck = if ($null -eq $failedCheck) { $null } else { $failedCheck.name }
+        remediation = if ($null -eq $failedCheck) { $null } else { $failedCheck.remediation }
+        proxyEnabled = [bool]$Facts.dockerProxyEnabled
+        checks = $checks
+    }
+}
+
+function Invoke-KanyikanPreflight {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$InstallRoot
+    )
+
+    $facts = Get-KanyikanHostFacts -InstallRoot $InstallRoot
+    return Test-KanyikanPreflightFacts -Facts $facts
+}
+
 Export-ModuleMember -Function @(
     'Get-KanyikanInstallStates',
     'Get-KanyikanStatePath',
+    'Get-KanyikanHostFacts',
+    'Invoke-KanyikanPreflight',
     'New-KanyikanInstallState',
     'Read-KanyikanInstallState',
     'Set-KanyikanInstallState',
-    'Set-KanyikanInstallFailure'
+    'Set-KanyikanInstallFailure',
+    'Test-KanyikanPreflightFacts'
 )

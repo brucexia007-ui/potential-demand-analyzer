@@ -145,6 +145,7 @@ function Invoke-Install {
     if (-not $ready.passed) { Stop-KanyikanCommand -ExitCode 51 -Reason $ready.reason -NextStep '请保留容器并运行 status；安装器不会删除数据卷。' }
     if ($script:State.currentState -ceq 'SERVICES_STARTING') { $script:State = Set-KanyikanInstallState -State $script:State -NextState 'HEALTHY' -InstallRoot $script:InstallRoot }
     if ($script:State.currentState -ceq 'HEALTHY') { $script:State = Set-KanyikanInstallState -State $script:State -NextState 'INSTALLED' -InstallRoot $script:InstallRoot }
+    if (-not $script:State.installationActive) { $script:State = Set-KanyikanInstallationActive -State $script:State -InstallRoot $script:InstallRoot -Active $true }
 
     Write-KanyikanResult -Level '成功' -Message "Kanyikan $($script:State.productVersion) 已安装。"
     Write-KanyikanResult -Level '入口' -Message $script:Entrypoint
@@ -156,6 +157,7 @@ function Invoke-Status {
     catch { Stop-KanyikanCommand -ExitCode 90 -Reason $_.Exception.Message -NextStep '请恢复有效安装状态。' }
     Write-KanyikanResult -Level '版本' -Message $(if ($null -eq $state.productVersion) { '未安装' } else { [string]$state.productVersion })
     Write-KanyikanResult -Level '状态' -Message ([string]$state.currentState)
+    Write-KanyikanResult -Level '安装激活' -Message ([string]$state.installationActive)
     Write-KanyikanResult -Level '入口' -Message $script:Entrypoint
     try {
         $facts = @(Get-KanyikanServiceFacts -InstallRoot $script:InstallRoot)
@@ -182,6 +184,7 @@ switch -CaseSensitive ($Command.ToLowerInvariant()) {
         if ((Get-StateIndex $script:State.currentState) -lt (Get-StateIndex 'CERT_READY')) { Stop-KanyikanCommand -ExitCode 10 -Reason '尚未完成配置和证书阶段。' -NextStep '请先运行 install。' }
         try { Start-KanyikanServices -InstallRoot $script:InstallRoot; $ready = Wait-KanyikanBootstrapReady -InstallRoot $script:InstallRoot; if (-not $ready.passed) { throw $ready.reason } }
         catch { Stop-KanyikanCommand -ExitCode 51 -Reason $_.Exception.Message -NextStep '请运行 status 后重试。' }
+        $script:State = Set-KanyikanInstallationActive -State $script:State -InstallRoot $script:InstallRoot -Active $true
         Write-KanyikanResult -Level '成功' -Message "服务已启动：$script:Entrypoint"; exit 0
     }
     'stop' {
@@ -255,6 +258,37 @@ switch -CaseSensitive ($Command.ToLowerInvariant()) {
         try { $bundle = Export-KanyikanSupportBundle -InstallRoot $script:InstallRoot }
         catch { Stop-KanyikanCommand -ExitCode 90 -Reason $_.Exception.Message -NextStep '请运行 doctor；敏感信息扫描失败时不会交付支持包。' }
         Write-KanyikanResult -Level '成功' -Message "脱敏支持包已生成：$($bundle.path)"
+        exit 0
+    }
+    'uninstall' {
+        $script:Stage = 'UNINSTALL_VALIDATE'
+        try {
+            $script:State = Read-KanyikanInstallState -InstallRoot $script:InstallRoot
+            if ($script:State.currentState -ceq 'NEW') { throw '没有可证明归属的安装状态。' }
+            $release = Test-KanyikanReleasePackage -PackageRoot $script:InstallRoot -TrustedPublicKeySha256 ([string]$script:State.releasePublicKeySha256)
+            $plan = Get-KanyikanUninstallResourcePlan -InstallRoot $script:InstallRoot -State $script:State -Manifest $release.manifest
+        }
+        catch { Stop-KanyikanCommand -ExitCode 80 -Reason $_.Exception.Message -NextStep '资源归属无法证明，已全部保留；请人工核对状态与 manifest。' }
+        if ($PurgeData) {
+            $latestBackup = Get-KanyikanLatestValidBackup -InstallRoot $script:InstallRoot -State $script:State
+            Write-KanyikanResult -Level '警告' -Message "将删除数据卷：$($plan.volumes -join ', ')"
+            Write-KanyikanResult -Level '警告' -Message "将删除本地路径：$($plan.generatedPaths -join ', ')"
+            Write-KanyikanResult -Level '最近有效备份' -Message $(if ($null -eq $latestBackup) { '无' } else { $latestBackup.path })
+            $confirmation = Read-Host '请输入 PURGE KANYIKAN DATA 确认永久删除'
+            if ($confirmation -cne 'PURGE KANYIKAN DATA') { Stop-KanyikanCommand -ExitCode 10 -Reason 'Purge 确认文本不匹配。' -NextStep '未删除任何资源。' }
+            if ($null -eq $latestBackup) {
+                $secondConfirmation = Read-Host '没有有效备份。请输入 PURGE WITHOUT BACKUP 再次确认'
+                if ($secondConfirmation -cne 'PURGE WITHOUT BACKUP') { Stop-KanyikanCommand -ExitCode 10 -Reason '无备份二次确认文本不匹配。' -NextStep '未删除任何资源。' }
+            }
+        }
+        $script:Stage = 'UNINSTALL'
+        try { [void](Invoke-KanyikanUninstall -InstallRoot $script:InstallRoot -State $script:State -Manifest $release.manifest -PurgeData:$PurgeData) }
+        catch { Stop-KanyikanCommand -ExitCode 80 -Reason $_.Exception.Message -NextStep '仅继续处理状态能证明归属的精确资源；其余资源请人工核对。' }
+        if ($PurgeData) { Write-KanyikanResult -Level '成功' -Message '已精确删除本项目容器、网络、四个数据卷、本地 CA 信任和安装器生成的数据。' }
+        else {
+            Write-KanyikanResult -Level '成功' -Message '已删除本项目容器、网络和本地 CA 信任。'
+            Write-KanyikanResult -Level '保留' -Message "配置、状态、备份与数据卷仍位于 $script:InstallRoot，并可重新启动。"
+        }
         exit 0
     }
     default { Write-Host "[失败] 未知或尚未实现的命令：$Command"; exit 10 }

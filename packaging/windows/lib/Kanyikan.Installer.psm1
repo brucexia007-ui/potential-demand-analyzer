@@ -189,6 +189,7 @@ function New-KanyikanInstallState {
         images = @()
         caThumbprint = $null
         caTrusted = $false
+        installationActive = $false
         lastFailure = $null
     }
 }
@@ -245,6 +246,7 @@ function Assert-KanyikanInstallState {
         'images',
         'caThumbprint',
         'caTrusted',
+        'installationActive',
         'lastFailure'
     )
     foreach ($propertyName in $requiredProperties) {
@@ -386,6 +388,7 @@ function Set-KanyikanInstallState {
     }
 
     $State.currentState = $NextState
+    if ($NextState -ceq 'INSTALLED') { $State.installationActive = $true }
     $State.updatedAt = [DateTime]::UtcNow.ToString('o')
     $State.lastFailure = $null
     Write-KanyikanInstallState -State $State -InstallRoot $InstallRoot
@@ -1468,8 +1471,9 @@ function Get-KanyikanBackupArguments {
         [string]$BackupName
     )
 
-    $toolArguments = if ([string]::IsNullOrWhiteSpace($BackupName)) {
-        @(
+    if ([string]::IsNullOrWhiteSpace($BackupName)) {
+        $composeOperation = @('exec', '--no-TTY', 'backend', 'python', '-m', 'app.tools.local_backup')
+        $toolArguments = @(
             'create', '--backup-root', '/backups',
             '--snapshots-root', '/app/data/snapshots',
             '--skills-root', '/app/data/workspace_skills',
@@ -1480,11 +1484,10 @@ function Get-KanyikanBackupArguments {
     }
     else {
         if ($BackupName -notmatch '^kanyikan-[0-9]{8}T[0-9]{6}Z-[0-9a-f]{8}$') { throw '备份名称不合法。' }
-        @('validate', '--backup-root', '/backups', '--backup', "/backups/$BackupName")
+        $composeOperation = @('run', '--rm', '--no-deps', '--pull', 'never', '--entrypoint', 'python', 'backend', '-m', 'app.tools.local_backup')
+        $toolArguments = @('validate', '--backup-root', '/backups', '--backup', "/backups/$BackupName")
     }
-    $composeArguments = @(Get-KanyikanComposeArguments -InstallRoot $InstallRoot -Arguments @(
-        'exec', '--no-TTY', 'backend', 'python', '-m', 'app.tools.local_backup'
-    ))
+    $composeArguments = @(Get-KanyikanComposeArguments -InstallRoot $InstallRoot -Arguments $composeOperation)
     return $composeArguments + $toolArguments
 }
 
@@ -1728,7 +1731,124 @@ function Export-KanyikanSupportBundle {
     }
 }
 
+function Set-KanyikanInstallationActive {
+    param(
+        [Parameter(Mandatory = $true)][psobject]$State,
+        [Parameter(Mandatory = $true)][string]$InstallRoot,
+        [Parameter(Mandatory = $true)][bool]$Active
+    )
+    Assert-KanyikanInstallState -State $State -InstallRoot $InstallRoot
+    $State.installationActive = $Active
+    $State.updatedAt = [DateTime]::UtcNow.ToString('o')
+    Write-KanyikanInstallState -State $State -InstallRoot $InstallRoot
+    return $State
+}
+
+function Get-KanyikanUninstallResourcePlan {
+    param(
+        [Parameter(Mandatory = $true)][string]$InstallRoot,
+        [Parameter(Mandatory = $true)][psobject]$State,
+        [Parameter(Mandatory = $true)][psobject]$Manifest
+    )
+    Assert-KanyikanInstallState -State $State -InstallRoot $InstallRoot
+    foreach ($name in @('postgres', 'redis', 'snapshots', 'skills')) {
+        if ([string]$State.resources.volumes.$name -cne [string]$Manifest.resources.namedVolumes.$name) { throw "无法共同证明数据卷归属：$name" }
+    }
+    $root = Get-KanyikanNormalizedPath -Path $InstallRoot
+    return [pscustomobject][ordered]@{
+        composeDownArguments = @(Get-KanyikanComposeArguments -InstallRoot $root -Arguments @('down', '--remove-orphans'))
+        volumes = @(
+            [string]$State.resources.volumes.postgres,
+            [string]$State.resources.volumes.redis,
+            [string]$State.resources.volumes.snapshots,
+            [string]$State.resources.volumes.skills
+        )
+        generatedPaths = @(
+            [System.IO.Path]::Combine($root, 'config', 'system.env'),
+            [System.IO.Path]::Combine($root, 'config', 'certs'),
+            [System.IO.Path]::Combine($root, 'state'),
+            [System.IO.Path]::Combine($root, 'data'),
+            [System.IO.Path]::Combine($root, 'logs')
+        )
+        caThumbprint = if ($State.caTrusted) { [string]$State.caThumbprint } else { $null }
+    }
+}
+
+function Assert-KanyikanSafeRemovalTree {
+    param(
+        [Parameter(Mandatory = $true)][string]$InstallRoot,
+        [Parameter(Mandatory = $true)][string]$Path
+    )
+    $root = Get-KanyikanNormalizedPath -Path $InstallRoot
+    $target = Get-KanyikanNormalizedPath -Path $Path
+    if (-not $target.StartsWith($root + [System.IO.Path]::DirectorySeparatorChar, [StringComparison]::OrdinalIgnoreCase)) { throw '拒绝删除安装根目录之外的路径。' }
+    if ([System.IO.File]::Exists($target)) {
+        if (([System.IO.File]::GetAttributes($target) -band [System.IO.FileAttributes]::ReparsePoint) -ne 0) { throw "删除目标包含重解析点，已保留并需人工处理：$target" }
+        return
+    }
+    if ([System.IO.Directory]::Exists($target)) {
+        $pending = New-Object 'System.Collections.Generic.Stack[string]'
+        $pending.Push($target)
+        while ($pending.Count -gt 0) {
+            $current = $pending.Pop()
+            if (([System.IO.File]::GetAttributes($current) -band [System.IO.FileAttributes]::ReparsePoint) -ne 0) { throw "删除目标包含重解析点，已保留并需人工处理：$current" }
+            foreach ($entry in [System.IO.Directory]::GetFileSystemEntries($current)) {
+                $attributes = [System.IO.File]::GetAttributes($entry)
+                if (($attributes -band [System.IO.FileAttributes]::ReparsePoint) -ne 0) { throw "删除目标包含重解析点，已保留并需人工处理：$entry" }
+                if (($attributes -band [System.IO.FileAttributes]::Directory) -ne 0) { $pending.Push($entry) }
+            }
+        }
+    }
+}
+
+function Invoke-KanyikanUninstall {
+    param(
+        [Parameter(Mandatory = $true)][string]$InstallRoot,
+        [Parameter(Mandatory = $true)][psobject]$State,
+        [Parameter(Mandatory = $true)][psobject]$Manifest,
+        [switch]$PurgeData
+    )
+    $plan = Get-KanyikanUninstallResourcePlan -InstallRoot $InstallRoot -State $State -Manifest $Manifest
+    if ($PurgeData) {
+        foreach ($path in $plan.generatedPaths) { Assert-KanyikanSafeRemovalTree -InstallRoot $InstallRoot -Path $path }
+    }
+    $down = Invoke-KanyikanDockerCommand -Arguments $plan.composeDownArguments
+    if ($down.exitCode -ne 0) { throw "删除项目容器和网络失败：$(Protect-KanyikanText -Text $down.output)" }
+    if (-not [string]::IsNullOrWhiteSpace([string]$plan.caThumbprint) -and $plan.caThumbprint -match '^[0-9A-Fa-f]{40}$') { [void](Remove-KanyikanLocalRootTrust -Thumbprint $plan.caThumbprint) }
+    if (-not $PurgeData) {
+        $State.caTrusted = $false
+        return Set-KanyikanInstallationActive -State $State -InstallRoot $InstallRoot -Active $false
+    }
+    foreach ($volume in $plan.volumes) {
+        $inspect = Invoke-KanyikanDockerCommand -Arguments @('volume', 'inspect', $volume)
+        if ($inspect.exitCode -eq 0) {
+            $remove = Invoke-KanyikanDockerCommand -Arguments @('volume', 'rm', $volume)
+            if ($remove.exitCode -ne 0) { throw "删除数据卷失败：$volume" }
+        }
+    }
+    foreach ($path in $plan.generatedPaths) {
+        if ([System.IO.Directory]::Exists($path)) { [System.IO.Directory]::Delete($path, $true) }
+        elseif ([System.IO.File]::Exists($path)) { [System.IO.File]::Delete($path) }
+    }
+    return $null
+}
+
+function Get-KanyikanLatestValidBackup {
+    param(
+        [Parameter(Mandatory = $true)][string]$InstallRoot,
+        [Parameter(Mandatory = $true)][psobject]$State
+    )
+    $backupRoot = [System.IO.Path]::Combine((Get-KanyikanNormalizedPath -Path $InstallRoot), 'data', 'backups')
+    if (-not [System.IO.Directory]::Exists($backupRoot)) { return $null }
+    foreach ($directory in @([System.IO.Directory]::GetDirectories($backupRoot, 'kanyikan-*') | Sort-Object -Descending)) {
+        try { return Invoke-KanyikanValidateBackup -InstallRoot $InstallRoot -State $State -BackupPath $directory }
+        catch { }
+    }
+    return $null
+}
+
 Export-ModuleMember -Function @(
+    'Assert-KanyikanSafeRemovalTree',
     'Export-KanyikanSupportBundle',
     'Get-KanyikanCertificateDockerArguments',
     'Get-KanyikanBackupArguments',
@@ -1739,12 +1859,15 @@ Export-ModuleMember -Function @(
     'Get-KanyikanHostFacts',
     'Get-KanyikanDoctorReport',
     'Get-KanyikanRestoreArguments',
+    'Get-KanyikanLatestValidBackup',
     'Get-KanyikanInspectedImages',
     'Get-KanyikanServiceFacts',
+    'Get-KanyikanUninstallResourcePlan',
     'Import-KanyikanReleaseImages',
     'Install-KanyikanLocalRootTrust',
     'Invoke-KanyikanBackup',
     'Invoke-KanyikanRestore',
+    'Invoke-KanyikanUninstall',
     'Invoke-KanyikanValidateBackup',
     'Invoke-KanyikanPreflight',
     'New-KanyikanInstallState',
@@ -1755,6 +1878,7 @@ Export-ModuleMember -Function @(
     'Resolve-KanyikanBackupDirectory',
     'Set-KanyikanInstallState',
     'Set-KanyikanInstallFailure',
+    'Set-KanyikanInstallationActive',
     'Set-KanyikanBackupAcl',
     'Start-KanyikanServices',
     'Stop-KanyikanServices',

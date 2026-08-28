@@ -9,6 +9,7 @@ param(
 
 $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version 2.0
+Import-Module (Join-Path $PSScriptRoot 'Kanyikan.ReleaseE2E.psm1') -Force
 
 if ([Environment]::GetEnvironmentVariable('KANYIKAN_CLEAN_E2E', 'Machine') -cne '1') {
     throw '只允许在设置机器级 KANYIKAN_CLEAN_E2E=1 的专用一次性 runner 上执行。'
@@ -24,6 +25,7 @@ $enterOfflinePath = (Resolve-Path -LiteralPath $EnterOfflineScript).Path
 $exitOfflinePath = (Resolve-Path -LiteralPath $ExitOfflineScript).Path
 $evidenceFullPath = [System.IO.Path]::GetFullPath($EvidencePath)
 $evidenceDirectory = [System.IO.Path]::GetDirectoryName($evidenceFullPath)
+$controllerOutputDirectory = [System.IO.Path]::Combine($evidenceDirectory, ([System.IO.Path]::GetFileNameWithoutExtension($evidenceFullPath) + '-controller-output'))
 [System.IO.Directory]::CreateDirectory($evidenceDirectory) | Out-Null
 
 $startedAt = [DateTime]::UtcNow
@@ -38,6 +40,10 @@ $failure = $null
 
 function Add-Check([string]$Name, [string]$Status, [string]$Detail) {
     $checks.Add([pscustomobject][ordered]@{ name = $Name; status = $Status; detail = $Detail })
+}
+
+function Get-ControllerOutputEvidencePath([string]$Path) {
+    return ([IO.Path]::Combine([IO.Path]::GetFileName($controllerOutputDirectory), [IO.Path]::GetFileName($Path))).Replace('\', '/')
 }
 
 function Invoke-Guard([string]$Path) {
@@ -79,10 +85,17 @@ function Invoke-Controller {
         $stdout = $stdoutTask.Result
         $stderr = $stderrTask.Result
         if ($stdout.Contains($script:AdminPassword) -or $stderr.Contains($script:AdminPassword)) { throw "控制器输出泄露 E2E 管理员密码：$Command" }
+        $outputSha256 = Get-StringSha256 -Value ($stdout + "`n" + $stderr)
+        $outputRecord = Write-KanyikanE2EControllerOutput -Run ([pscustomobject]@{
+            stdout = $stdout
+            stderr = $stderr
+            outputSha256 = $outputSha256
+        }) -OutputDirectory $controllerOutputDirectory -Name (("{0:D2}-{1}" -f ($controllerRuns.Count + 1), $Command))
         $controllerRuns.Add([pscustomobject][ordered]@{
             command = $Command
             exitCode = $process.ExitCode
-            outputSha256 = Get-StringSha256 -Value ($stdout + "`n" + $stderr)
+            outputSha256 = $outputSha256
+            outputPath = Get-ControllerOutputEvidencePath -Path $outputRecord.path
         })
         if ($AllowedExitCodes -notcontains $process.ExitCode) { throw "控制器命令失败：$Command；退出码=$($process.ExitCode)" }
         return [pscustomobject]@{ exitCode = $process.ExitCode; stdout = $stdout; stderr = $stderr }
@@ -231,6 +244,7 @@ finally {
         releaseVersion = if ($null -eq $release) { $null } else { [string]$release.version }
         offlineZipSha256 = Get-FileSha256 -Path $offlineZipPath
         manifestSha256 = if ($null -eq $release) { $null } else { [string]$release.manifestSha256 }
+        controllerOutputDirectory = [IO.Path]::GetFileName($controllerOutputDirectory)
         environment = [pscustomobject][ordered]@{
             os = [Environment]::OSVersion.VersionString
             powershell = $PSVersionTable.PSVersion.ToString()

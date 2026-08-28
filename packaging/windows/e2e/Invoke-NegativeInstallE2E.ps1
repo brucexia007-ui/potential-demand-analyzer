@@ -17,6 +17,8 @@ Assert-KanyikanDedicatedE2EHost
 $offlineZipPath = (Resolve-Path -LiteralPath $OfflineZip).Path
 $hooksRoot = [IO.Path]::GetFullPath($InfrastructureHooksRoot)
 $evidenceFullPath = [IO.Path]::GetFullPath($EvidencePath)
+$evidenceDirectory = [IO.Path]::GetDirectoryName($evidenceFullPath)
+$controllerOutputDirectory = [IO.Path]::Combine($evidenceDirectory, ([IO.Path]::GetFileNameWithoutExtension($evidenceFullPath) + '-controller-output'))
 $wrapperPath = Join-Path $PSScriptRoot 'Invoke-ControllerWithAnswers.ps1'
 $normalScenarioRoot = [IO.Path]::Combine($env:RUNNER_TEMP, '看一看 E2E 负向测试')
 $expectedExitCodes = @{
@@ -57,6 +59,11 @@ function Get-ToolVersionForEvidence {
     $result = Invoke-DockerForE2E -Arguments $Arguments
     if ($result.exitCode -ne 0) { throw "无法读取 Docker 验收环境版本：$($Arguments -join ' ')" }
     return $result.output
+}
+
+function Get-ControllerOutputEvidencePath {
+    param([Parameter(Mandatory = $true)][string]$Path)
+    return ([IO.Path]::Combine([IO.Path]::GetFileName($controllerOutputDirectory), [IO.Path]::GetFileName($Path))).Replace('\', '/')
 }
 
 function Assert-PathWithinParent {
@@ -229,12 +236,14 @@ function New-RunEvidence {
         [Parameter(Mandatory = $true)][psobject]$Run,
         [Parameter(Mandatory = $true)][DateTime]$ScenarioStartedAt
     )
+    $outputRecord = Write-KanyikanE2EControllerOutput -Run $Run -OutputDirectory $controllerOutputDirectory -Name ("early-$ScenarioName")
     return [pscustomobject][ordered]@{
         scenario = $ScenarioName
         command = 'install'
         expectedExitCode = $ExpectedExitCode
         actualExitCode = [int]$Run.exitCode
         outputSha256 = [string]$Run.outputSha256
+        outputPath = Get-ControllerOutputEvidencePath -Path $outputRecord.path
         startedAt = $ScenarioStartedAt.ToString('o')
         completedAt = [DateTime]::UtcNow.ToString('o')
         passed = [int]$Run.exitCode -eq $ExpectedExitCode
@@ -362,8 +371,10 @@ function Invoke-InterruptionRetryStage {
         [void](Wait-ForInstallState -PackageRoot $package.packageRoot -ExpectedState $TargetState -Handle $handle)
         $interruptedResult = Stop-KanyikanE2EController -Handle $handle
         $handle = $null
+        $interruptedOutput = Write-KanyikanE2EControllerOutput -Run $interruptedResult -OutputDirectory $controllerOutputDirectory -Name ("interrupted-$TargetState")
 
         $retryResult = Invoke-ControllerForEvidence -ControllerPath $package.controllerPath -Command 'install' -CredentialSecret $credentialSecret
+        $retryOutput = Write-KanyikanE2EControllerOutput -Run $retryResult -OutputDirectory $controllerOutputDirectory -Name ("retry-$TargetState")
         if ([int]$retryResult.exitCode -ne 0) { throw "$TargetState 中断后的重试安装失败：$($retryResult.exitCode)" }
         Import-Module ([IO.Path]::Combine($package.packageRoot, 'lib', 'Kanyikan.Installer.psm1')) -Force
         Test-KanyikanAuthenticatedSmoke -InstallRoot $package.packageRoot
@@ -371,6 +382,7 @@ function Invoke-InterruptionRetryStage {
         $identityBefore = Get-InstalledIdentityHashes -PackageRoot $package.packageRoot
         $configSha256BeforeIdempotent = [string]$identityBefore.systemEnvironment
         $idempotentResult = Invoke-ControllerForEvidence -ControllerPath $package.controllerPath -Command 'install' -CredentialSecret $credentialSecret
+        $idempotentOutput = Write-KanyikanE2EControllerOutput -Run $idempotentResult -OutputDirectory $controllerOutputDirectory -Name ("idempotent-$TargetState")
         if ([int]$idempotentResult.exitCode -ne 0) { throw "$TargetState 恢复后重复安装不幂等：$($idempotentResult.exitCode)" }
         $identityAfter = Get-InstalledIdentityHashes -PackageRoot $package.packageRoot
         if ($configSha256BeforeIdempotent -cne [string]$identityAfter.systemEnvironment -or [string]$identityBefore.leafPrivateKey -cne [string]$identityAfter.leafPrivateKey -or [string]$identityBefore.rootCertificate -cne [string]$identityAfter.rootCertificate) {
@@ -378,6 +390,7 @@ function Invoke-InterruptionRetryStage {
         }
 
         $purgeResult = Invoke-ControllerForEvidence -ControllerPath $package.controllerPath -Command 'uninstall' -CredentialSecret $credentialSecret -PurgeData
+        $purgeOutput = Write-KanyikanE2EControllerOutput -Run $purgeResult -OutputDirectory $controllerOutputDirectory -Name ("purge-$TargetState")
         if ([int]$purgeResult.exitCode -ne 0) { throw "$TargetState 验收清理失败：$($purgeResult.exitCode)" }
         $purgeCompleted = $true
         Assert-KanyikanRuntimeAbsent
@@ -388,7 +401,11 @@ function Invoke-InterruptionRetryStage {
             actualExitCode = [int]$retryResult.exitCode
             interruptedProcessExitCode = [int]$interruptedResult.exitCode
             outputSha256 = [string]$retryResult.outputSha256
+            outputPath = Get-ControllerOutputEvidencePath -Path $retryOutput.path
+            interruptedOutputPath = Get-ControllerOutputEvidencePath -Path $interruptedOutput.path
             idempotentOutputSha256 = [string]$idempotentResult.outputSha256
+            idempotentOutputPath = Get-ControllerOutputEvidencePath -Path $idempotentOutput.path
+            purgeOutputPath = Get-ControllerOutputEvidencePath -Path $purgeOutput.path
             identitySha256 = Get-KanyikanE2EStringSha256 -Value (($identityAfter | ConvertTo-Json -Compress))
             startedAt = $scenarioStartedAt.ToString('o')
             completedAt = [DateTime]::UtcNow.ToString('o')
@@ -414,7 +431,7 @@ function Invoke-InterruptionRetryStage {
     }
 }
 
-[IO.Directory]::CreateDirectory([IO.Path]::GetDirectoryName($evidenceFullPath)) | Out-Null
+[IO.Directory]::CreateDirectory($evidenceDirectory) | Out-Null
 [IO.Directory]::CreateDirectory($normalScenarioRoot) | Out-Null
 $offlineZipSha256 = Get-KanyikanE2EFileSha256 -Path $offlineZipPath
 $sourceRoot = [IO.Path]::GetFullPath([IO.Path]::Combine($PSScriptRoot, '..', '..', '..'))
@@ -453,6 +470,7 @@ finally {
         powerShellVersion = $PSVersionTable.PSVersion.ToString()
         dockerVersion = $dockerVersion
         composeVersion = $composeVersion
+        controllerOutputDirectory = [IO.Path]::GetFileName($controllerOutputDirectory)
         startedAt = $startedAt.ToString('o')
         completedAt = [DateTime]::UtcNow.ToString('o')
         scenarios = @($results)

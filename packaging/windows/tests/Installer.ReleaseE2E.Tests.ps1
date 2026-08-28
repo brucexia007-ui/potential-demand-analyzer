@@ -105,9 +105,10 @@ Invoke-TestCase '负向 E2E 覆盖三阶段中断恢复与幂等重复安装' {
 
 Invoke-TestCase '负向 E2E 证据可复核且不记录秘密或原始输出' {
     $source = [IO.File]::ReadAllText($negativeE2EPath, [Text.Encoding]::UTF8)
-    foreach ($field in @('sourceCommit', 'releaseVersion', 'offlineZipSha256', 'publicKeySha256', 'windowsVersion', 'dockerVersion', 'composeVersion', 'expectedExitCode', 'actualExitCode', 'outputSha256', 'startedAt', 'completedAt')) {
+    foreach ($field in @('sourceCommit', 'releaseVersion', 'offlineZipSha256', 'publicKeySha256', 'windowsVersion', 'dockerVersion', 'composeVersion', 'expectedExitCode', 'actualExitCode', 'outputSha256', 'outputPath', 'controllerOutputDirectory', 'startedAt', 'completedAt')) {
         Assert-True ($source.Contains($field)) "负向 E2E 证据缺少字段：$field"
     }
+    Assert-True ($source.Contains('Write-KanyikanE2EControllerOutput')) '负向 E2E 未安全落盘控制器输出。'
     Assert-True (-not $source.Contains('adminPassword =')) '负向 E2E 证据疑似记录管理员密码。'
     Assert-True (-not $source.Contains('stdout =')) '负向 E2E 证据记录了原始标准输出。'
     Assert-True (-not $source.Contains('stderr =')) '负向 E2E 证据记录了原始标准错误。'
@@ -131,9 +132,10 @@ Invoke-TestCase 'E2E 覆盖核心安装生命周期和可复核证据' {
         Assert-True ($index -gt $lastIndex) "E2E 缺少或乱序执行：$step"
         $lastIndex = $index
     }
-    foreach ($field in @('sourceCommit', 'releaseVersion', 'offlineZipSha256', 'manifestSha256', 'controllerRuns', 'checks')) {
+    foreach ($field in @('sourceCommit', 'releaseVersion', 'offlineZipSha256', 'manifestSha256', 'controllerRuns', 'controllerOutputDirectory', 'outputPath', 'checks')) {
         Assert-True ($source.Contains($field)) "E2E 证据缺少字段：$field"
     }
+    Assert-True ($source.Contains('Write-KanyikanE2EControllerOutput')) '正向 E2E 未安全落盘控制器输出。'
 }
 
 Write-Host "RESULT passed=$script:Passed failed=$script:Failed"

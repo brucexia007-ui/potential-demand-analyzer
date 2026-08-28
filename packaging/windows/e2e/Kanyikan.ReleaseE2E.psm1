@@ -34,6 +34,52 @@ function Get-KanyikanE2EFileSha256 {
     finally { $sha.Dispose(); $stream.Dispose() }
 }
 
+function Write-KanyikanE2EControllerOutput {
+    param(
+        [Parameter(Mandatory = $true)][psobject]$Run,
+        [Parameter(Mandatory = $true)][string]$OutputDirectory,
+        [Parameter(Mandatory = $true)][ValidatePattern('^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$')][string]$Name
+    )
+    foreach ($property in @('stdout', 'stderr', 'outputSha256')) {
+        if ($Run.PSObject.Properties.Name -cnotcontains $property) { throw "控制器运行记录缺少字段：$property" }
+    }
+    $text = [string]$Run.stdout + "`n" + [string]$Run.stderr
+    $expectedSha256 = [string]$Run.outputSha256
+    if ($expectedSha256 -notmatch '^[0-9a-f]{64}$' -or (Get-KanyikanE2EStringSha256 -Value $text) -cne $expectedSha256) {
+        throw '控制器输出摘要与运行记录不一致。'
+    }
+    foreach ($pattern in @(
+        '(?im)-----BEGIN [A-Z0-9 ]*PRIVATE KEY-----',
+        '(?i)\bBearer\s+[A-Za-z0-9._~+/=-]{8,}',
+        '(?i)\b(?:ADMIN_PASSWORD|SECRET_KEY|CONFIG_ENCRYPTION_KEY|POSTGRES_PASSWORD|REDIS_PASSWORD|BROWSERLESS_TOKEN|API[_-]?KEY|PASSWORD|TOKEN|SECRET)\s*[:=]\s*[^\s;]{4,}',
+        '(?i)https?://[^\s/:@]+:[^\s/@]+@',
+        '(?i)\beyJ[A-Za-z0-9_-]{8,}\.[A-Za-z0-9_-]{8,}\.[A-Za-z0-9_-]{8,}\b',
+        '(?im)^\s*(?:Cookie|Set-Cookie)\s*:'
+    )) {
+        if ($text -match $pattern) { throw '控制器输出包含疑似秘密，拒绝写入 E2E 证据。' }
+    }
+
+    $directory = [IO.Path]::GetFullPath($OutputDirectory)
+    [IO.Directory]::CreateDirectory($directory) | Out-Null
+    if (([IO.File]::GetAttributes($directory) -band [IO.FileAttributes]::ReparsePoint) -ne 0) { throw 'E2E 输出目录不得是重解析点。' }
+    $destination = [IO.Path]::Combine($directory, "$Name.log")
+    if ([IO.File]::Exists($destination)) { throw "E2E 输出证据已存在，拒绝覆盖：$Name" }
+    $temporary = [IO.Path]::Combine($directory, ".$Name.tmp-$([Guid]::NewGuid().ToString('N'))")
+    try {
+        [IO.File]::WriteAllText($temporary, $text, (New-Object Text.UTF8Encoding($false)))
+        if ((Get-KanyikanE2EFileSha256 -Path $temporary) -cne $expectedSha256) { throw 'E2E 输出落盘后的摘要复核失败。' }
+        [IO.File]::Move($temporary, $destination)
+    }
+    finally {
+        if ([IO.File]::Exists($temporary)) { [IO.File]::Delete($temporary) }
+    }
+    return [pscustomobject][ordered]@{
+        path = $destination
+        sha256 = $expectedSha256
+        sizeBytes = [IO.FileInfo]::new($destination).Length
+    }
+}
+
 function Start-KanyikanE2EController {
     param(
         [Parameter(Mandatory = $true)][string]$WrapperPath,
@@ -133,5 +179,6 @@ Export-ModuleMember -Function @(
     'Invoke-KanyikanE2EGuard',
     'New-KanyikanE2EAdminPassword',
     'Start-KanyikanE2EController',
-    'Stop-KanyikanE2EController'
+    'Stop-KanyikanE2EController',
+    'Write-KanyikanE2EControllerOutput'
 )

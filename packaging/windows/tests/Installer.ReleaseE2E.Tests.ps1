@@ -47,6 +47,36 @@ Invoke-TestCase 'E2E 公共执行模块支持异步中断且不泄露密码' {
     Assert-True ($source.Contains("KANYIKAN_CLEAN_E2E', 'Machine'")) '公共 E2E 模块未限制专用 runner。'
 }
 
+Invoke-TestCase 'E2E 公共模块只落盘通过秘密扫描且摘要一致的控制器输出' {
+    Import-Module $e2eModulePath -Force
+    $root = Join-Path ([IO.Path]::GetTempPath()) ("kanyikan-e2e-output-$([Guid]::NewGuid().ToString('N'))")
+    try {
+        $safeText = "[失败] 阶段=PREFLIGHT；退出码=22`n"
+        $safeRun = [pscustomobject]@{
+            stdout = $safeText.TrimEnd("`n")
+            stderr = ''
+            outputSha256 = Get-KanyikanE2EStringSha256 -Value ($safeText.TrimEnd("`n") + "`n")
+        }
+        $written = Write-KanyikanE2EControllerOutput -Run $safeRun -OutputDirectory $root -Name 'safe-install'
+        Assert-True ([IO.File]::Exists($written.path)) '公共 E2E 模块未落盘安全输出。'
+        Assert-True ((Get-KanyikanE2EFileSha256 -Path $written.path) -ceq $safeRun.outputSha256) '落盘输出摘要与运行记录不一致。'
+
+        $unsafeRun = [pscustomobject]@{
+            stdout = 'ADMIN_PASSWORD=top-secret-value'
+            stderr = ''
+            outputSha256 = Get-KanyikanE2EStringSha256 -Value "ADMIN_PASSWORD=top-secret-value`n"
+        }
+        $blocked = $false
+        try { Write-KanyikanE2EControllerOutput -Run $unsafeRun -OutputDirectory $root -Name 'unsafe-install' | Out-Null }
+        catch { $blocked = $true }
+        Assert-True $blocked '公共 E2E 模块未阻断秘密输出落盘。'
+        Assert-True (-not [IO.File]::Exists((Join-Path $root 'unsafe-install.log'))) '秘密输出被写入证据目录。'
+    }
+    finally {
+        if ([IO.Directory]::Exists($root)) { [IO.Directory]::Delete($root, $true) }
+    }
+}
+
 Invoke-TestCase '负向 E2E 固定预检与发行资产失败退出码且无持久副作用' {
     $source = [IO.File]::ReadAllText($negativeE2EPath, [Text.Encoding]::UTF8)
     [void][scriptblock]::Create($source)

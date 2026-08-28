@@ -89,5 +89,14 @@ Invoke-TestCase 'Purge 必须在任何破坏动作前完成全部路径边界检
     Assert-True ($boundary -lt $volumeRemove) '路径边界检查晚于数据卷删除。'
 }
 
+Invoke-TestCase 'Purge 删除日志目录前必须关闭当前日志写入' {
+    $source = [IO.File]::ReadAllText($controllerPath, [Text.Encoding]::UTF8)
+    $purgeBranch = $source.IndexOf("if (`$PurgeData) {", [StringComparison]::Ordinal)
+    $invoke = $source.IndexOf('Invoke-KanyikanUninstall', $purgeBranch, [StringComparison]::Ordinal)
+    $disableLog = $source.IndexOf('$script:LogPath = $null', $purgeBranch, [StringComparison]::Ordinal)
+    Assert-True ($purgeBranch -ge 0 -and $invoke -gt $purgeBranch) '未找到 Purge 控制分支。'
+    Assert-True ($disableLog -gt $purgeBranch -and $disableLog -lt $invoke) 'Purge 未在删除 logs 前关闭当前日志写入。'
+}
+
 Write-Host "RESULT passed=$script:Passed failed=$script:Failed"
 if ($script:Failed -gt 0) { exit 1 }

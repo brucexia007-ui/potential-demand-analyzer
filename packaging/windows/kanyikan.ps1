@@ -463,6 +463,8 @@ switch -CaseSensitive ($Command.ToLowerInvariant()) {
                 $secondConfirmation = Read-Host '没有有效备份。请输入 PURGE WITHOUT BACKUP 再次确认'
                 if ($secondConfirmation -cne 'PURGE WITHOUT BACKUP') { Stop-KanyikanCommand -ExitCode 10 -Reason '无备份二次确认文本不匹配。' -NextStep '未删除任何资源。' }
             }
+            Write-KanyikanResult -Level '日志' -Message '即将永久删除 logs；后续结果仅输出到当前终端。'
+            $script:LogPath = $null
         }
         $script:Stage = 'UNINSTALL'
         try { [void](Invoke-KanyikanUninstall -InstallRoot $script:InstallRoot -State $script:State -Manifest $release.manifest -PurgeData:$PurgeData) }

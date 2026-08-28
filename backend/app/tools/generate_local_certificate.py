@@ -13,7 +13,7 @@ from typing import Sequence
 
 from cryptography import x509
 from cryptography.hazmat.primitives import hashes, serialization
-from cryptography.hazmat.primitives.asymmetric import rsa
+from cryptography.hazmat.primitives.asymmetric import padding, rsa
 from cryptography.x509.oid import ExtendedKeyUsageOID, NameOID
 
 
@@ -245,21 +245,114 @@ def generate_local_certificate(
     )
 
 
+def validate_local_certificate(
+    output_dir: str | os.PathLike[str],
+) -> LocalCertificateResult:
+    """复核已生成的 CA、叶子证书和私钥，不修改任何文件。"""
+    source = Path(output_dir).resolve()
+    ca_path = source / CA_CERTIFICATE_FILENAME
+    leaf_path = source / LEAF_CERTIFICATE_FILENAME
+    key_path = source / LEAF_PRIVATE_KEY_FILENAME
+    for path in (ca_path, leaf_path, key_path):
+        if not path.is_file():
+            raise ValueError(f"缺少证书材料: {path.name}")
+    if (source / "local-root-ca.key").exists():
+        raise ValueError("根 CA 私钥不得保留在证书目录")
+
+    ca_certificate = x509.load_pem_x509_certificate(ca_path.read_bytes())
+    leaf_certificate = x509.load_pem_x509_certificate(leaf_path.read_bytes())
+    leaf_private_key = serialization.load_pem_private_key(
+        key_path.read_bytes(),
+        password=None,
+    )
+    now = datetime.now(timezone.utc)
+    for label, certificate in (
+        ("根 CA", ca_certificate),
+        ("叶子证书", leaf_certificate),
+    ):
+        if not certificate.not_valid_before_utc <= now < certificate.not_valid_after_utc:
+            raise ValueError(f"{label}不在有效期内")
+
+    if ca_certificate.subject != ca_certificate.issuer:
+        raise ValueError("根 CA 不是自签名证书")
+    ca_constraints = ca_certificate.extensions.get_extension_for_class(
+        x509.BasicConstraints
+    ).value
+    if not ca_constraints.ca or ca_constraints.path_length != 0:
+        raise ValueError("根 CA BasicConstraints 不合法")
+    ca_usage = ca_certificate.extensions.get_extension_for_class(x509.KeyUsage).value
+    if not ca_usage.key_cert_sign or not ca_usage.crl_sign:
+        raise ValueError("根 CA KeyUsage 不合法")
+    ca_certificate.public_key().verify(
+        ca_certificate.signature,
+        ca_certificate.tbs_certificate_bytes,
+        padding.PKCS1v15(),
+        ca_certificate.signature_hash_algorithm,
+    )
+
+    if leaf_certificate.issuer != ca_certificate.subject:
+        raise ValueError("叶子证书签发者与根 CA 不匹配")
+    ca_certificate.public_key().verify(
+        leaf_certificate.signature,
+        leaf_certificate.tbs_certificate_bytes,
+        padding.PKCS1v15(),
+        leaf_certificate.signature_hash_algorithm,
+    )
+    leaf_constraints = leaf_certificate.extensions.get_extension_for_class(
+        x509.BasicConstraints
+    ).value
+    if leaf_constraints.ca:
+        raise ValueError("叶子证书不得作为 CA")
+    san = leaf_certificate.extensions.get_extension_for_class(
+        x509.SubjectAlternativeName
+    ).value
+    if san.get_values_for_type(x509.DNSName) != ["localhost"]:
+        raise ValueError("叶子证书 DNS SAN 不合法")
+    if san.get_values_for_type(x509.IPAddress) != [
+        ipaddress.ip_address("127.0.0.1")
+    ]:
+        raise ValueError("叶子证书 IP SAN 不合法")
+    eku = leaf_certificate.extensions.get_extension_for_class(x509.ExtendedKeyUsage).value
+    if list(eku) != [ExtendedKeyUsageOID.SERVER_AUTH]:
+        raise ValueError("叶子证书扩展用途不合法")
+    if (
+        leaf_private_key.public_key().public_numbers()
+        != leaf_certificate.public_key().public_numbers()
+    ):
+        raise ValueError("叶子证书与私钥不匹配")
+    if ca_certificate.not_valid_after_utc <= leaf_certificate.not_valid_after_utc:
+        raise ValueError("根 CA 必须晚于叶子证书到期")
+
+    return LocalCertificateResult(
+        ca_certificate_path=ca_path,
+        leaf_certificate_path=leaf_path,
+        leaf_private_key_path=key_path,
+        ca_sha256=ca_certificate.fingerprint(hashes.SHA256()).hex(),
+        leaf_sha256=leaf_certificate.fingerprint(hashes.SHA256()).hex(),
+        ca_not_after=ca_certificate.not_valid_after_utc,
+        leaf_not_after=leaf_certificate.not_valid_after_utc,
+    )
+
+
 def _build_argument_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="生成 Kanyikan 本地 HTTPS 证书")
     parser.add_argument("--output-dir", required=True)
     parser.add_argument("--leaf-validity-days", type=int, default=365)
     parser.add_argument("--ca-validity-days", type=int, default=3650)
+    parser.add_argument("--validate", action="store_true")
     return parser
 
 
 def main(argv: Sequence[str] | None = None) -> int:
     args = _build_argument_parser().parse_args(argv)
-    result = generate_local_certificate(
-        args.output_dir,
-        leaf_validity_days=args.leaf_validity_days,
-        ca_validity_days=args.ca_validity_days,
-    )
+    if args.validate:
+        result = validate_local_certificate(args.output_dir)
+    else:
+        result = generate_local_certificate(
+            args.output_dir,
+            leaf_validity_days=args.leaf_validity_days,
+            ca_validity_days=args.ca_validity_days,
+        )
     print(
         json.dumps(
             {

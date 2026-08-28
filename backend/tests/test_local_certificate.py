@@ -14,6 +14,7 @@ from cryptography.x509.oid import ExtendedKeyUsageOID
 
 from app.tools.generate_local_certificate import generate_local_certificate
 from app.tools.generate_local_certificate import main
+from app.tools.generate_local_certificate import validate_local_certificate
 
 
 def _load_certificate(path):
@@ -173,3 +174,51 @@ def test_cli_outputs_only_public_metadata(tmp_path, capsys) -> None:
     assert "BEGIN PRIVATE KEY" not in combined_output
     assert "BEGIN RSA PRIVATE KEY" not in combined_output
     assert "private_key_pem" not in combined_output
+
+
+def test_validates_existing_certificate_material_without_modification(tmp_path) -> None:
+    generated = generate_local_certificate(tmp_path)
+    before = {
+        path.name: path.read_bytes()
+        for path in (
+            generated.ca_certificate_path,
+            generated.leaf_certificate_path,
+            generated.leaf_private_key_path,
+        )
+    }
+
+    validated = validate_local_certificate(tmp_path)
+
+    assert validated.ca_sha256 == generated.ca_sha256
+    assert validated.leaf_sha256 == generated.leaf_sha256
+    assert {name: (tmp_path / name).read_bytes() for name in before} == before
+
+
+def test_validation_rejects_mismatched_leaf_private_key(tmp_path) -> None:
+    first = generate_local_certificate(tmp_path / "first")
+    second = generate_local_certificate(tmp_path / "second")
+    first.leaf_private_key_path.write_bytes(second.leaf_private_key_path.read_bytes())
+
+    with pytest.raises(ValueError, match="私钥不匹配"):
+        validate_local_certificate(tmp_path / "first")
+
+
+def test_validation_rejects_retained_ca_private_key(tmp_path) -> None:
+    generate_local_certificate(tmp_path)
+    (tmp_path / "local-root-ca.key").write_text("forbidden", encoding="utf-8")
+
+    with pytest.raises(ValueError, match="CA 私钥"):
+        validate_local_certificate(tmp_path)
+
+
+def test_validation_cli_outputs_only_public_metadata(tmp_path, capsys) -> None:
+    generate_local_certificate(tmp_path)
+
+    exit_code = main(["--output-dir", str(tmp_path), "--validate"])
+
+    captured = capsys.readouterr()
+    payload = json.loads(captured.out)
+    assert exit_code == 0
+    assert payload["ca_sha256"]
+    assert payload["leaf_sha256"]
+    assert "BEGIN PRIVATE KEY" not in captured.out + captured.err

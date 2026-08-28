@@ -3,6 +3,7 @@ Set-StrictMode -Version 2.0
 
 $e2ePath = Join-Path $PSScriptRoot '..\e2e\Invoke-CleanOfflineInstallE2E.ps1'
 $wrapperPath = Join-Path $PSScriptRoot '..\e2e\Invoke-ControllerWithAnswers.ps1'
+$e2eModulePath = Join-Path $PSScriptRoot '..\e2e\Kanyikan.ReleaseE2E.psm1'
 $script:Passed = 0
 $script:Failed = 0
 
@@ -33,6 +34,16 @@ Invoke-TestCase 'E2E 管理员密码不进入命令行、输出或证据' {
     Assert-True ($source.Contains('$stdout.Contains($script:AdminPassword)')) 'E2E 未阻断终端密码泄露。'
     Assert-True ($wrapper.Contains("GetEnvironmentVariable('KANYIKAN_E2E_ADMIN_PASSWORD', 'Process')")) '交互包装器未从子进程环境读取密码。'
     Assert-True (-not $source.Contains('adminPassword =')) 'E2E 证据疑似记录管理员密码。'
+}
+
+Invoke-TestCase 'E2E 公共执行模块支持异步中断且不泄露密码' {
+    $source = [IO.File]::ReadAllText($e2eModulePath, [Text.Encoding]::UTF8)
+    Assert-True ($source.Contains("EnvironmentVariables['KANYIKAN_E2E_ADMIN_PASSWORD']")) '公共 E2E 模块未通过子进程环境传递密码。'
+    Assert-True (-not $source.Contains('-AdminPassword')) '公共 E2E 模块将密码写入命令行。'
+    Assert-True ($source.Contains('Start-KanyikanE2EController')) '公共 E2E 模块缺少异步启动。'
+    Assert-True ($source.Contains('Stop-KanyikanE2EController')) '公共 E2E 模块缺少中断能力。'
+    Assert-True ($source.Contains('$stdout.Contains($Handle.adminPassword)')) '公共 E2E 模块未检测终端密码泄露。'
+    Assert-True ($source.Contains("KANYIKAN_CLEAN_E2E', 'Machine'")) '公共 E2E 模块未限制专用 runner。'
 }
 
 Invoke-TestCase 'E2E 覆盖核心安装生命周期和可复核证据' {

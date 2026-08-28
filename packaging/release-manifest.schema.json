@@ -17,6 +17,7 @@
     "resources",
     "files",
     "images",
+    "upgrade",
     "signing"
   ],
   "properties": {
@@ -347,6 +348,68 @@
         },
         "signaturePath": {
           "const": "release-manifest.sig"
+        }
+      }
+    },
+    "upgrade": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "supportedFrom",
+        "migration",
+        "smokeTests"
+      ],
+      "properties": {
+        "supportedFrom": {
+          "description": "允许直接升级到当前发行版的精确产品版本。首个发行版使用空数组。",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/semanticVersion"
+          },
+          "uniqueItems": true
+        },
+        "migration": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "strategy",
+            "requiresFullBackup",
+            "rollbackStrategy"
+          ],
+          "properties": {
+            "strategy": {
+              "enum": [
+                "none",
+                "alembic_upgrade_head"
+              ]
+            },
+            "requiresFullBackup": {
+              "const": true
+            },
+            "rollbackStrategy": {
+              "const": "restore_full_backup"
+            }
+          }
+        },
+        "smokeTests": {
+          "type": "array",
+          "prefixItems": [
+            {
+              "const": "https_health"
+            },
+            {
+              "const": "https_ready"
+            },
+            {
+              "const": "admin_login"
+            },
+            {
+              "const": "core_api"
+            }
+          ],
+          "items": false,
+          "minItems": 4,
+          "maxItems": 4
         }
       }
     }

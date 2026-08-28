@@ -599,7 +599,7 @@ jobs:
 
   windows-clean-offline-e2e:
     needs: assemble-offline-candidate
-    runs-on: [self-hosted, Windows, X64, kanyikan-clean-e2e]
+    runs-on: [self-hosted, Windows, X64, kanyikan-clean-e2e, "kanyikan-clean-e2e-round-${{ matrix.round }}"]
     timeout-minutes: 180
     permissions:
       actions: read
@@ -613,6 +613,48 @@ jobs:
     steps:
       - name: 检出受测源码
         uses: actions/checkout@v4
+
+      - name: 证明本轮来自重新注册的干净快照
+        shell: powershell
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $generationId = [Environment]::GetEnvironmentVariable('KANYIKAN_CLEAN_E2E_GENERATION_ID', 'Process')
+          $snapshotSha256 = [Environment]::GetEnvironmentVariable('KANYIKAN_CLEAN_SNAPSHOT_SHA256', 'Process')
+          $declaredRound = [Environment]::GetEnvironmentVariable('KANYIKAN_CLEAN_E2E_ROUND', 'Process')
+          $parsedGeneration = [Guid]::Empty
+          if (-not [Guid]::TryParse($generationId, [ref]$parsedGeneration) -or $parsedGeneration -eq [Guid]::Empty) {
+            throw 'KANYIKAN_CLEAN_E2E_GENERATION_ID 必须是本次快照复原后生成的非空 UUID。'
+          }
+          if ($snapshotSha256 -cnotmatch '^[0-9a-f]{64}$') {
+            throw 'KANYIKAN_CLEAN_SNAPSHOT_SHA256 必须是黄金快照的 64 位小写 SHA256。'
+          }
+          if ($declaredRound -cne '${{ matrix.round }}') {
+            throw 'Runner 注册轮次与当前矩阵轮次不一致。'
+          }
+          $markerRoot = Join-Path $env:ProgramData 'KanyikanCleanE2E'
+          $markerPath = Join-Path $markerRoot 'snapshot-consumed.json'
+          if (Test-Path -LiteralPath $markerPath) {
+            throw '黄金快照已被先前任务消费；必须恢复快照并以 ephemeral runner 重新注册。'
+          }
+          New-Item -ItemType Directory -Path $markerRoot -Force | Out-Null
+          New-Item -ItemType Directory -Path 'evidence' -Force | Out-Null
+          $evidence = [ordered]@{
+            schemaVersion = 1
+            round = [int]'${{ matrix.round }}'
+            generationId = $parsedGeneration.ToString('D')
+            snapshotSha256 = $snapshotSha256
+            sourceCommit = '${{ github.sha }}'
+            tag = '${{ github.ref_name }}'
+            githubRunId = '${{ github.run_id }}'
+            githubRunAttempt = '${{ github.run_attempt }}'
+            runnerName = '${{ runner.name }}'
+            windowsVersion = [Environment]::OSVersion.VersionString
+            startedAt = [DateTime]::UtcNow.ToString('o')
+          }
+          $json = $evidence | ConvertTo-Json -Depth 4
+          $utf8 = New-Object System.Text.UTF8Encoding($false)
+          [IO.File]::WriteAllText($markerPath, $json + "`n", $utf8)
+          [IO.File]::WriteAllText((Join-Path 'evidence' 'runner-rotation.json'), $json + "`n", $utf8)
 
       - name: 下载离线候选包
         uses: actions/download-artifact@v4
@@ -680,6 +722,13 @@ jobs:
           name: release-candidate
           path: release-assets
 
+      - name: 下载三轮快照复原证据
+        uses: actions/download-artifact@v4
+        with:
+          pattern: windows-e2e-round-*
+          path: windows-evidence
+          merge-multiple: false
+
       - name: 发布前复核顶层签名、摘要与候选身份
         shell: bash
         env:
@@ -689,6 +738,22 @@ jobs:
           test "$(jq -r '.tag' release-assets/candidate-status.json)" = "$GITHUB_REF_NAME"
           test "$(jq -r '.sourceCommit' release-assets/candidate-status.json)" = "$GITHUB_SHA"
           test "$(jq -r '.status' release-assets/candidate-status.json)" = "WINDOWS_E2E_REQUIRED"
+          mapfile -t rotation_files < <(find windows-evidence -type f -name runner-rotation.json | sort)
+          test "${#rotation_files[@]}" = "3"
+          jq -s '{
+            rounds: (map(.round) | sort),
+            uniqueGenerationCount: ([.[].generationId] | unique | length),
+            uniqueSnapshotCount: ([.[].snapshotSha256] | unique | length),
+            sourceCommits: ([.[].sourceCommit] | unique),
+            tags: ([.[].tag] | unique)
+          }' "${rotation_files[@]}" > rotation-summary.json
+          test "$(jq -c '.rounds' rotation-summary.json)" = '[1,2,3]'
+          test "$(jq -r '.uniqueGenerationCount' rotation-summary.json)" = '3'
+          test "$(jq -r '.uniqueSnapshotCount' rotation-summary.json)" = '1'
+          test "$(jq -r '.sourceCommits | length' rotation-summary.json)" = '1'
+          test "$(jq -r '.sourceCommits[0]' rotation-summary.json)" = "$GITHUB_SHA"
+          test "$(jq -r '.tags | length' rotation-summary.json)" = '1'
+          test "$(jq -r '.tags[0]' rotation-summary.json)" = "$GITHUB_REF_NAME"
           online_zip="release-assets/${{ needs.assemble-offline-candidate.outputs.online_zip_name }}"
           test -s "$online_zip"
           unzip -p "$online_zip" '*/public-key.pem' > release-public-key.pem

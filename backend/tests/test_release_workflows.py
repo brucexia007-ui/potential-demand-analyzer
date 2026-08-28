@@ -113,12 +113,17 @@ def test_release_candidate_assembles_verifies_and_signs_online_and_offline_asset
 def test_formal_release_waits_for_three_clean_windows_offline_rounds() -> None:
     workflow = DEPLOY_WORKFLOW.read_text(encoding="utf-8")
 
-    assert "[self-hosted, Windows, X64, kanyikan-clean-e2e]" in workflow
+    assert "kanyikan-clean-e2e" in workflow
+    assert '"kanyikan-clean-e2e-round-${{ matrix.round }}"' in workflow
     assert "round: [1, 2, 3]" in workflow
     assert "Invoke-CleanOfflineInstallE2E.ps1" in workflow
     assert "Invoke-NegativeInstallE2E.ps1" in workflow
     assert "KANYIKAN_ENTER_OFFLINE_SCRIPT" in workflow
     assert "KANYIKAN_INFRASTRUCTURE_HOOKS_ROOT" in workflow
+    assert "KANYIKAN_CLEAN_E2E_GENERATION_ID" in workflow
+    assert "KANYIKAN_CLEAN_SNAPSHOT_SHA256" in workflow
+    assert "snapshot-consumed.json" in workflow
+    assert 'runner-rotation.json' in workflow
     assert "if: always()" in workflow
     assert "formalReleaseBlockedBy" not in workflow
     assert "needs: [assemble-offline-candidate, windows-clean-offline-e2e]" in workflow
@@ -126,6 +131,8 @@ def test_formal_release_waits_for_three_clean_windows_offline_rounds() -> None:
     assert "--verify-tag" in workflow
     assert "--draft" in workflow
     assert 'gh release edit "$GITHUB_REF_NAME" --draft=false' in workflow
+    assert "pattern: windows-e2e-round-*" in workflow
+    assert "uniqueGenerationCount" in workflow
 
 
 def test_release_runbook_declares_secrets_runner_hooks_evidence_and_no_publish_boundary() -> None:

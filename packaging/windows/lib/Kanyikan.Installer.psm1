@@ -728,7 +728,7 @@ function Assert-KanyikanReleaseManifest {
     if ($Manifest.schemaVersion -ne 1 -or $Manifest.product -cne 'Kanyikan') { throw 'manifest 产品或契约版本不合法。' }
 
     Assert-KanyikanExactProperties -Value $Manifest.release -Names @('version', 'publishedAt', 'sourceCommit', 'packageType') -Context 'release'
-    if ([string]$Manifest.release.version -notmatch '^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(?:-[0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*)?(?:\+[0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*)?$') { throw 'release.version 不是合法语义化版本。' }
+    if ([string]$Manifest.release.version -notmatch '^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(?:-(?:0|[1-9][0-9]*|[0-9]*[A-Za-z-][0-9A-Za-z-]*)(?:\.(?:0|[1-9][0-9]*|[0-9]*[A-Za-z-][0-9A-Za-z-]*))*)?(?:\+[0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*)?$') { throw 'release.version 不是合法语义化版本。' }
     if ([string]$Manifest.release.sourceCommit -notmatch '^[0-9a-f]{40}$' -or $Manifest.release.packageType -cne 'offline') { throw 'release 元数据不合法。' }
     $publishedAt = [DateTime]::MinValue
     if (-not [DateTime]::TryParse([string]$Manifest.release.publishedAt, [ref]$publishedAt)) { throw 'release.publishedAt 不合法。' }
@@ -793,7 +793,7 @@ function Assert-KanyikanReleaseManifest {
     Assert-KanyikanExactProperties -Value $Manifest.upgrade -Names @('supportedFrom', 'migration', 'smokeTests') -Context 'upgrade'
     $seenSourceVersions = @{}
     foreach ($sourceVersion in @($Manifest.upgrade.supportedFrom)) {
-        if ([string]$sourceVersion -notmatch '^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(?:-[0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*)?(?:\+[0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*)?$') { throw "upgrade.supportedFrom 包含非法版本：$sourceVersion" }
+        if ([string]$sourceVersion -notmatch '^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(?:-(?:0|[1-9][0-9]*|[0-9]*[A-Za-z-][0-9A-Za-z-]*)(?:\.(?:0|[1-9][0-9]*|[0-9]*[A-Za-z-][0-9A-Za-z-]*))*)?(?:\+[0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*)?$') { throw "upgrade.supportedFrom 包含非法版本：$sourceVersion" }
         if ($seenSourceVersions.ContainsKey([string]$sourceVersion)) { throw "upgrade.supportedFrom 包含重复版本：$sourceVersion" }
         $seenSourceVersions[[string]$sourceVersion] = $true
     }
@@ -868,6 +868,136 @@ function Test-KanyikanReleasePackage {
         manifestSha256 = Get-KanyikanFileSha256 -Path $manifestPath
         releasePublicKeySha256 = $publicKeySha256
         manifest = $manifest
+    }
+}
+
+function ConvertTo-KanyikanSemanticVersionParts {
+    param([Parameter(Mandatory = $true)][string]$Version)
+
+    $pattern = '^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(?:-((?:0|[1-9][0-9]*|[0-9]*[A-Za-z-][0-9A-Za-z-]*)(?:\.(?:0|[1-9][0-9]*|[0-9]*[A-Za-z-][0-9A-Za-z-]*))*))?(?:\+[0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*)?$'
+    if ($Version -notmatch $pattern) { throw "不是合法的语义化版本：$Version" }
+    return [pscustomobject]@{
+        core = @(
+            [System.Numerics.BigInteger]::Parse($Matches[1]),
+            [System.Numerics.BigInteger]::Parse($Matches[2]),
+            [System.Numerics.BigInteger]::Parse($Matches[3])
+        )
+        prerelease = if ([string]::IsNullOrEmpty($Matches[4])) { @() } else { @($Matches[4].Split('.')) }
+    }
+}
+
+function Compare-KanyikanSemanticVersion {
+    param(
+        [Parameter(Mandatory = $true)][string]$Left,
+        [Parameter(Mandatory = $true)][string]$Right
+    )
+
+    $leftParts = ConvertTo-KanyikanSemanticVersionParts -Version $Left
+    $rightParts = ConvertTo-KanyikanSemanticVersionParts -Version $Right
+    for ($index = 0; $index -lt 3; $index++) {
+        $comparison = $leftParts.core[$index].CompareTo($rightParts.core[$index])
+        if ($comparison -ne 0) { return $comparison }
+    }
+    $leftPre = @($leftParts.prerelease)
+    $rightPre = @($rightParts.prerelease)
+    if ($leftPre.Count -eq 0 -and $rightPre.Count -eq 0) { return 0 }
+    if ($leftPre.Count -eq 0) { return 1 }
+    if ($rightPre.Count -eq 0) { return -1 }
+    $count = [Math]::Min($leftPre.Count, $rightPre.Count)
+    for ($index = 0; $index -lt $count; $index++) {
+        $leftNumeric = $leftPre[$index] -match '^[0-9]+$'
+        $rightNumeric = $rightPre[$index] -match '^[0-9]+$'
+        if ($leftNumeric -and $rightNumeric) {
+            $comparison = [System.Numerics.BigInteger]::Parse($leftPre[$index]).CompareTo([System.Numerics.BigInteger]::Parse($rightPre[$index]))
+        }
+        elseif ($leftNumeric) { $comparison = -1 }
+        elseif ($rightNumeric) { $comparison = 1 }
+        else { $comparison = [StringComparer]::Ordinal.Compare($leftPre[$index], $rightPre[$index]) }
+        if ($comparison -ne 0) { return $comparison }
+    }
+    return $leftPre.Count.CompareTo($rightPre.Count)
+}
+
+function Test-KanyikanUpgradePath {
+    param(
+        [Parameter(Mandatory = $true)][string]$CurrentVersion,
+        [Parameter(Mandatory = $true)][psobject]$Manifest
+    )
+
+    $targetVersion = [string]$Manifest.release.version
+    if ((Compare-KanyikanSemanticVersion -Left $targetVersion -Right $CurrentVersion) -le 0) {
+        throw "更新版本必须严格高于当前版本：$CurrentVersion -> $targetVersion"
+    }
+    if (@($Manifest.upgrade.supportedFrom) -cnotcontains $CurrentVersion) {
+        throw "更新包不支持从当前版本直接升级：$CurrentVersion -> $targetVersion"
+    }
+    return [pscustomobject][ordered]@{
+        currentVersion = $CurrentVersion
+        targetVersion = $targetVersion
+        migrationStrategy = [string]$Manifest.upgrade.migration.strategy
+    }
+}
+
+function Expand-KanyikanUpdatePackage {
+    param(
+        [Parameter(Mandatory = $true)][string]$ZipPath,
+        [Parameter(Mandatory = $true)][string]$DestinationRoot
+    )
+
+    $archivePath = Get-KanyikanNormalizedPath -Path $ZipPath
+    $destination = Get-KanyikanNormalizedPath -Path $DestinationRoot
+    if (-not [System.IO.File]::Exists($archivePath)) { throw "更新包不存在：$archivePath" }
+    if ([System.IO.Directory]::Exists($destination) -or [System.IO.File]::Exists($destination)) { throw "更新暂存目录已存在：$destination" }
+    Add-Type -AssemblyName System.IO.Compression.FileSystem
+    $archive = $null
+    $createdDestination = $false
+    try {
+        $archive = [System.IO.Compression.ZipFile]::OpenRead($archivePath)
+        if ($archive.Entries.Count -lt 1 -or $archive.Entries.Count -gt 20000) { throw '更新 ZIP 文件项数量不合法。' }
+        $seenEntries = @{}
+        $topLevel = $null
+        $totalLength = 0L
+        foreach ($entry in $archive.Entries) {
+            $entryName = [string]$entry.FullName
+            if ([string]::IsNullOrWhiteSpace($entryName) -or $entryName.Contains('\')) { throw "更新 ZIP 包含非法路径：$entryName" }
+            $trimmedName = $entryName.TrimEnd('/')
+            Assert-KanyikanPackageRelativePath -Path $trimmedName
+            if ($seenEntries.ContainsKey($trimmedName)) { throw "更新 ZIP 包含重复路径：$trimmedName" }
+            $seenEntries[$trimmedName] = $true
+            $segments = @($trimmedName.Split('/'))
+            if ([string]::IsNullOrEmpty($topLevel)) { $topLevel = $segments[0] }
+            elseif ($segments[0] -cne $topLevel) { throw '更新 ZIP 必须只包含一个顶层发行目录。' }
+            if (-not $entryName.EndsWith('/') -and $segments.Count -lt 2) { throw '更新 ZIP 的文件必须位于唯一顶层发行目录内。' }
+            if ((($entry.ExternalAttributes -shr 16) -band 0xF000) -eq 0xA000) { throw "更新 ZIP 不得包含符号链接：$entryName" }
+            $totalLength += [int64]$entry.Length
+            if ($totalLength -gt 107374182400L) { throw '更新 ZIP 解压后大小超过 100 GiB 限制。' }
+        }
+
+        [System.IO.Directory]::CreateDirectory($destination) | Out-Null
+        $createdDestination = $true
+        $destinationPrefix = $destination + [System.IO.Path]::DirectorySeparatorChar
+        foreach ($entry in $archive.Entries) {
+            $relativePath = ([string]$entry.FullName).Replace('/', [System.IO.Path]::DirectorySeparatorChar)
+            $targetPath = Get-KanyikanNormalizedPath -Path ([System.IO.Path]::Combine($destination, $relativePath))
+            if (-not $targetPath.StartsWith($destinationPrefix, [StringComparison]::OrdinalIgnoreCase)) { throw "更新 ZIP 路径越界：$($entry.FullName)" }
+            if (([string]$entry.FullName).EndsWith('/')) {
+                [System.IO.Directory]::CreateDirectory($targetPath) | Out-Null
+                continue
+            }
+            [System.IO.Directory]::CreateDirectory([System.IO.Path]::GetDirectoryName($targetPath)) | Out-Null
+            $inputStream = $entry.Open()
+            $outputStream = New-Object System.IO.FileStream($targetPath, [System.IO.FileMode]::CreateNew, [System.IO.FileAccess]::Write, [System.IO.FileShare]::None)
+            try { $inputStream.CopyTo($outputStream) }
+            finally { $outputStream.Dispose(); $inputStream.Dispose() }
+        }
+        return [System.IO.Path]::Combine($destination, $topLevel)
+    }
+    catch {
+        if ($createdDestination -and [System.IO.Directory]::Exists($destination)) { [System.IO.Directory]::Delete($destination, $true) }
+        throw
+    }
+    finally {
+        if ($null -ne $archive) { $archive.Dispose() }
     }
 }
 
@@ -1907,6 +2037,8 @@ function Get-KanyikanLatestValidBackup {
 
 Export-ModuleMember -Function @(
     'Assert-KanyikanSafeRemovalTree',
+    'Compare-KanyikanSemanticVersion',
+    'Expand-KanyikanUpdatePackage',
     'Export-KanyikanSupportBundle',
     'Get-KanyikanCertificateDockerArguments',
     'Get-KanyikanBackupArguments',
@@ -1950,6 +2082,7 @@ Export-ModuleMember -Function @(
     'Test-KanyikanRestrictedFileAcl',
     'Test-KanyikanSystemEnvironment',
     'Test-KanyikanSupportPayload',
+    'Test-KanyikanUpgradePath',
     'Test-KanyikanServiceFacts',
     'Wait-KanyikanBootstrapReady',
     'Write-KanyikanLog',

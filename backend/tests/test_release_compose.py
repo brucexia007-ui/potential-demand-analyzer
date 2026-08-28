@@ -246,5 +246,6 @@ def test_installer_filled_system_env_satisfies_local_bootstrap_preflight(
     for key in tuple(os.environ):
         if key.startswith("LLM_PROVIDER_"):
             monkeypatch.delenv(key, raising=False)
+    monkeypatch.delenv("SECURITY_OUTBOUND_ALLOW_CIDRS", raising=False)
 
     validate_production_environment()

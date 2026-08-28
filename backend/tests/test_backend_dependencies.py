@@ -55,7 +55,7 @@ def test_auth_and_upload_dependencies_use_audited_versions() -> None:
 def test_pdf_dependency_uses_audited_version() -> None:
     versions = _production_dependency_versions()
 
-    assert versions["pypdf"] == "6.14.2"
+    assert versions["pypdf"] == "6.16.2"
 
 
 def test_langgraph_dependency_uses_audited_version() -> None:

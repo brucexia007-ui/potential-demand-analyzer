@@ -27,6 +27,9 @@ _PLACEHOLDER_MARKERS = (
     ".example.org",
 )
 
+_DEPLOYMENT_PROFILES = {"local_appliance", "server_tls"}
+_LOCAL_APPLIANCE_ORIGIN = "https://127.0.0.1:10443"
+
 
 def _required(name: str) -> str:
     value = os.getenv(name, "").strip()
@@ -72,17 +75,71 @@ def _is_true(name: str) -> bool:
     return os.getenv(name, "").strip().lower() in {"1", "true", "yes", "on"}
 
 
+def _validate_tls() -> None:
+    if not _is_true("TLS_ENABLED"):
+        raise ProductionPreflightError("TLS_ENABLED 必须为 true")
+    _required("TLS_CERT_PATH")
+    _required("TLS_KEY_PATH")
+
+
+def _validate_cors(deployment_profile: str) -> None:
+    origins = [
+        value.strip()
+        for value in _required("CORS_ALLOW_ORIGINS").split(",")
+        if value.strip()
+    ]
+    if deployment_profile == "local_appliance":
+        if origins != [_LOCAL_APPLIANCE_ORIGIN]:
+            raise ProductionPreflightError(
+                f"CORS_ALLOW_ORIGINS 必须为 {_LOCAL_APPLIANCE_ORIGIN}"
+            )
+        return
+
+    for origin in origins:
+        parsed_origin = urlparse(origin)
+        if (
+            origin == "*"
+            or parsed_origin.scheme != "https"
+            or not parsed_origin.hostname
+            or parsed_origin.hostname in {"localhost", "127.0.0.1", "::1"}
+            or parsed_origin.path not in {"", "/"}
+            or parsed_origin.params
+            or parsed_origin.query
+            or parsed_origin.fragment
+            or any(marker in origin.lower() for marker in _PLACEHOLDER_MARKERS)
+        ):
+            raise ProductionPreflightError(
+                "CORS_ALLOW_ORIGINS 只能包含生产 HTTPS Origin"
+            )
+
+
+def _validate_local_appliance_entrypoint() -> None:
+    if _required("APP_BIND_HOST") != "127.0.0.1":
+        raise ProductionPreflightError("APP_BIND_HOST 必须为 127.0.0.1")
+    if _required("APP_HTTPS_PORT") != "10443":
+        raise ProductionPreflightError("APP_HTTPS_PORT 必须为 10443")
+
+
 def validate_production_environment() -> None:
     environment = os.getenv("ENV", "development").strip().lower()
     if environment not in {"production", "prod"}:
         return
 
-    for image_name in (
+    deployment_profile = _required("DEPLOYMENT_PROFILE").lower()
+    if deployment_profile not in _DEPLOYMENT_PROFILES:
+        raise ProductionPreflightError(
+            "DEPLOYMENT_PROFILE 只允许 local_appliance 或 server_tls"
+        )
+
+    image_names = [
         "BACKEND_IMAGE",
         "FRONTEND_IMAGE",
         "NGINX_IMAGE",
         "REDIS_IMAGE",
-    ):
+    ]
+    if deployment_profile == "local_appliance":
+        image_names.extend(("POSTGRES_IMAGE", "BROWSERLESS_IMAGE"))
+    for image_name in image_names:
         _required_image_digest(image_name)
     if os.getenv("CERTBOT_IMAGE", "").strip():
         _required_image_digest("CERTBOT_IMAGE")
@@ -109,6 +166,9 @@ def validate_production_environment() -> None:
             "ADMIN_PASSWORD 必须至少为 16 个字符且不得使用默认口令"
         )
 
+    _required_real_value("POSTGRES_PASSWORD", min_length=16)
+    _required_real_value("REDIS_PASSWORD", min_length=16)
+
     database_url = _required("DATABASE_URL")
     parsed_database = urlparse(database_url)
     if (
@@ -129,6 +189,8 @@ def validate_production_environment() -> None:
     if not _is_true("AUTH_COOKIE_SECURE"):
         raise ProductionPreflightError("AUTH_COOKIE_SECURE 必须为 true")
 
+    _validate_tls()
+
     if not _is_true("SECURITY_OUTBOUND_CHECK_ENABLED"):
         raise ProductionPreflightError(
             "SECURITY_OUTBOUND_CHECK_ENABLED 必须为 true"
@@ -140,89 +202,12 @@ def validate_production_environment() -> None:
             "BROWSERLESS_TOKEN 长度必须至少为 24 个字符"
         )
 
-    _required_https_url("SENTRY_DSN")
+    if os.getenv("SENTRY_DSN", "").strip():
+        _required_https_url("SENTRY_DSN")
 
-    cors_origins = [
-        value.strip()
-        for value in _required("CORS_ALLOW_ORIGINS").split(",")
-        if value.strip()
-    ]
-    for origin in cors_origins:
-        parsed_origin = urlparse(origin)
-        if (
-            origin == "*"
-            or parsed_origin.scheme != "https"
-            or not parsed_origin.hostname
-            or parsed_origin.hostname in {"localhost", "127.0.0.1", "::1"}
-            or parsed_origin.path not in {"", "/"}
-            or parsed_origin.params
-            or parsed_origin.query
-            or parsed_origin.fragment
-            or any(
-                marker in origin.lower()
-                for marker in _PLACEHOLDER_MARKERS
-            )
-        ):
-            raise ProductionPreflightError(
-                "CORS_ALLOW_ORIGINS 只能包含生产 HTTPS Origin"
-            )
-
-    provider_pattern = re.compile(r"^LLM_PROVIDER_(.+)_BASE_URL$")
-    provider_names = sorted(
-        match.group(1)
-        for key in os.environ
-        if (match := provider_pattern.match(key))
-    )
-    if not provider_names:
-        raise ProductionPreflightError(
-            "至少配置一个 LLM_PROVIDER_<NAME>_BASE_URL"
-        )
-
-    available_models: set[str] = set()
-    for provider_name in provider_names:
-        prefix = f"LLM_PROVIDER_{provider_name}"
-        _required_https_url(f"{prefix}_BASE_URL")
-        _required_real_value(f"{prefix}_API_KEY", min_length=12)
-        models = {
-            model.strip()
-            for model in _required_real_value(
-                f"{prefix}_MODELS",
-            ).split(",")
-            if model.strip()
-        }
-        if not models:
-            raise ProductionPreflightError(
-                f"{prefix}_MODELS 至少包含一个模型"
-            )
-        available_models.update(models)
-
-    default_model = _required_real_value("DEFAULT_MODEL")
-    if default_model not in available_models:
-        raise ProductionPreflightError(
-            "DEFAULT_MODEL 必须包含在已配置 Provider 的模型列表中"
-        )
-
-    _required_real_value("EMBEDDING_MODEL")
-    embedding_provider = _required_real_value("EMBEDDING_PROVIDER_NAME").upper()
-    if embedding_provider not in provider_names:
-        raise ProductionPreflightError(
-            "EMBEDDING_PROVIDER_NAME 必须指向已配置的 LLM Provider"
-        )
-
-    search_provider = _required_real_value("SEARCH_PROVIDER").lower()
-    search_credentials = {
-        "bocha": ("BOCHA_API_KEY",),
-        "bing": ("BING_API_KEY",),
-        "tavily": ("TAVILY_API_KEY",),
-    }
-    if search_provider not in search_credentials:
-        raise ProductionPreflightError(
-            "SEARCH_PROVIDER 生产环境只允许 bocha、bing 或 tavily"
-        )
-    for credential_name in search_credentials[search_provider]:
-        _required_real_value(credential_name, min_length=12)
-    if search_provider == "bocha":
-        _required_https_url("BOCHA_API_URL")
+    if deployment_profile == "local_appliance":
+        _validate_local_appliance_entrypoint()
+    _validate_cors(deployment_profile)
 
     if os.getenv("SECURITY_OUTBOUND_ALLOW_CIDRS", "").strip():
         raise ProductionPreflightError(

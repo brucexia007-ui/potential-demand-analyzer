@@ -85,7 +85,7 @@ jobs:
           echo "published_at=$published_at" >> "$GITHUB_OUTPUT"
 
       - name: 安装 Python 3.11
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v7
         with:
           python-version: "3.11"
           cache: pip
@@ -377,7 +377,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: 安装 Python 3.11
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v7
         with:
           python-version: "3.11"
 

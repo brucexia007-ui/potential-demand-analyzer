@@ -9,6 +9,12 @@ import {
 
 const TASK_ID = '00000000-0000-0000-0000-000000000001';
 
+async function openTaskDetail(page: Parameters<typeof mockAuthRoutes>[0]) {
+  await page.goto(`/tasks/${TASK_ID}`);
+  await expect(page).toHaveURL(`/tasks/${TASK_ID}`);
+  await expect(page.getByRole('heading', { name: '任务状态', exact: true })).toBeVisible({ timeout: 10000 });
+}
+
 test.beforeEach(async ({ page }) => {
   await mockAuthRoutes(page);
   await mockConfigStatus(page, true);
@@ -19,35 +25,20 @@ test.beforeEach(async ({ page }) => {
 
 test.describe('Task Detail — Page Layout', () => {
   test('should show task detail page header', async ({ page }) => {
-    await page.goto('/history');
-    const taskCard = page.getByText('测试企业A');
-    await expect(taskCard).toBeVisible({ timeout: 10000 });
-    await taskCard.click();
-
-    await expect(page).toHaveURL(/\/tasks\/[a-f0-9-]{36}/);
+    await openTaskDetail(page);
     await expect(page.getByRole('heading', { name: '任务详情' })).toBeVisible();
     await expect(page.getByText(/ID:/)).toBeVisible();
   });
 
   test('should show task status card with company name and demand direction', async ({ page }) => {
-    await page.goto('/history');
-    const taskCard = page.getByText('测试企业A');
-    await expect(taskCard).toBeVisible({ timeout: 10000 });
-    await taskCard.click();
-
-    await expect(page).toHaveURL(/\/tasks\/[a-f0-9-]{36}/);
+    await openTaskDetail(page);
     await expect(page.getByRole('heading', { name: '任务状态', exact: true })).toBeVisible();
-    await expect(page.getByText('某市政务服务中心')).toBeVisible();
-    await expect(page.getByText('智能客服系统升级')).toBeVisible();
+    await expect(page.getByText('某市政务服务中心', { exact: true }).first()).toBeVisible();
+    await expect(page.getByText('智能客服系统升级', { exact: true })).toBeVisible();
   });
 
   test('should show status badge', async ({ page }) => {
-    await page.goto('/history');
-    const taskCard = page.getByText('测试企业A');
-    await expect(taskCard).toBeVisible({ timeout: 10000 });
-    await taskCard.click();
-
-    await expect(page).toHaveURL(/\/tasks\/[a-f0-9-]{36}/);
+    await openTaskDetail(page);
     // One of the status labels should be visible
     const statusBadge = page.locator('span', {
       hasText: /已完成|已失败|执行中|等待中/,
@@ -58,23 +49,13 @@ test.describe('Task Detail — Page Layout', () => {
 
 test.describe('Task Detail — Progress Display', () => {
   test('should show progress percentage', async ({ page }) => {
-    await page.goto('/history');
-    const taskCard = page.getByText('测试企业A');
-    await expect(taskCard).toBeVisible({ timeout: 10000 });
-    await taskCard.click();
-
-    await expect(page).toHaveURL(/\/tasks\/[a-f0-9-]{36}/);
+    await openTaskDetail(page);
     // Progress bar section
     await expect(page.getByText('执行进度')).toBeVisible({ timeout: 10000 });
   });
 
   test('should show current stage and creation time', async ({ page }) => {
-    await page.goto('/history');
-    const taskCard = page.getByText('测试企业A');
-    await expect(taskCard).toBeVisible({ timeout: 10000 });
-    await taskCard.click();
-
-    await expect(page).toHaveURL(/\/tasks\/[a-f0-9-]{36}/);
+    await openTaskDetail(page);
     await expect(page.getByText('当前阶段')).toBeVisible();
     await expect(page.getByText('创建时间')).toBeVisible();
   });
@@ -82,7 +63,7 @@ test.describe('Task Detail — Progress Display', () => {
 
 test.describe('Task Detail — Research Director Plan', () => {
   test('should show the commercial goal, task DAG and exact LLM queries', async ({ page }) => {
-    await page.goto(`/tasks/${TASK_ID}`);
+    await openTaskDetail(page);
 
     await expect(page.getByText('商业分析总目标')).toBeVisible();
     await expect(page.getByRole('heading', {
@@ -104,59 +85,32 @@ test.describe('Task Detail — Research Director Plan', () => {
 
 test.describe('Task Detail — Tabs on Completed/Failed', () => {
   test('should show tab navigation for completed or failed tasks', async ({ page }) => {
-    await page.goto('/history');
-    const taskCard = page.getByText('测试企业A');
-    await expect(taskCard).toBeVisible({ timeout: 10000 });
-    await taskCard.click();
-
-    await expect(page).toHaveURL(/\/tasks\/[a-f0-9-]{36}/);
-    // Tabs may or may not appear depending on task status
-    // If task is still running, these won't be visible — that's fine
+    await openTaskDetail(page);
     const logsTab = page.getByRole('button', { name: '执行日志' });
     const reportTab = page.getByRole('button', { name: '分析报告' });
     const evidenceTab = page.getByRole('button', { name: '证据回溯' });
 
-    // At least one of these should be visible if completed/failed
-    const anyTabVisible = (await logsTab.isVisible().catch(() => false))
-      || (await reportTab.isVisible().catch(() => false))
-      || (await evidenceTab.isVisible().catch(() => false));
-    // Tabs OR running state visualization should exist
-    expect(anyTabVisible).toBeTruthy();
+    await expect(logsTab).toBeVisible({ timeout: 10000 });
+    await expect(reportTab).toBeVisible();
+    await expect(evidenceTab).toBeVisible();
   });
 });
 
 test.describe('Task Detail — Export Buttons', () => {
   test('should show export PDF button on completed tasks', async ({ page }) => {
-    await page.goto('/history');
-    // Find a completed task if possible, otherwise skip
-    const taskCard = page.getByText('测试企业A');
-    await expect(taskCard).toBeVisible({ timeout: 10000 });
-    await taskCard.click();
+    await openTaskDetail(page);
 
-    await expect(page).toHaveURL(/\/tasks\/[a-f0-9-]{36}/);
-
-    // Click "分析报告" tab if available
     const reportTab = page.getByRole('button', { name: '分析报告' });
-    if (await reportTab.isVisible().catch(() => false)) {
-      await reportTab.click();
-      // Export buttons should be in the report tab
-      const exportPdf = page.getByRole('button', { name: /导出 PDF/ });
-      const exportWord = page.getByRole('button', { name: /导出 Word/ });
-      const anyExport = (await exportPdf.isVisible().catch(() => false))
-        || (await exportWord.isVisible().catch(() => false));
-      expect(anyExport).toBeTruthy();
-    }
+    await expect(reportTab).toBeVisible({ timeout: 10000 });
+    await reportTab.click();
+    await expect(page.getByRole('button', { name: /导出 PDF/ })).toBeVisible();
+    await expect(page.getByRole('button', { name: /导出 Word/ })).toBeVisible();
   });
 });
 
 test.describe('Task Detail — Error Display', () => {
   test('should show error message when task has error', async ({ page }) => {
-    await page.goto('/history');
-    const taskCard = page.getByText('测试企业A');
-    await expect(taskCard).toBeVisible({ timeout: 10000 });
-    await taskCard.click();
-
-    await expect(page).toHaveURL(/\/tasks\/[a-f0-9-]{36}/);
+    await openTaskDetail(page);
     // If failed, error message should be visible
     // If not failed, that's fine — the test just confirms no crash
     await expect(page.getByRole('heading', { name: '任务状态', exact: true })).toBeVisible();
@@ -165,7 +119,7 @@ test.describe('Task Detail — Error Display', () => {
 
 test.describe('Task Detail v3.1 — New Tabs', () => {
   test('should not duplicate claims that also appear in severity buckets', async ({ page }) => {
-    await page.goto(`/tasks/${TASK_ID}`);
+    await openTaskDetail(page);
     await page.getByRole('button', { name: '证据审计' }).click();
 
     await expect(page.getByText('共 3 条结论')).toBeVisible();
@@ -204,7 +158,7 @@ test.describe('Task Detail v3.1 — New Tabs', () => {
       });
     });
 
-    await page.goto(`/tasks/${TASK_ID}`);
+    await openTaskDetail(page);
     await page.getByRole('button', { name: '证据审计' }).click();
 
     await expect(page.getByText('审计已完成：无可审计结论')).toBeVisible();
@@ -213,11 +167,7 @@ test.describe('Task Detail v3.1 — New Tabs', () => {
   });
 
   test('should show 证据审计 tab when available', async ({ page }) => {
-    await page.goto('/history');
-    const taskCard = page.getByText('测试企业A');
-    await expect(taskCard).toBeVisible({ timeout: 10000 });
-    await taskCard.click();
-    await expect(page).toHaveURL(/\/tasks\/[a-f0-9-]{36}/);
+    await openTaskDetail(page);
 
     // 查找审计 tab（可能在任务完成后才显示）
     const auditTab = page.getByRole('button', { name: /审计|audit/i });
@@ -227,10 +177,7 @@ test.describe('Task Detail v3.1 — New Tabs', () => {
   });
 
   test('should show OpportunityScoreCard when score data exists', async ({ page }) => {
-    await page.goto('/history');
-    const taskCard = page.getByText('测试企业A');
-    await expect(taskCard).toBeVisible({ timeout: 10000 });
-    await taskCard.click();
+    await openTaskDetail(page);
 
     // 点击分析报告 tab
     const reportTab = page.getByRole('button', { name: /报告|report/i });

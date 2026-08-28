@@ -206,8 +206,8 @@ test.describe("任务详情实时刷新", () => {
     await expect(page.getByRole("button", { name: "客服中心现状与能力基线", exact: true })).toBeVisible();
     await expect(page.getByRole("button", { name: "低准入证据补检", exact: true })).toBeVisible();
     await expect(page.getByText("其他分析维度")).toHaveCount(0);
-    await expect(page.getByRole("button", { name: "暂停" })).toBeDisabled();
-    await expect(page.getByRole("button", { name: "继续" })).toBeDisabled();
-    await expect(page.getByRole("button", { name: "取消" })).toBeDisabled();
+    await expect(page.getByRole("button", { name: "暂停", exact: true })).toBeDisabled();
+    await expect(page.getByRole("button", { name: "继续", exact: true })).toBeDisabled();
+    await expect(page.getByRole("button", { name: "取消", exact: true })).toBeDisabled();
   });
 });

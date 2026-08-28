@@ -13,10 +13,10 @@ test.describe('Auth — Login', () => {
     await expect(page.getByRole('button', { name: '登录' })).toBeVisible();
   });
 
-  test('should show demo account hint', async ({ page }) => {
+  test('should not expose a fixed default credential hint', async ({ page }) => {
     await page.goto('/login');
-    await expect(page.getByText('演示账号：')).toBeVisible();
-    await expect(page.getByText('admin / admin123')).toBeVisible();
+    await expect(page.getByText('演示账号：')).toHaveCount(0);
+    await expect(page.getByText('admin / admin123')).toHaveCount(0);
   });
 
   test('should navigate to register page', async ({ page }) => {

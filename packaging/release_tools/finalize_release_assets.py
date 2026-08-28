@@ -157,7 +157,7 @@ def main() -> int:
     sbom_parser.add_argument("--published-at", required=True)
     sbom_parser.add_argument("--sbom", action="append", type=_name_path, required=True)
     sbom_parser.add_argument("--output-directory", type=Path, required=True)
-    checksum_parser = subparsers.add_parser("checksums")
+    checksum_parser = subparsers.add_parser("sign-checksums")
     checksum_parser.add_argument("--asset", action="append", type=Path, required=True)
     checksum_parser.add_argument("--private-key", type=Path, required=True)
     checksum_parser.add_argument("--output-directory", type=Path, required=True)
@@ -179,7 +179,7 @@ def main() -> int:
                 )
             )
         }
-    elif args.command == "checksums":
+    elif args.command == "sign-checksums":
         result = sign_checksums(
             assets=args.asset,
             private_key_path=args.private_key,

@@ -3,6 +3,8 @@ from __future__ import annotations
 
 import importlib.util
 import json
+import subprocess
+import sys
 import zipfile
 from pathlib import Path
 
@@ -121,3 +123,32 @@ def test_rejects_duplicate_asset_names_from_different_directories(tmp_path: Path
             private_key_path=private_key_path,
             output_directory=tmp_path / "release",
         )
+
+
+def test_sign_checksums_cli_matches_release_workflow_command(tmp_path: Path) -> None:
+    asset = tmp_path / "Kanyikan-v1.2.3-windows-amd64-online.zip"
+    asset.write_bytes(b"online")
+    private_key_path = tmp_path / "private.pem"
+    _private_key(private_key_path)
+
+    completed = subprocess.run(
+        [
+            sys.executable,
+            str(FINALIZER_PATH),
+            "sign-checksums",
+            "--asset",
+            str(asset),
+            "--private-key",
+            str(private_key_path),
+            "--output-directory",
+            str(tmp_path / "release"),
+        ],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+
+    assert completed.returncode == 0, completed.stderr
+    result = json.loads(completed.stdout)
+    assert result["assetCount"] == "1"
+    assert Path(result["checksums"]).name == "SHA256SUMS"

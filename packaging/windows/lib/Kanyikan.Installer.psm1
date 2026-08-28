@@ -208,20 +208,53 @@ function Protect-KanyikanText {
     $patterns = @(
         '(?is)-----BEGIN(?: [A-Z0-9]+)? PRIVATE KEY-----.*?-----END(?: [A-Z0-9]+)? PRIVATE KEY-----',
         '(?i)\b(Bearer\s+)[A-Za-z0-9._~+/=-]+',
-        '(?i)\b(SECRET_KEY|CONFIG_ENCRYPTION_KEY|POSTGRES_PASSWORD|REDIS_PASSWORD|BROWSERLESS_TOKEN|PASSWORD|API_KEY|COOKIE|JWT)\s*[:=]\s*([^\s;,]+)',
-        '(?i)(https?://[^\s:/@]+:)[^\s/@]+(@)'
+        '(?i)\b(SECRET_KEY|CONFIG_ENCRYPTION_KEY|ADMIN_PASSWORD|POSTGRES_PASSWORD|REDIS_PASSWORD|BROWSERLESS_TOKEN|PASSWORD|API_KEY|COOKIE|JWT|SENTRY_DSN)\s*[:=]\s*([^\s;,]+)',
+        '(?i)(https?://)[^\s:/@]+:[^\s/@]+@'
     )
     $replacements = @(
         '[REDACTED]',
         '${1}[REDACTED]',
         '${1}=[REDACTED]',
-        '${1}[REDACTED]${2}'
+        '${1}[REDACTED]@'
     )
 
     for ($index = 0; $index -lt $patterns.Count; $index++) {
         $protected = [regex]::Replace($protected, $patterns[$index], $replacements[$index])
     }
     return $protected
+}
+
+function New-KanyikanLogFile {
+    param([Parameter(Mandatory = $true)][string]$InstallRoot)
+    $logDirectory = [System.IO.Path]::Combine((Get-KanyikanNormalizedPath -Path $InstallRoot), 'logs')
+    [System.IO.Directory]::CreateDirectory($logDirectory) | Out-Null
+    Set-KanyikanRestrictedDirectoryAcl -Path $logDirectory
+    $path = [System.IO.Path]::Combine($logDirectory, "kanyikan-$(Get-Date -Format 'yyyyMMdd-HHmmss')-$([Guid]::NewGuid().ToString('N').Substring(0, 8)).log")
+    [System.IO.File]::WriteAllText($path, '', (New-Object Text.UTF8Encoding($false)))
+    Set-KanyikanRestrictedFileAcl -Path $path
+    return $path
+}
+
+function Write-KanyikanLog {
+    param(
+        [Parameter(Mandatory = $true)][string]$Path,
+        [Parameter(Mandatory = $true)][string]$Level,
+        [Parameter(Mandatory = $true)][string]$Command,
+        [Parameter(Mandatory = $true)][string]$Stage,
+        [Parameter(Mandatory = $true)][string]$Message,
+        [int]$ExitCode = 0
+    )
+    $record = [pscustomobject][ordered]@{
+        timestamp = [DateTime]::UtcNow.ToString('o')
+        level = Protect-KanyikanText -Text $Level
+        command = Protect-KanyikanText -Text $Command
+        stage = Protect-KanyikanText -Text $Stage
+        exitCode = $ExitCode
+        message = Protect-KanyikanText -Text $Message
+    }
+    $line = $record | ConvertTo-Json -Compress
+    if (-not (Test-KanyikanSupportPayload -Text $line)) { throw '安装器日志敏感信息扫描失败。' }
+    [System.IO.File]::AppendAllText($Path, $line + [Environment]::NewLine, (New-Object Text.UTF8Encoding($false)))
 }
 
 function Assert-KanyikanInstallState {
@@ -1691,9 +1724,18 @@ function Export-KanyikanSupportBundle {
         caThumbprint = $state.caThumbprint; caTrusted = $state.caTrusted
         lastFailure = if ($null -eq $state.lastFailure) { $null } else { [pscustomobject]@{ occurredAt = $state.lastFailure.occurredAt; command = $state.lastFailure.command; stage = $state.lastFailure.stage; exitCode = $state.lastFailure.exitCode; reason = Protect-KanyikanText -Text ([string]$state.lastFailure.reason) } }
     }
+    $installerLogs = @()
+    $logDirectory = [System.IO.Path]::Combine($root, 'logs')
+    if ([System.IO.Directory]::Exists($logDirectory)) {
+        foreach ($logPath in @([System.IO.Directory]::GetFiles($logDirectory, 'kanyikan-*.log') | Sort-Object -Descending | Select-Object -First 5)) {
+            $content = Protect-KanyikanText -Text ([System.IO.File]::ReadAllText($logPath, [Text.Encoding]::UTF8))
+            if (-not (Test-KanyikanSupportPayload -Text $content)) { throw "安装器日志敏感信息扫描失败：$([System.IO.Path]::GetFileName($logPath))" }
+            $installerLogs += [pscustomobject]@{ fileName = [System.IO.Path]::GetFileName($logPath); content = $content }
+        }
+    }
     $payload = [pscustomobject][ordered]@{
         schemaVersion = 1; generatedAt = [DateTime]::UtcNow.ToString('o'); doctor = $doctor; installation = $publicState
-        release = $releasePublic; containers = $containers
+        release = $releasePublic; containers = $containers; installerLogs = $installerLogs
         exclusions = @('system.env', 'private keys', 'Provider request/response bodies', 'customer business content', 'raw container configuration')
     }
     $json = Protect-KanyikanText -Text ($payload | ConvertTo-Json -Depth 16)
@@ -1871,6 +1913,7 @@ Export-ModuleMember -Function @(
     'Invoke-KanyikanValidateBackup',
     'Invoke-KanyikanPreflight',
     'New-KanyikanInstallState',
+    'New-KanyikanLogFile',
     'New-KanyikanLocalCertificate',
     'Read-KanyikanAdminPassword',
     'Read-KanyikanInstallState',
@@ -1893,5 +1936,6 @@ Export-ModuleMember -Function @(
     'Test-KanyikanSupportPayload',
     'Test-KanyikanServiceFacts',
     'Wait-KanyikanBootstrapReady',
+    'Write-KanyikanLog',
     'Write-KanyikanSystemEnvironment'
 )

@@ -18,10 +18,14 @@ $script:TrustedReleasePublicKeySha256 = '__KANYIKAN_RELEASE_PUBLIC_KEY_SHA256__'
 $script:InstallRoot = [System.IO.Path]::GetFullPath($PSScriptRoot)
 $script:State = $null
 $script:Stage = 'COMMAND'
+$script:LogPath = $null
 
 function Write-KanyikanResult {
-    param([string]$Level, [string]$Message)
+    param([string]$Level, [string]$Message, [int]$ExitCode = 0)
     Write-Host "[$Level] $Message"
+    if (-not [string]::IsNullOrWhiteSpace($script:LogPath)) {
+        Write-KanyikanLog -Path $script:LogPath -Level $Level -Command $Command -Stage $script:Stage -Message $Message -ExitCode $ExitCode
+    }
 }
 
 function Stop-KanyikanCommand {
@@ -33,8 +37,9 @@ function Stop-KanyikanCommand {
         }
         catch { }
     }
-    Write-KanyikanResult -Level '失败' -Message "命令=$Command；阶段=$script:Stage；退出码=$ExitCode；原因=$Reason"
+    Write-KanyikanResult -Level '失败' -Message "命令=$Command；阶段=$script:Stage；退出码=$ExitCode；原因=$Reason" -ExitCode $ExitCode
     Write-KanyikanResult -Level '下一步' -Message $NextStep
+    Write-Host "[日志] $(if ([string]::IsNullOrWhiteSpace($script:LogPath)) { '未创建（只读命令或持久副作用前失败）' } else { $script:LogPath })"
     exit $ExitCode
 }
 
@@ -79,6 +84,8 @@ function Invoke-Install {
         try { $adminPassword = Read-KanyikanAdminPassword }
         catch { Stop-KanyikanCommand -ExitCode 40 -Reason $_.Exception.Message -NextStep '请重新运行 install 并输入两次相同且符合策略的密码。' }
     }
+    try { $script:LogPath = New-KanyikanLogFile -InstallRoot $script:InstallRoot }
+    catch { Stop-KanyikanCommand -ExitCode 90 -Reason '无法创建受限安装日志。' -NextStep '请检查 logs 目录权限。' }
 
     if ($script:State.currentState -ceq 'NEW') {
         $script:State.productVersion = $release.version
@@ -175,6 +182,11 @@ if ([string]::IsNullOrWhiteSpace($Command)) { Write-Host '[失败] 必须指定�
 $modulePath = [System.IO.Path]::Combine($script:InstallRoot, 'lib', 'Kanyikan.Installer.psm1')
 try { Import-Module $modulePath -Force }
 catch { Write-Host '[失败] 无法加载安装器模块。'; exit 90 }
+
+if (@('start', 'stop', 'restart', 'backup', 'restore', 'support-bundle', 'uninstall') -ccontains $Command.ToLowerInvariant()) {
+    try { $script:LogPath = New-KanyikanLogFile -InstallRoot $script:InstallRoot }
+    catch { Write-Host '[失败] 无法创建受限操作日志。'; exit 90 }
+}
 
 switch -CaseSensitive ($Command.ToLowerInvariant()) {
     'install' { Invoke-Install; exit 0 }

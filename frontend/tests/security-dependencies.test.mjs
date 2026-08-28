@@ -41,3 +41,11 @@ test("production frontend uses a supported, July 2026 patched Next.js line", () 
     "package-lock.json 与 package.json 中的 Next.js 版本必须一致",
   );
 });
+
+test("transitive nanoid dependency uses the patched 3.3.18 release", () => {
+  assert.equal(
+    packageLock.packages["node_modules/nanoid"].version,
+    "3.3.18",
+    "nanoid 3.x 低于 3.3.18 会允许 size=0 的自定义生成器无限循环",
+  );
+});

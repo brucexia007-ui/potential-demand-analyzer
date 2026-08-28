@@ -79,6 +79,30 @@ def test_signs_sorted_checksums_covering_every_explicit_asset(tmp_path: Path) ->
         padding.PKCS1v15(),
         hashes.SHA256(),
     )
+    public_key_path = tmp_path / "public.pem"
+    public_key_path.write_bytes(
+        private_key.public_key().public_bytes(
+            serialization.Encoding.PEM,
+            serialization.PublicFormat.PKCS1,
+        )
+    )
+    verified = FINALIZER.verify_checksums(
+        checksum_path=Path(result["checksums"]),
+        signature_path=Path(result["signature"]),
+        public_key_path=public_key_path,
+        asset_directory=release,
+    )
+    assert verified["passed"] is True
+    assert verified["assetCount"] == 3
+
+    assets[0].write_bytes(b"tampered")
+    with pytest.raises(ValueError, match="SHA256 不匹配"):
+        FINALIZER.verify_checksums(
+            checksum_path=Path(result["checksums"]),
+            signature_path=Path(result["signature"]),
+            public_key_path=public_key_path,
+            asset_directory=release,
+        )
 
 
 def test_rejects_duplicate_asset_names_from_different_directories(tmp_path: Path) -> None:

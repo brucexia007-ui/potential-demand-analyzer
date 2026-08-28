@@ -103,6 +103,45 @@ def sign_checksums(*, assets: list[Path], private_key_path: Path, output_directo
     }
 
 
+def verify_checksums(
+    *,
+    checksum_path: Path,
+    signature_path: Path,
+    public_key_path: Path,
+    asset_directory: Path,
+) -> dict[str, object]:
+    checksum_bytes = checksum_path.read_bytes()
+    signature = signature_path.read_bytes()
+    public_key = serialization.load_pem_public_key(public_key_path.read_bytes())
+    if not isinstance(public_key, rsa.RSAPublicKey) or public_key.key_size < 3072:
+        raise ValueError("顶层摘要验签必须使用至少 3072 位 RSA 公钥。")
+    try:
+        public_key.verify(signature, checksum_bytes, padding.PKCS1v15(), hashes.SHA256())
+    except Exception as exc:
+        raise ValueError("SHA256SUMS 的 RSA-SHA256 签名无效。") from exc
+
+    declared: dict[str, str] = {}
+    for line in checksum_bytes.decode("utf-8").splitlines():
+        match = re.fullmatch(r"([0-9a-f]{64})  ([A-Za-z0-9][A-Za-z0-9._-]*)", line)
+        if not match:
+            raise ValueError("SHA256SUMS 格式或资产文件名不合法。")
+        digest, name = match.groups()
+        if name in {"SHA256SUMS", "SHA256SUMS.sig"} or name in declared:
+            raise ValueError(f"SHA256SUMS 包含重复或禁止的资产名：{name}")
+        declared[name] = digest
+    if not declared:
+        raise ValueError("SHA256SUMS 不得为空。")
+
+    root = asset_directory.resolve()
+    for name, expected in declared.items():
+        asset = (root / name).resolve()
+        if asset.parent != root or not asset.is_file() or asset.stat().st_size == 0:
+            raise ValueError(f"发布资产缺失或越界：{name}")
+        if _sha256(asset) != expected:
+            raise ValueError(f"发布资产 SHA256 不匹配：{name}")
+    return {"passed": True, "assetCount": len(declared), "assets": sorted(declared)}
+
+
 def _name_path(value: str) -> tuple[str, Path]:
     name, separator, path = value.partition("=")
     if not separator or not name or not path:
@@ -122,6 +161,11 @@ def main() -> int:
     checksum_parser.add_argument("--asset", action="append", type=Path, required=True)
     checksum_parser.add_argument("--private-key", type=Path, required=True)
     checksum_parser.add_argument("--output-directory", type=Path, required=True)
+    verify_parser = subparsers.add_parser("verify-checksums")
+    verify_parser.add_argument("--checksums", type=Path, required=True)
+    verify_parser.add_argument("--signature", type=Path, required=True)
+    verify_parser.add_argument("--public-key", type=Path, required=True)
+    verify_parser.add_argument("--asset-directory", type=Path, required=True)
     args = parser.parse_args()
 
     if args.command == "sbom-zip":
@@ -135,11 +179,18 @@ def main() -> int:
                 )
             )
         }
-    else:
+    elif args.command == "checksums":
         result = sign_checksums(
             assets=args.asset,
             private_key_path=args.private_key,
             output_directory=args.output_directory,
+        )
+    else:
+        result = verify_checksums(
+            checksum_path=args.checksums,
+            signature_path=args.signature,
+            public_key_path=args.public_key,
+            asset_directory=args.asset_directory,
         )
     print(json.dumps(result, ensure_ascii=False, sort_keys=True))
     return 0

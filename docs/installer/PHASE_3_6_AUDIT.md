@@ -1,6 +1,6 @@
 # Phase 3～6 实现与证据审计
 
-审计基线：`3fb1b2ffcdc9f907cb96c30d67b7ebc952fa6462`
+审计基线：`e10586191da067f8f15d6f2a60d0e00f38b43493`
 
 审计时间：2026-08-28（Asia/Shanghai）
 
@@ -41,13 +41,13 @@
 - `backend/tests/test_release_compose.py`
 - `backend/tests/test_release_nginx_image.py`
 
-结果：47/47 用例通过，0 失败。
+结果：48/48 用例通过，0 失败。
 
-覆盖：严格 Tag 契约、六镜像候选矩阵、SBOM/Grype/Cosign/来源证明接线、许可证生成、OCI 六镜像归档、RSA 离线包构建、在线引导包构建、两类独立包验证、SBOM ZIP、顶层摘要签名、漏洞豁免、发行 Compose、自包含 Nginx 镜像、单机三轮快照复原门禁和发布 Runbook。
+覆盖：严格 Tag 契约、六镜像候选矩阵、SBOM/Grype/Cosign/来源证明接线、许可证生成、OCI 六镜像归档、RSA 离线包构建、在线引导包构建、两类独立包验证、SBOM ZIP、顶层摘要签名、漏洞豁免、发行 Compose、自包含 Nginx 镜像、单机三轮快照复原门禁、拒绝覆盖或删除状态的一次性 Runner 启动器和发布 Runbook。
 
 补充 Windows 烟测：生成的 `install-online.ps1` 通过 PowerShell AST 语法解析；将发行地址指向不可达的 `https://127.0.0.1:1/releases` 时以退出码 1 终止，没有进入离线安装器。
 
-证据强度：工作流和发行工具为 `IMPLEMENTED_AUTOMATED_VERIFIED`；GitHub Actions 实际执行为 `IMPLEMENTED_NOT_RUNTIME_VERIFIED`。
+证据强度：工作流和发行工具为 `IMPLEMENTED_AUTOMATED_VERIFIED`；main CI 已在 GitHub Actions 实际执行，Tag 发行工作流仍为 `IMPLEMENTED_NOT_RUNTIME_VERIFIED`。
 
 ### 全仓后端回归
 
@@ -61,7 +61,7 @@
 
 执行范围：前端依赖安全契约、Next.js 生产构建与 TypeScript 检查，以及连接隔离测试后端的完整 Chromium 套件。最终浏览器命令显式使用 `--retries=0`，避免以重试掩盖波动。
 
-结果：安全契约 1/1 通过；生产构建完成 22 个静态页面生成并通过类型检查；Playwright 108/108 通过，0 失败、0 flaky。
+结果：安全契约 2/2 通过；生产构建完成 22 个静态页面生成并通过类型检查；Playwright 108/108 通过，0 失败、0 flaky。
 
 首轮浏览器执行实际暴露 6 条失败与 3 条 flaky。失败用例先作为复现证据保留，随后修复默认口令过时断言、任务详情非精确选择器、页面稳定等待和配置向导漏模拟通知接口导致的会话过期竞态；对应提交为 `3400796` 与 `ad4db7d`。
 
@@ -69,11 +69,11 @@
 
 ### GitHub main CI
 
-运行：`33171589490`，commit `3fb1b2ffcdc9f907cb96c30d67b7ebc952fa6462`。
+运行：`33173790955`，commit `e10586191da067f8f15d6f2a60d0e00f38b43493`。
 
-结果：前端依赖安全契约与生产构建成功；后端使用 Python 3.11、PostgreSQL 16/pgvector 与 Redis 完成 `pip-audit` 和全量测试，1982 条通过、5 条跳过、0 失败、8 条警告，应用覆盖率 81%。
+结果：前端依赖安全契约与生产构建成功；后端使用 Python 3.11、PostgreSQL 16/pgvector 与 Redis 完成 `pip-audit` 和全量测试，1983 条通过、5 条跳过、0 失败、8 条警告，应用覆盖率 81%。
 
-前两次远端运行作为失败复现证据保留：`33170171376` 被 `pypdf 6.14.2` 的两项已知漏洞阻断，升级到 6.16.2 后 `pip-audit` 通过；`33170591361` 随后暴露测试环境缺少 `jsonschema`，通过新增精确固定的 `backend/requirements-test.txt` 并让 CI/Tag 工作流共同安装后修复。
+前两次远端运行作为失败复现证据保留：`33170171376` 被 `pypdf 6.14.2` 的两项已知漏洞阻断，升级到 6.16.2 后 `pip-audit` 通过；`33170591361` 随后暴露测试环境缺少 `jsonschema`，通过新增精确固定的 `backend/requirements-test.txt` 并让 CI/Tag 工作流共同安装后修复。前端传递依赖 `nanoid 3.3.16` 的高危安全告警也已通过精确覆盖到 3.3.18 修复，GitHub Dependabot 告警状态为 `fixed`，`npm audit` 为 0 个漏洞。
 
 证据强度：main 分支 CI 为 `IMPLEMENTED_AUTOMATED_VERIFIED`；它不替代 Tag 发行、供应链签名和三轮 Windows 断网 E2E。
 
@@ -118,10 +118,10 @@
 | 六镜像 SPDX SBOM、第三方许可证、Grype Critical/High 门禁与时效豁免 | 生成器、评估器与工作流契约测试 | `IMPLEMENTED_AUTOMATED_VERIFIED` |
 | 六镜像 Cosign 签名、SBOM 证明、GitHub 来源证明 | Tag 工作流已接线，尚未在 GitHub 执行 | `IMPLEMENTED_NOT_RUNTIME_VERIFIED` |
 | 离线 ZIP、SBOM ZIP、许可证、`SHA256SUMS` 和 RSA 顶层签名 | 生成器及独立验签测试；候选工作流已接线 | `IMPLEMENTED_AUTOMATED_VERIFIED` |
-| 后端回归、前端安全契约、生产构建和 Chromium E2E | 本机隔离回归通过；GitHub main CI 1982 passed/5 skipped、覆盖率 81%，前端构建成功；本机 Chromium 108/108 且禁用重试 | `IMPLEMENTED_AUTOMATED_VERIFIED` |
+| 后端回归、前端安全契约、生产构建和 Chromium E2E | 本机隔离回归通过；GitHub main CI 1983 passed/5 skipped、覆盖率 81%，前端构建成功；本机 Chromium 108/108 且禁用重试 | `IMPLEMENTED_AUTOMATED_VERIFIED` |
 | 端口占用、Docker 停止、Windows Containers、低磁盘、manifest/镜像损坏 | 负向 E2E 编排、精确退出码与无副作用检查已实现 | `IMPLEMENTED_NOT_RUNTIME_VERIFIED` |
 | `IMAGES_LOADED`、`CONFIG_CREATED`、`SERVICES_STARTING` 中断重试及重复安装不重置密钥 | 中断进程、重试、认证冒烟和身份摘要编排已实现 | `IMPLEMENTED_NOT_RUNTIME_VERIFIED` |
-| 三轮独立纯净 Windows 11 完全断网 E2E | 一台 Windows 11 经三次黄金快照复原、round 标签、ephemeral 注册、消费标记和代次汇总的门禁已实现；runner 与证据不存在 | `EXTERNAL_NOT_RUN` |
+| 三轮独立纯净 Windows 11 完全断网 E2E | 一台 Windows 11 经三次黄金快照复原、round 标签、ephemeral 注册、消费标记和代次汇总的门禁已实现；一次性启动器已通过契约与 PowerShell AST 检查；runner 与证据不存在 | `EXTERNAL_NOT_RUN` |
 | 在线发行包 | `Kanyikan-vX.Y.Z-windows-amd64-online.zip` 构建器、独立验证器及固定信任锚/下载/顶层 RSA/离线 ZIP SHA256/同安装器契约已实现并测试 | `IMPLEMENTED_AUTOMATED_VERIFIED` |
 | 正式 GitHub Release | 三轮证据通过后创建草稿、上传在线/离线/SBOM/许可证/摘要/签名并公开的作业已实现，尚未在 GitHub 执行 | `IMPLEMENTED_NOT_RUNTIME_VERIFIED` |
 
@@ -138,8 +138,9 @@
 ## 8. 解除 NO-GO 的必要顺序
 
 1. 为仓库配置配对的 RSA Secrets，并准备一台带黄金快照、断网/负向 Hook 的 Windows 11 虚拟机。
-2. 恢复黄金快照，以 round 1 标签和新的 generation UUID 注册 ephemeral runner；第一轮完成后关机。
-3. 对 round 2、round 3 分别重新恢复同一黄金快照、生成新 UUID 并重新注册，禁止直接复用上一轮系统状态。
-4. 推送候选 Tag，保存六镜像签名/证明、`release-candidate`、三轮 Windows JSON、快照轮转 JSON 和脱敏输出；确认草稿 Release 仅在全部资产上传后公开。
-5. 使用两套正式版本执行更新成功、迁移/健康失败回滚成功和回滚失败三类真实 Windows 场景。
-6. 本机全仓后端非集成、前端构建和 108 条浏览器回归已完成；候选 Tag 仍须在 GitHub 工作流中重跑相同门禁并保存日志。根据实际外部证据更新 `ACCEPTANCE_MATRIX.md`，未执行的真实 Windows E2E 条目不得写 PASS。
+2. 确认正式版本号并推送候选 Tag，等待托管作业完成候选构建；不得在 Windows 三轮证据完成前手工公开 Release。
+3. 恢复黄金快照，以 round 1 标签和新的 generation UUID 注册 ephemeral runner；第一轮完成后关机。
+4. 对 round 2、round 3 分别重新恢复同一黄金快照、生成新 UUID 并重新注册，禁止直接复用上一轮系统状态。
+5. 保存六镜像签名/证明、`release-candidate`、三轮 Windows JSON、快照轮转 JSON 和脱敏输出；确认草稿 Release 仅在全部资产上传后公开。
+6. 使用两套正式版本执行更新成功、迁移/健康失败回滚成功和回滚失败三类真实 Windows 场景。
+7. 本机全仓后端非集成、前端构建和 108 条浏览器回归已完成；候选 Tag 仍须在 GitHub 工作流中重跑相同门禁并保存日志。根据实际外部证据更新 `ACCEPTANCE_MATRIX.md`，未执行的真实 Windows E2E 条目不得写 PASS。

@@ -215,7 +215,7 @@ def test_phase_audit_separates_automated_evidence_from_unverified_release_gates(
     assert re.search(r"审计基线：`[0-9a-f]{40}`", audit)
     for value in (
         "108/108",
-        "47/47",
+        "48/48",
         "IMPLEMENTED_AUTOMATED_VERIFIED",
         "IMPLEMENTED_NOT_RUNTIME_VERIFIED",
         "EXTERNAL_NOT_RUN",
@@ -228,3 +228,12 @@ def test_phase_audit_separates_automated_evidence_from_unverified_release_gates(
     assert "一台 Windows 11" in audit
     assert "真实 Windows E2E：PASS" not in audit
     assert "Phase 3～6：完成" not in audit
+
+
+def test_phase_audit_starts_tag_workflow_before_rotating_ephemeral_runners() -> None:
+    release_steps = PHASE_AUDIT.read_text(encoding="utf-8").split(
+        "## 8. 解除 NO-GO 的必要顺序",
+        maxsplit=1,
+    )[1]
+
+    assert release_steps.index("推送候选 Tag") < release_steps.index("round 1")

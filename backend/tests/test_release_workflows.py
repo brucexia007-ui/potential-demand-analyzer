@@ -6,6 +6,7 @@ ROOT = Path(__file__).resolve().parents[2]
 CI_WORKFLOW = ROOT / ".github" / "workflows" / "ci.yml"
 DEPLOY_WORKFLOW = ROOT / ".github" / "workflows" / "deploy.yml"
 RELEASE_POLICY = ROOT / "packaging" / "windows" / "release-policy.json"
+RELEASE_RUNBOOK = ROOT / "docs" / "installer" / "RELEASE_RUNBOOK.md"
 
 
 def test_ci_runs_for_the_repository_default_branch_and_security_gate() -> None:
@@ -114,3 +115,26 @@ def test_formal_release_waits_for_three_clean_windows_offline_rounds_and_online_
     assert "KANYIKAN_INFRASTRUCTURE_HOOKS_ROOT" in workflow
     assert "if: always()" in workflow
     assert "gh release create" not in workflow
+
+
+def test_release_runbook_declares_secrets_runner_hooks_evidence_and_no_publish_boundary() -> None:
+    runbook = RELEASE_RUNBOOK.read_text(encoding="utf-8")
+
+    for value in (
+        "WINDOWS_RELEASE_PRIVATE_KEY_PEM",
+        "WINDOWS_RELEASE_PUBLIC_KEY_PEM",
+        "KANYIKAN_CLEAN_E2E=1",
+        "self-hosted, Windows, X64, kanyikan-clean-e2e",
+        "KANYIKAN_ENTER_OFFLINE_SCRIPT",
+        "KANYIKAN_EXIT_OFFLINE_SCRIPT",
+        "KANYIKAN_INFRASTRUCTURE_HOOKS_ROOT",
+        "Enter-DockerStopped.ps1",
+        "Exit-WindowsContainers.ps1",
+        "Enter-DiskInsufficient.ps1",
+        "release-candidate",
+        "windows-e2e-round-1",
+        "ONLINE_PACKAGE_CONTRACT",
+    ):
+        assert value in runbook
+    assert "不得创建 GitHub Release" in runbook
+    assert "不得输出私钥" in runbook

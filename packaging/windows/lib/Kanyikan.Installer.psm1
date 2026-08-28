@@ -1426,8 +1426,82 @@ function Stop-KanyikanServices {
     if ($result.exitCode -ne 0) { throw "Compose 停止失败：$(Protect-KanyikanText -Text $result.output)" }
 }
 
+function Set-KanyikanRestrictedDirectoryAcl {
+    param([Parameter(Mandatory = $true)][string]$Path)
+
+    $currentUserSid = [Security.Principal.WindowsIdentity]::GetCurrent().User
+    $administratorsSid = New-Object Security.Principal.SecurityIdentifier([Security.Principal.WellKnownSidType]::BuiltinAdministratorsSid, $null)
+    $security = New-Object Security.AccessControl.DirectorySecurity
+    $security.SetOwner($currentUserSid)
+    $security.SetAccessRuleProtection($true, $false)
+    $rights = [Security.AccessControl.FileSystemRights]::FullControl
+    $inheritance = [Security.AccessControl.InheritanceFlags]::ContainerInherit -bor [Security.AccessControl.InheritanceFlags]::ObjectInherit
+    $propagation = [Security.AccessControl.PropagationFlags]::None
+    $allow = [Security.AccessControl.AccessControlType]::Allow
+    $security.AddAccessRule((New-Object Security.AccessControl.FileSystemAccessRule($currentUserSid, $rights, $inheritance, $propagation, $allow)))
+    $security.AddAccessRule((New-Object Security.AccessControl.FileSystemAccessRule($administratorsSid, $rights, $inheritance, $propagation, $allow)))
+    [System.IO.Directory]::SetAccessControl($Path, $security)
+}
+
+function Set-KanyikanBackupAcl {
+    param([Parameter(Mandatory = $true)][string]$BackupDirectory)
+    $root = Get-KanyikanNormalizedPath -Path $BackupDirectory
+    foreach ($directory in @($root) + @([System.IO.Directory]::GetDirectories($root, '*', [System.IO.SearchOption]::AllDirectories))) { Set-KanyikanRestrictedDirectoryAcl -Path $directory }
+    foreach ($file in [System.IO.Directory]::GetFiles($root, '*', [System.IO.SearchOption]::AllDirectories)) { Set-KanyikanRestrictedFileAcl -Path $file }
+}
+
+function Get-KanyikanBackupArguments {
+    param(
+        [Parameter(Mandatory = $true)][string]$InstallRoot,
+        [Parameter(Mandatory = $true)][psobject]$State,
+        [string]$BackupName
+    )
+
+    $toolArguments = if ([string]::IsNullOrWhiteSpace($BackupName)) {
+        @(
+            'create', '--backup-root', '/backups',
+            '--snapshots-root', '/app/data/snapshots',
+            '--skills-root', '/app/data/workspace_skills',
+            '--product-version', [string]$State.productVersion,
+            '--manifest-sha256', [string]$State.manifestSha256,
+            '--release-public-key-sha256', [string]$State.releasePublicKeySha256
+        )
+    }
+    else {
+        if ($BackupName -notmatch '^kanyikan-[0-9]{8}T[0-9]{6}Z-[0-9a-f]{8}$') { throw '备份名称不合法。' }
+        @('validate', '--backup-root', '/backups', '--backup', "/backups/$BackupName")
+    }
+    $composeArguments = @(Get-KanyikanComposeArguments -InstallRoot $InstallRoot -Arguments @(
+        'exec', '--no-TTY', 'backend', 'python', '-m', 'app.tools.local_backup'
+    ))
+    return $composeArguments + $toolArguments
+}
+
+function Invoke-KanyikanBackup {
+    param(
+        [Parameter(Mandatory = $true)][string]$InstallRoot,
+        [Parameter(Mandatory = $true)][psobject]$State
+    )
+
+    $result = Invoke-KanyikanDockerCommand -Arguments (Get-KanyikanBackupArguments -InstallRoot $InstallRoot -State $State)
+    if ($result.exitCode -ne 0) { throw "完整备份失败：$(Protect-KanyikanText -Text $result.output)" }
+    $jsonLine = @($result.output -split '\r?\n' | Where-Object { $_.Trim().StartsWith('{') }) | Select-Object -Last 1
+    try { $metadata = $jsonLine | ConvertFrom-Json }
+    catch { throw '完整备份工具未返回合法公开元数据。' }
+    $backupName = [string]$metadata.backup
+    if ($backupName -notmatch '^kanyikan-[0-9]{8}T[0-9]{6}Z-[0-9a-f]{8}$') { throw '完整备份工具返回了非法备份名称。' }
+
+    $verify = Invoke-KanyikanDockerCommand -Arguments (Get-KanyikanBackupArguments -InstallRoot $InstallRoot -State $State -BackupName $backupName)
+    if ($verify.exitCode -ne 0) { throw "完整备份最终校验失败：$(Protect-KanyikanText -Text $verify.output)" }
+    $windowsPath = [System.IO.Path]::Combine((Get-KanyikanNormalizedPath -Path $InstallRoot), 'data', 'backups', $backupName)
+    if (-not [System.IO.Directory]::Exists($windowsPath)) { throw '完整备份未出现在安装目录 data/backups。' }
+    Set-KanyikanBackupAcl -BackupDirectory $windowsPath
+    return [pscustomobject][ordered]@{ name = $backupName; path = $windowsPath; valid = $true }
+}
+
 Export-ModuleMember -Function @(
     'Get-KanyikanCertificateDockerArguments',
+    'Get-KanyikanBackupArguments',
     'Get-KanyikanComposeArguments',
     'Get-KanyikanInstallStates',
     'Get-KanyikanLocalCaThumbprint',
@@ -1437,6 +1511,7 @@ Export-ModuleMember -Function @(
     'Get-KanyikanServiceFacts',
     'Import-KanyikanReleaseImages',
     'Install-KanyikanLocalRootTrust',
+    'Invoke-KanyikanBackup',
     'Invoke-KanyikanPreflight',
     'New-KanyikanInstallState',
     'New-KanyikanLocalCertificate',
@@ -1445,6 +1520,7 @@ Export-ModuleMember -Function @(
     'Remove-KanyikanLocalRootTrust',
     'Set-KanyikanInstallState',
     'Set-KanyikanInstallFailure',
+    'Set-KanyikanBackupAcl',
     'Start-KanyikanServices',
     'Stop-KanyikanServices',
     'Test-KanyikanAdminPassword',

@@ -197,5 +197,20 @@ switch -CaseSensitive ($Command.ToLowerInvariant()) {
         catch { Stop-KanyikanCommand -ExitCode 51 -Reason $_.Exception.Message -NextStep '请运行 status 后重试。' }
         Write-KanyikanResult -Level '成功' -Message "服务已重启：$script:Entrypoint"; exit 0
     }
+    'backup' {
+        $script:State = Read-KanyikanInstallState -InstallRoot $script:InstallRoot
+        if ($script:State.currentState -cne 'INSTALLED') { Stop-KanyikanCommand -ExitCode 10 -Reason '尚未完成安装。' -NextStep '请先运行 install。' }
+        $script:Stage = 'BACKUP'
+        try {
+            Start-KanyikanServices -InstallRoot $script:InstallRoot
+            $ready = Wait-KanyikanBootstrapReady -InstallRoot $script:InstallRoot
+            if (-not $ready.passed) { throw $ready.reason }
+            $result = Invoke-KanyikanBackup -InstallRoot $script:InstallRoot -State $script:State
+        }
+        catch { Stop-KanyikanCommand -ExitCode 60 -Reason $_.Exception.Message -NextStep '请保留无 VALID 标志的失败现场并检查磁盘、数据库和数据卷。' }
+        Write-KanyikanResult -Level '成功' -Message "完整备份已校验：$($result.path)"
+        Write-KanyikanResult -Level '重要' -Message '请另行安全保存 config/system.env；缺少该文件将无法恢复已加密的 Provider 配置。'
+        exit 0
+    }
     default { Write-Host "[失败] 未知或尚未实现的命令：$Command"; exit 10 }
 }

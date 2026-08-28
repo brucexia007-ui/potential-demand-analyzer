@@ -10,6 +10,9 @@ TEST_REQUIREMENTS = ROOT / "backend" / "requirements-test.txt"
 RELEASE_POLICY = ROOT / "packaging" / "windows" / "release-policy.json"
 RELEASE_RUNBOOK = ROOT / "docs" / "installer" / "RELEASE_RUNBOOK.md"
 PHASE_AUDIT = ROOT / "docs" / "installer" / "PHASE_3_6_AUDIT.md"
+START_CLEAN_RUNNER = (
+    ROOT / "packaging" / "windows" / "e2e" / "Start-CleanReleaseRunner.ps1"
+)
 
 
 def test_ci_runs_for_the_repository_default_branch_and_security_gate() -> None:
@@ -175,6 +178,35 @@ def test_release_runbook_declares_single_runner_rotation_hooks_evidence_and_publ
         assert value in runbook
     assert "ONLINE_PACKAGE_CONTRACT" not in runbook
     assert "不得输出私钥" in runbook
+
+
+def test_single_windows_runner_has_a_fail_closed_one_round_launcher() -> None:
+    script = START_CLEAN_RUNNER.read_text(encoding="utf-8")
+    runbook = RELEASE_RUNBOOK.read_text(encoding="utf-8")
+
+    for value in (
+        "[ValidateSet(1, 2, 3)]",
+        "KANYIKAN_RUNNER_REGISTRATION_TOKEN",
+        "KANYIKAN_CLEAN_E2E_GENERATION_ID",
+        "KANYIKAN_CLEAN_SNAPSHOT_SHA256",
+        "KANYIKAN_CLEAN_E2E_ROUND",
+        "KANYIKAN_ENTER_OFFLINE_SCRIPT",
+        "KANYIKAN_EXIT_OFFLINE_SCRIPT",
+        "KANYIKAN_INFRASTRUCTURE_HOOKS_ROOT",
+        "snapshot-consumed.json",
+        "--ephemeral",
+        "--unattended",
+        "kanyikan-clean-e2e-round-$Round",
+        "docker info",
+        "docker compose version",
+        "config.cmd",
+        "run.cmd",
+    ):
+        assert value in script
+    assert "--replace" not in script
+    assert "Remove-Item" not in script
+    assert "Start-CleanReleaseRunner.ps1" in runbook
+    assert "$env:KANYIKAN_RUNNER_REGISTRATION_TOKEN" in runbook
 
 
 def test_phase_audit_separates_automated_evidence_from_unverified_release_gates() -> None:

@@ -56,6 +56,34 @@ Runner 进程环境必须提供：
 
 单机轮转顺序固定为：恢复黄金快照 → 设置本轮三个环境变量 → 用当前轮次标签和 `--ephemeral` 注册 → 启动 runner 并等待这一轮作业结束 → 关闭虚拟机。流水线会在作业开始时写入 `snapshot-consumed.json`；若下一轮仍看到该文件会立即失败。公开 Release 前还会汇总三份 `runner-rotation.json`，要求三轮编号完整、三个注册代次互异、黄金快照 SHA256 唯一且 Tag/commit 一致。
 
+### 单轮启动命令
+
+黄金快照内应预先解压 GitHub Actions Runner 到 `C:\actions-runner`，但不得执行 `config.cmd`，也不得保留 `.runner`、`.credentials`、`.credentials_rsaparams` 或 `.service`。先从仓库设置页显示的当前版本安装包完成解压，再创建只读黄金快照；不要把注册令牌、GitHub 登录态或已配置 Runner 写入快照。
+
+每次恢复快照后，在管理员 PowerShell 中先取得一个短期 Runner 注册令牌并只存入当前进程环境变量。下面的命令不会输出令牌，启动脚本会在注册尝试结束后立即从当前进程清除它：
+
+```powershell
+$env:KANYIKAN_RUNNER_REGISTRATION_TOKEN = gh api `
+  --method POST `
+  repos/brucexia007-ui/potential-demand-analyzer/actions/runners/registration-token `
+  --jq .token
+```
+
+然后执行仓库内的 `packaging\windows\e2e\Start-CleanReleaseRunner.ps1`。`SnapshotSha256` 必须是虚拟化平台对只读黄金快照导出物或不可变快照标识计算出的 SHA256；三轮必须使用同一个值，不能对虚拟机当前磁盘临时计算三个不同的值。路径按实际基础设施替换：
+
+```powershell
+& F:\program\kanyikan\packaging\windows\e2e\Start-CleanReleaseRunner.ps1 `
+  -Round 1 `
+  -SnapshotSha256 '<64 位小写黄金快照 SHA256>' `
+  -RepositoryUrl 'https://github.com/brucexia007-ui/potential-demand-analyzer' `
+  -RunnerRoot 'C:\actions-runner' `
+  -EnterOfflineScript 'C:\kanyikan-e2e-hooks\Enter-Offline.ps1' `
+  -ExitOfflineScript 'C:\kanyikan-e2e-hooks\Exit-Offline.ps1' `
+  -InfrastructureHooksRoot 'C:\kanyikan-e2e-hooks'
+```
+
+脚本会在注册前拒绝以下状态：非管理员、非 Windows 11、CPU/内存/磁盘不足、Docker 非 Linux Engine、Compose 非 v2、缺失 Hook、存在快照消费标记、Runner 已配置或注册令牌缺失。它只注册当前轮次标签，不使用 `--replace`，并在一个 ephemeral 作业结束后退出。第一轮退出后必须关机并由虚拟化平台恢复黄金快照；第二轮和第三轮分别把 `Round` 改为 `2`、`3`，重新获取注册令牌并重复执行，禁止用删除标记或 Runner 配置文件代替快照恢复。
+
 ## 3. 负向场景 Hook 契约
 
 `KANYIKAN_INFRASTRUCTURE_HOOKS_ROOT` 必须包含以下脚本，全部以管理员权限执行：

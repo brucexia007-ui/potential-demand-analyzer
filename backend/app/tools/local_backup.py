@@ -262,6 +262,88 @@ def create_backup(
         raise
 
 
+def _restore_database(source: Path, database_url: str) -> None:
+    command, environment = _database_connection(database_url)
+    psql = ["psql", *command[command.index("-h") : command.index("--no-owner")], "-v", "ON_ERROR_STOP=1"]
+    reset = subprocess.run(
+        [*psql, "-c", "DROP SCHEMA public CASCADE; CREATE SCHEMA public;"],
+        env=environment,
+        capture_output=True,
+        text=True,
+        timeout=300,
+    )
+    if reset.returncode != 0:
+        raise LocalBackupError(f"重置数据库 schema 失败，退出码 {reset.returncode}: {reset.stderr.strip()}")
+    with gzip.open(source, "rb") as decompressed:
+        restored = subprocess.run(
+            psql,
+            stdin=decompressed,
+            env=environment,
+            capture_output=True,
+            text=False,
+            timeout=1800,
+        )
+    if restored.returncode != 0:
+        stderr = restored.stderr.decode("utf-8", errors="replace").strip()
+        raise LocalBackupError(f"恢复 PostgreSQL 失败，退出码 {restored.returncode}: {stderr}")
+
+
+def _replace_tree_from_archive(archive_path: Path, target: Path, archive_root: str) -> None:
+    _safe_archive(archive_path, archive_root)
+    _assert_regular_tree(target)
+    staging = target.parent / f".restore-{archive_root}-{secrets.token_hex(4)}"
+    staging.mkdir(mode=0o700)
+    try:
+        with tarfile.open(archive_path, mode="r:gz") as archive:
+            for member in archive.getmembers():
+                relative = PurePosixPath(member.name).relative_to(archive_root)
+                destination = staging.joinpath(*relative.parts)
+                if member.isdir():
+                    destination.mkdir(parents=True, exist_ok=True)
+                elif member.isfile():
+                    destination.parent.mkdir(parents=True, exist_ok=True)
+                    source = archive.extractfile(member)
+                    if source is None:
+                        raise LocalBackupError(f"无法读取归档成员: {member.name}")
+                    with source, destination.open("xb") as output:
+                        shutil.copyfileobj(source, output, length=1024 * 1024)
+                    os.chmod(destination, 0o600)
+        for child in target.iterdir():
+            if child.is_dir():
+                shutil.rmtree(child)
+            else:
+                child.unlink()
+        for child in staging.iterdir():
+            os.replace(child, target / child.name)
+    finally:
+        if staging.exists():
+            shutil.rmtree(staging)
+
+
+def restore_backup(
+    backup_directory: str | os.PathLike[str],
+    *,
+    backup_root: str | os.PathLike[str],
+    snapshots_root: str | os.PathLike[str],
+    skills_root: str | os.PathLike[str],
+    database_url: str,
+    database_restorer: Callable[[Path, str], None] = _restore_database,
+    tree_restorer: Callable[[Path, Path, str], None] = _replace_tree_from_archive,
+) -> dict[str, object]:
+    validation = validate_backup(backup_directory, backup_root=backup_root)
+    backup = Path(backup_directory).resolve(strict=True)
+    snapshots = Path(snapshots_root).resolve(strict=True)
+    skills = Path(skills_root).resolve(strict=True)
+    database_restorer(backup / "postgres.sql.gz", database_url)
+    tree_restorer(backup / "snapshots.tar.gz", snapshots, "snapshots")
+    tree_restorer(backup / "skills.tar.gz", skills, "skills")
+    return {
+        "status": "restored",
+        "backup": validation["backup"],
+        "metadata": validation["metadata"],
+    }
+
+
 def _parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="Kanyikan 本地设备完整备份")
     subparsers = parser.add_subparsers(dest="command", required=True)
@@ -275,6 +357,11 @@ def _parser() -> argparse.ArgumentParser:
     validate = subparsers.add_parser("validate")
     validate.add_argument("--backup-root", default="/backups")
     validate.add_argument("--backup", required=True)
+    restore = subparsers.add_parser("restore")
+    restore.add_argument("--backup-root", default="/backups")
+    restore.add_argument("--backup", required=True)
+    restore.add_argument("--snapshots-root", default="/app/data/snapshots")
+    restore.add_argument("--skills-root", default="/app/data/workspace_skills")
     return parser
 
 
@@ -293,8 +380,19 @@ def main(argv: Sequence[str] | None = None) -> int:
             manifest_sha256=arguments.manifest_sha256,
             release_public_key_sha256=arguments.release_public_key_sha256,
         )
-    else:
+    elif arguments.command == "validate":
         result = validate_backup(arguments.backup, backup_root=arguments.backup_root)
+    else:
+        database_url = os.getenv("DATABASE_URL", "").strip()
+        if not database_url:
+            raise LocalBackupError("DATABASE_URL 未配置")
+        result = restore_backup(
+            arguments.backup,
+            backup_root=arguments.backup_root,
+            snapshots_root=arguments.snapshots_root,
+            skills_root=arguments.skills_root,
+            database_url=database_url,
+        )
     print(json.dumps(result, ensure_ascii=False, sort_keys=True))
     return 0
 

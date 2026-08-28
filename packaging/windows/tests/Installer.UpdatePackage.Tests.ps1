@@ -123,6 +123,49 @@ try {
         Remove-KanyikanReleaseAssetSnapshot -InstallRoot $installRoot -SnapshotRoot $snapshotRoot
         Assert-True (-not [IO.Directory]::Exists($snapshotRoot)) '成功清理快照失败。'
     }
+
+    Invoke-TestCase '更新镜像引用时保留全部本机密钥' {
+        $environmentPath = Join-Path $testRoot 'system.env'
+        $requiredSecrets = [ordered]@{
+            SECRET_KEY = 'secret'; CONFIG_ENCRYPTION_KEY = 'encrypt'; ADMIN_PASSWORD = 'Password-2026!$\"';
+            POSTGRES_PASSWORD = 'postgres'; REDIS_PASSWORD = 'redis'; BROWSERLESS_TOKEN = 'browserless';
+            DATABASE_URL = 'postgresql://user:password@postgres/db'; REDIS_URL = 'redis://:password@redis/0'
+        }
+        $imageNames = @('backend', 'frontend', 'postgres', 'redis', 'nginx', 'browserless')
+        $oldImages = [ordered]@{}
+        $newImages = [ordered]@{}
+        $lines = @()
+        foreach ($imageName in $imageNames) {
+            $oldReference = "registry.local/$imageName@sha256:$('a' * 64)"
+            $newReference = "registry.local/$imageName@sha256:$('b' * 64)"
+            $oldImages[$imageName] = [pscustomobject]@{ reference = $oldReference }
+            $newImages[$imageName] = [pscustomobject]@{ reference = $newReference }
+            $lines += "$($imageName.ToUpperInvariant())_IMAGE=`"$oldReference`""
+        }
+        foreach ($key in $requiredSecrets.Keys) {
+            $encoded = ([string]$requiredSecrets[$key]).Replace('\', '\\').Replace('"', '\"').Replace('$', '$$')
+            $lines += "$key=`"$encoded`""
+        }
+        [IO.File]::WriteAllLines($environmentPath, $lines, (New-Object Text.UTF8Encoding($false)))
+        Set-KanyikanRestrictedFileAcl -Path $environmentPath
+        $oldManifest = [pscustomobject]@{ images = [pscustomobject]$oldImages }
+        $newManifest = [pscustomobject]@{ images = [pscustomobject]$newImages }
+
+        Update-KanyikanSystemImageReferences -Path $environmentPath -CurrentManifest $oldManifest -NewManifest $newManifest
+        $updated = [IO.File]::ReadAllText($environmentPath)
+        foreach ($imageName in $imageNames) { Assert-True $updated.Contains("sha256:$('b' * 64)") '未写入新镜像引用。' }
+        foreach ($key in $requiredSecrets.Keys) {
+            $encoded = ([string]$requiredSecrets[$key]).Replace('\', '\\').Replace('"', '\"').Replace('$', '$$')
+            Assert-True $updated.Contains("$key=`"$encoded`"") "本机密钥 $key 被修改。"
+        }
+    }
+
+    Invoke-TestCase 'Alembic 迁移命令固定使用新 Backend 且禁止拉取' {
+        $arguments = @(Get-KanyikanMigrationArguments -InstallRoot 'C:\Kanyikan' -Strategy 'alembic_upgrade_head')
+        $tail = @('run', '--rm', '--no-deps', '--pull', 'never', '--entrypoint', 'alembic', 'backend', 'upgrade', 'head')
+        Assert-True (($arguments[-$tail.Count..-1] -join '|') -ceq ($tail -join '|')) 'Alembic 迁移命令不符合契约。'
+        Assert-True (@(Get-KanyikanMigrationArguments -InstallRoot 'C:\Kanyikan' -Strategy 'none').Count -eq 0) 'none 策略不应执行迁移命令。'
+    }
 }
 finally {
     if ([IO.Directory]::Exists($testRoot)) { [IO.Directory]::Delete($testRoot, $true) }

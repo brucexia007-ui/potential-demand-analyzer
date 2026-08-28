@@ -93,14 +93,14 @@ using System.Security.Cryptography.X509Certificates;
 
 public static class KanyikanPinnedHttps
 {
-    public static int GetStatusCode(string url, byte[] expectedSha256, int timeoutMilliseconds)
+    private static HttpWebRequest CreateRequest(string url, byte[] expectedSha256, int timeoutMilliseconds, CookieContainer cookies)
     {
         HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
-        request.Method = "GET";
         request.Timeout = timeoutMilliseconds;
         request.ReadWriteTimeout = timeoutMilliseconds;
         request.Proxy = null;
         request.AllowAutoRedirect = false;
+        request.CookieContainer = cookies;
         request.ServerCertificateValidationCallback = (sender, certificate, chain, errors) =>
         {
             if (certificate == null) return false;
@@ -113,10 +113,52 @@ public static class KanyikanPinnedHttps
                 return difference == 0;
             }
         };
+        return request;
+    }
+
+    public static int GetStatusCode(string url, byte[] expectedSha256, int timeoutMilliseconds)
+    {
+        HttpWebRequest request = CreateRequest(url, expectedSha256, timeoutMilliseconds, new CookieContainer());
+        request.Method = "GET";
         using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
         {
             return (int)response.StatusCode;
         }
+    }
+
+    private static string ReadResponse(HttpWebRequest request)
+    {
+        using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
+        using (System.IO.StreamReader reader = new System.IO.StreamReader(response.GetResponseStream(), System.Text.Encoding.UTF8))
+        {
+            if ((int)response.StatusCode < 200 || (int)response.StatusCode >= 300)
+                throw new WebException("Unexpected HTTP status " + (int)response.StatusCode + ".");
+            return reader.ReadToEnd();
+        }
+    }
+
+    public static void RunAuthenticatedSmoke(byte[] expectedSha256, string password, int timeoutMilliseconds)
+    {
+        CookieContainer cookies = new CookieContainer();
+        HttpWebRequest login = CreateRequest("https://127.0.0.1:10443/api/auth/login", expectedSha256, timeoutMilliseconds, cookies);
+        login.Method = "POST";
+        login.ContentType = "application/x-www-form-urlencoded";
+        byte[] body = System.Text.Encoding.UTF8.GetBytes("username=admin&password=" + Uri.EscapeDataString(password));
+        login.ContentLength = body.Length;
+        using (System.IO.Stream stream = login.GetRequestStream()) stream.Write(body, 0, body.Length);
+        string loginBody = ReadResponse(login);
+        if (loginBody.IndexOf("\"username\":\"admin\"", StringComparison.Ordinal) < 0)
+            throw new WebException("Admin login response was invalid.");
+
+        HttpWebRequest me = CreateRequest("https://127.0.0.1:10443/api/auth/me", expectedSha256, timeoutMilliseconds, cookies);
+        me.Method = "GET";
+        string meBody = ReadResponse(me);
+        if (meBody.IndexOf("\"username\":\"admin\"", StringComparison.Ordinal) < 0)
+            throw new WebException("Authenticated user response was invalid.");
+
+        HttpWebRequest core = CreateRequest("https://127.0.0.1:10443/api/config/status", expectedSha256, timeoutMilliseconds, cookies);
+        core.Method = "GET";
+        ReadResponse(core);
     }
 }
 '@
@@ -1435,6 +1477,67 @@ function Get-KanyikanEnvironmentMap {
     return $values
 }
 
+function ConvertFrom-KanyikanEnvValue {
+    param([Parameter(Mandatory = $true)][string]$Value)
+
+    if ($Value.Length -lt 2 -or -not $Value.StartsWith('"') -or -not $Value.EndsWith('"')) { throw 'system.env 值必须使用双引号。' }
+    $body = $Value.Substring(1, $Value.Length - 2)
+    $builder = New-Object Text.StringBuilder
+    for ($index = 0; $index -lt $body.Length; $index++) {
+        $character = $body[$index]
+        if ($character -eq '\') {
+            if ($index + 1 -ge $body.Length -or @('\', '"') -cnotcontains [string]$body[$index + 1]) { throw 'system.env 包含非法反斜杠转义。' }
+            $index++
+            [void]$builder.Append($body[$index])
+        }
+        elseif ($character -eq '$') {
+            if ($index + 1 -ge $body.Length -or $body[$index + 1] -ne '$') { throw 'system.env 包含非法美元符号转义。' }
+            $index++
+            [void]$builder.Append('$')
+        }
+        else { [void]$builder.Append($character) }
+    }
+    return $builder.ToString()
+}
+
+function Update-KanyikanSystemImageReferences {
+    param(
+        [Parameter(Mandatory = $true)][string]$Path,
+        [Parameter(Mandatory = $true)][psobject]$CurrentManifest,
+        [Parameter(Mandatory = $true)][psobject]$NewManifest
+    )
+
+    if (-not (Test-KanyikanSystemEnvironment -Path $Path -Manifest $CurrentManifest)) { throw '更新前 system.env 内容或 ACL 复核失败。' }
+    $imageKeys = [ordered]@{
+        BACKEND_IMAGE = 'backend'; FRONTEND_IMAGE = 'frontend'; POSTGRES_IMAGE = 'postgres';
+        REDIS_IMAGE = 'redis'; NGINX_IMAGE = 'nginx'; BROWSERLESS_IMAGE = 'browserless'
+    }
+    $seen = @{}
+    $outputLines = @()
+    foreach ($line in [System.IO.File]::ReadAllLines($Path, [Text.Encoding]::UTF8)) {
+        if ($line -match '^([A-Z][A-Z0-9_]*)=.*$' -and $imageKeys.Contains($Matches[1])) {
+            $key = $Matches[1]
+            $outputLines += "$key=$(ConvertTo-KanyikanEnvValue -Value ([string]$NewManifest.images.$($imageKeys[$key]).reference))"
+            $seen[$key] = $true
+        }
+        else { $outputLines += $line }
+    }
+    foreach ($key in $imageKeys.Keys) { if (-not $seen.ContainsKey($key)) { throw "system.env 缺少镜像键 $key。" } }
+
+    $directory = [System.IO.Path]::GetDirectoryName((Get-KanyikanNormalizedPath -Path $Path))
+    $temporaryPath = [System.IO.Path]::Combine($directory, ".system.env.update.$([Guid]::NewGuid().ToString('N')).tmp")
+    try {
+        [System.IO.File]::WriteAllLines($temporaryPath, $outputLines, (New-Object Text.UTF8Encoding($false)))
+        Set-KanyikanRestrictedFileAcl -Path $temporaryPath
+        if (-not (Test-KanyikanRestrictedFileAcl -Path $temporaryPath)) { throw '无法收紧更新后的 system.env ACL。' }
+        if (-not [KanyikanNativeMethods]::MoveFileEx($temporaryPath, $Path, (0x1 -bor 0x8))) {
+            throw (New-Object ComponentModel.Win32Exception([Runtime.InteropServices.Marshal]::GetLastWin32Error()))
+        }
+    }
+    finally { if ([System.IO.File]::Exists($temporaryPath)) { [System.IO.File]::Delete($temporaryPath) } }
+    if (-not (Test-KanyikanSystemEnvironment -Path $Path -Manifest $NewManifest)) { throw '更新后的 system.env 复核失败。' }
+}
+
 function Write-KanyikanSystemEnvironment {
     param(
         [Parameter(Mandatory = $true)]
@@ -1796,6 +1899,51 @@ function Stop-KanyikanServices {
     param([Parameter(Mandatory = $true)][string]$InstallRoot)
     $result = Invoke-KanyikanComposeCommand -InstallRoot $InstallRoot -Arguments @('stop')
     if ($result.exitCode -ne 0) { throw "Compose 停止失败：$(Protect-KanyikanText -Text $result.output)" }
+}
+
+function Stop-KanyikanEntrypoint {
+    param([Parameter(Mandatory = $true)][string]$InstallRoot)
+    $result = Invoke-KanyikanComposeCommand -InstallRoot $InstallRoot -Arguments @('stop', 'nginx')
+    if ($result.exitCode -ne 0) { throw "停止 Nginx 入口失败：$(Protect-KanyikanText -Text $result.output)" }
+}
+
+function Get-KanyikanMigrationArguments {
+    param(
+        [Parameter(Mandatory = $true)][string]$InstallRoot,
+        [Parameter(Mandatory = $true)][ValidateSet('none', 'alembic_upgrade_head')][string]$Strategy
+    )
+    if ($Strategy -ceq 'none') { return @() }
+    return Get-KanyikanComposeArguments -InstallRoot $InstallRoot -Arguments @(
+        'run', '--rm', '--no-deps', '--pull', 'never', '--entrypoint', 'alembic', 'backend', 'upgrade', 'head'
+    )
+}
+
+function Invoke-KanyikanDatabaseMigration {
+    param(
+        [Parameter(Mandatory = $true)][string]$InstallRoot,
+        [Parameter(Mandatory = $true)][ValidateSet('none', 'alembic_upgrade_head')][string]$Strategy
+    )
+    $arguments = @(Get-KanyikanMigrationArguments -InstallRoot $InstallRoot -Strategy $Strategy)
+    if ($arguments.Count -eq 0) { return }
+    $result = Invoke-KanyikanDockerCommand -Arguments $arguments
+    if ($result.exitCode -ne 0) { throw "数据库迁移失败：$(Protect-KanyikanText -Text $result.output)" }
+}
+
+function Test-KanyikanAuthenticatedSmoke {
+    param(
+        [Parameter(Mandatory = $true)][string]$InstallRoot,
+        [ValidateRange(1, 120)][int]$TimeoutSeconds = 15
+    )
+    $root = Get-KanyikanNormalizedPath -Path $InstallRoot
+    $environment = Get-KanyikanEnvironmentMap -Path ([System.IO.Path]::Combine($root, 'config', 'system.env'))
+    if (-not $environment.ContainsKey('ADMIN_PASSWORD')) { throw 'system.env 缺少 ADMIN_PASSWORD。' }
+    $password = ConvertFrom-KanyikanEnvValue -Value ([string]$environment.ADMIN_PASSWORD)
+    try {
+        $certificateSha256 = Get-KanyikanLeafCertificateSha256Bytes -CertificatePath ([System.IO.Path]::Combine($root, 'config', 'certs', 'localhost.crt'))
+        [KanyikanPinnedHttps]::RunAuthenticatedSmoke($certificateSha256, $password, ($TimeoutSeconds * 1000))
+    }
+    catch { throw "管理员登录或核心 API 冒烟失败：$(Protect-KanyikanText -Text $_.Exception.Message)" }
+    finally { $password = $null }
 }
 
 function Set-KanyikanRestrictedDirectoryAcl {
@@ -2223,6 +2371,7 @@ Export-ModuleMember -Function @(
     'Get-KanyikanBackupArguments',
     'Get-KanyikanComposeArguments',
     'Get-KanyikanInstallStates',
+    'Get-KanyikanMigrationArguments',
     'Get-KanyikanLocalCaThumbprint',
     'Get-KanyikanStatePath',
     'Get-KanyikanHostFacts',
@@ -2235,6 +2384,7 @@ Export-ModuleMember -Function @(
     'Import-KanyikanReleaseImages',
     'Install-KanyikanLocalRootTrust',
     'Invoke-KanyikanBackup',
+    'Invoke-KanyikanDatabaseMigration',
     'Invoke-KanyikanRestore',
     'Invoke-KanyikanUninstall',
     'Invoke-KanyikanValidateBackup',
@@ -2254,9 +2404,12 @@ Export-ModuleMember -Function @(
     'Set-KanyikanInstallFailure',
     'Set-KanyikanInstallationActive',
     'Set-KanyikanBackupAcl',
+    'Set-KanyikanRestrictedFileAcl',
     'Start-KanyikanServices',
     'Stop-KanyikanServices',
+    'Stop-KanyikanEntrypoint',
     'Test-KanyikanAdminPassword',
+    'Test-KanyikanAuthenticatedSmoke',
     'Test-KanyikanPreflightFacts',
     'Test-KanyikanLoadedImageFacts',
     'Test-KanyikanLocalCertificate',
@@ -2269,5 +2422,6 @@ Export-ModuleMember -Function @(
     'Test-KanyikanServiceFacts',
     'Wait-KanyikanBootstrapReady',
     'Write-KanyikanLog',
-    'Write-KanyikanSystemEnvironment'
+    'Write-KanyikanSystemEnvironment',
+    'Update-KanyikanSystemImageReferences'
 )

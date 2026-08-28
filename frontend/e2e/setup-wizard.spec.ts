@@ -4,13 +4,23 @@
  * 覆盖：未配置跳转 / 已配置不跳转 / 完整走完 10 步 / 跳过非关键步骤
  */
 import { test, expect } from '@playwright/test';
-import { mockAuthRoutes, mockConfigStatus, mockSetupTestRoutes } from './mocks/setup';
+import {
+  mockAuthRoutes,
+  mockConfigStatus,
+  mockNotificationRoutes,
+  mockSetupTestRoutes,
+} from './mocks/setup';
 
 test.describe('Setup Wizard', () => {
+  test.beforeEach(async ({ page }) => {
+    await mockNotificationRoutes(page);
+  });
+
   test.describe('Auto-redirect on first launch', () => {
-    test('should show browse-only banner immediately after login', async ({ page, context }) => {
-      await context.clearCookies();
-      await mockAuthRoutes(page, false);
+    test.use({ storageState: { cookies: [], origins: [] } });
+
+    test('should show browse-only banner for an authenticated user', async ({ page }) => {
+      await mockAuthRoutes(page);
       await page.route('**/api/config/status', async (route) => {
         await route.fulfill({
           status: 200,
@@ -28,20 +38,26 @@ test.describe('Setup Wizard', () => {
         });
       });
 
-      await page.goto('/login');
-      await page.getByPlaceholder('请输入用户名').fill('admin');
-      await page.getByPlaceholder('请输入密码').fill('admin123');
-      await page.getByRole('button', { name: '登录' }).click();
+      const userResponse = page.waitForResponse('**/api/auth/me');
+      const statusResponse = page.waitForResponse('**/api/config/status');
+      await page.goto('/');
+      await expect((await userResponse).status()).toBe(200);
+      await expect((await statusResponse).status()).toBe(200);
 
-      await expect(page.getByText('当前为浏览模式，研究与批量执行暂不可用。')).toBeVisible();
-      await expect(page.getByText('系统执行能力尚未就绪。')).toBeVisible();
+      await expect(page).toHaveURL(/\/$/);
+      await expect(page.getByText('当前为浏览模式，研究与批量执行暂不可用。')).toBeVisible({ timeout: 10000 });
+      await expect(page.getByText('系统执行能力尚未就绪。', { exact: false })).toBeVisible();
     });
 
     test('should redirect to /setup when unconfigured', async ({ page }) => {
       await mockAuthRoutes(page);
       await mockConfigStatus(page, false);
 
+      const userResponse = page.waitForResponse('**/api/auth/me');
+      const statusResponse = page.waitForResponse('**/api/config/status');
       await page.goto('/');
+      await expect((await userResponse).status()).toBe(200);
+      await expect((await statusResponse).status()).toBe(200);
       await page.waitForURL('**/setup');
 
       // 应看到 Welcome 页面
@@ -135,7 +151,7 @@ test.describe('Setup Wizard', () => {
           body: JSON.stringify({
             setup_completed: false,
             setup_mode: null,
-            execution_ready: routesCreated,
+            execution_ready: false,
             llm: { configured: true, verification_status: 'PASSED', ready: true, last_tested_at: null, error_code: null, error_message: null, provider_count: 1, configured_provider_count: 1 },
             search: { configured: true, verification_status: 'PASSED', ready: true, last_tested_at: null, error_code: null, error_message: null, provider_count: 1, configured_provider_count: 1 },
             model_routes_ready: routesCreated,

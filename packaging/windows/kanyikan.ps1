@@ -250,5 +250,12 @@ switch -CaseSensitive ($Command.ToLowerInvariant()) {
         Write-KanyikanResult -Level '入口' -Message $report.entrypoint
         exit 0
     }
+    'support-bundle' {
+        $script:Stage = 'SUPPORT_BUNDLE'
+        try { $bundle = Export-KanyikanSupportBundle -InstallRoot $script:InstallRoot }
+        catch { Stop-KanyikanCommand -ExitCode 90 -Reason $_.Exception.Message -NextStep '请运行 doctor；敏感信息扫描失败时不会交付支持包。' }
+        Write-KanyikanResult -Level '成功' -Message "脱敏支持包已生成：$($bundle.path)"
+        exit 0
+    }
     default { Write-Host "[失败] 未知或尚未实现的命令：$Command"; exit 10 }
 }

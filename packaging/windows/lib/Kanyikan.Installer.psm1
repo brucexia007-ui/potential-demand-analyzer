@@ -1643,7 +1643,93 @@ function Get-KanyikanDoctorReport {
     }
 }
 
+function Test-KanyikanSupportPayload {
+    param([Parameter(Mandatory = $true)][AllowEmptyString()][string]$Text)
+    $forbiddenPatterns = @(
+        '(?is)-----BEGIN(?: [A-Z0-9]+)? PRIVATE KEY-----',
+        '(?i)\bBearer\s+[A-Za-z0-9._~+/=-]{8,}',
+        '(?i)\b(?:eyJ[A-Za-z0-9_-]{5,})\.(?:[A-Za-z0-9_-]{5,})\.(?:[A-Za-z0-9_-]{5,})\b',
+        '(?i)\b(?:SECRET_KEY|CONFIG_ENCRYPTION_KEY|ADMIN_PASSWORD|POSTGRES_PASSWORD|REDIS_PASSWORD|BROWSERLESS_TOKEN|API_KEY|COOKIE|JWT|SENTRY_DSN)\s*[:=]\s*["'']?(?!\[REDACTED\])[^\s,"''}]+',
+        '(?i)https?://[^\s:/@]+:[^\s/@]+@'
+    )
+    foreach ($pattern in $forbiddenPatterns) { if ([regex]::IsMatch($Text, $pattern)) { return $false } }
+    return $true
+}
+
+function Export-KanyikanSupportBundle {
+    param([Parameter(Mandatory = $true)][string]$InstallRoot)
+
+    $root = Get-KanyikanNormalizedPath -Path $InstallRoot
+    $state = Read-KanyikanInstallState -InstallRoot $root
+    $doctor = Get-KanyikanDoctorReport -InstallRoot $root
+    $releasePublic = $null
+    if ($state.currentState -cne 'NEW') {
+        try {
+            $release = Test-KanyikanReleasePackage -PackageRoot $root -TrustedPublicKeySha256 ([string]$state.releasePublicKeySha256)
+            $releasePublic = [pscustomobject][ordered]@{
+                release = $release.manifest.release
+                target = $release.manifest.target
+                entrypoint = $release.manifest.entrypoint
+                images = @('backend', 'frontend', 'postgres', 'redis', 'nginx', 'browserless') | ForEach-Object { [pscustomobject]@{ name = $_; reference = [string]$release.manifest.images.$_.reference; imageId = [string]$release.manifest.images.$_.imageId; platform = [string]$release.manifest.images.$_.platform } }
+                signing = [pscustomobject]@{ algorithm = [string]$release.manifest.signing.algorithm; keyId = [string]$release.manifest.signing.keyId; publicKeySha256 = [string]$release.manifest.signing.publicKeySha256 }
+            }
+        }
+        catch { $releasePublic = [pscustomobject]@{ verification = 'failed'; reason = Protect-KanyikanText -Text $_.Exception.Message } }
+    }
+    $containers = @()
+    try {
+        foreach ($fact in @(Get-KanyikanServiceFacts -InstallRoot $root)) { $containers += [pscustomobject][ordered]@{ service = [string]$fact.Service; state = [string]$fact.State; health = [string]$fact.Health; image = [string]$fact.Image; publishers = @($fact.Publishers) } }
+    }
+    catch { $containers = @([pscustomobject]@{ status = 'unavailable' }) }
+    $publicState = [pscustomobject][ordered]@{
+        contractVersion = $state.contractVersion; productVersion = $state.productVersion; currentState = $state.currentState
+        updatedAt = $state.updatedAt; manifestSha256 = $state.manifestSha256; releasePublicKeySha256 = $state.releasePublicKeySha256
+        composeProjectName = $state.composeProjectName; resources = $state.resources; images = $state.images
+        caThumbprint = $state.caThumbprint; caTrusted = $state.caTrusted
+        lastFailure = if ($null -eq $state.lastFailure) { $null } else { [pscustomobject]@{ occurredAt = $state.lastFailure.occurredAt; command = $state.lastFailure.command; stage = $state.lastFailure.stage; exitCode = $state.lastFailure.exitCode; reason = Protect-KanyikanText -Text ([string]$state.lastFailure.reason) } }
+    }
+    $payload = [pscustomobject][ordered]@{
+        schemaVersion = 1; generatedAt = [DateTime]::UtcNow.ToString('o'); doctor = $doctor; installation = $publicState
+        release = $releasePublic; containers = $containers
+        exclusions = @('system.env', 'private keys', 'Provider request/response bodies', 'customer business content', 'raw container configuration')
+    }
+    $json = Protect-KanyikanText -Text ($payload | ConvertTo-Json -Depth 16)
+    if (-not (Test-KanyikanSupportPayload -Text $json)) { throw '支持包敏感信息扫描失败，已拒绝交付。' }
+
+    $supportRoot = [System.IO.Path]::Combine($root, 'data', 'support-bundles')
+    [System.IO.Directory]::CreateDirectory($supportRoot) | Out-Null
+    Set-KanyikanRestrictedDirectoryAcl -Path $supportRoot
+    $identifier = "$(Get-Date -Format 'yyyyMMdd-HHmmss')-$([Guid]::NewGuid().ToString('N').Substring(0, 8))"
+    $staging = [System.IO.Path]::Combine($supportRoot, ".support-$identifier")
+    $temporaryZip = [System.IO.Path]::Combine($supportRoot, ".support-bundle-$identifier.tmp")
+    $destination = [System.IO.Path]::Combine($supportRoot, "support-bundle-$identifier.zip")
+    [System.IO.Directory]::CreateDirectory($staging) | Out-Null
+    try {
+        $payloadPath = [System.IO.Path]::Combine($staging, 'support-bundle.json')
+        [System.IO.File]::WriteAllText($payloadPath, $json, (New-Object Text.UTF8Encoding($false)))
+        Set-KanyikanRestrictedFileAcl -Path $payloadPath
+        Add-Type -AssemblyName System.IO.Compression.FileSystem
+        [System.IO.Compression.ZipFile]::CreateFromDirectory($staging, $temporaryZip, [System.IO.Compression.CompressionLevel]::Optimal, $false)
+        $archive = [System.IO.Compression.ZipFile]::OpenRead($temporaryZip)
+        try {
+            if ($archive.Entries.Count -ne 1 -or $archive.Entries[0].FullName -cne 'support-bundle.json') { throw '支持包 ZIP 文件集合不合法。' }
+            $reader = New-Object System.IO.StreamReader($archive.Entries[0].Open(), [Text.Encoding]::UTF8)
+            try { $archivedText = $reader.ReadToEnd() } finally { $reader.Dispose() }
+            if (-not (Test-KanyikanSupportPayload -Text $archivedText)) { throw '支持包 ZIP 二次敏感信息扫描失败。' }
+        }
+        finally { $archive.Dispose() }
+        Set-KanyikanRestrictedFileAcl -Path $temporaryZip
+        if (-not [KanyikanNativeMethods]::MoveFileEx($temporaryZip, $destination, (0x1 -bor 0x8))) { throw (New-Object ComponentModel.Win32Exception([Runtime.InteropServices.Marshal]::GetLastWin32Error())) }
+        return [pscustomobject][ordered]@{ path = $destination; fileName = [System.IO.Path]::GetFileName($destination) }
+    }
+    finally {
+        if ([System.IO.Directory]::Exists($staging)) { [System.IO.Directory]::Delete($staging, $true) }
+        if ([System.IO.File]::Exists($temporaryZip)) { [System.IO.File]::Delete($temporaryZip) }
+    }
+}
+
 Export-ModuleMember -Function @(
+    'Export-KanyikanSupportBundle',
     'Get-KanyikanCertificateDockerArguments',
     'Get-KanyikanBackupArguments',
     'Get-KanyikanComposeArguments',
@@ -1680,6 +1766,7 @@ Export-ModuleMember -Function @(
     'Test-KanyikanReleaseImagesPresent',
     'Test-KanyikanRestrictedFileAcl',
     'Test-KanyikanSystemEnvironment',
+    'Test-KanyikanSupportPayload',
     'Test-KanyikanServiceFacts',
     'Wait-KanyikanBootstrapReady',
     'Write-KanyikanSystemEnvironment'

@@ -154,6 +154,25 @@ def test_release_compose_persists_data_without_source_mounts() -> None:
                 assert source in allowed_bind_sources
 
 
+def test_release_compose_uses_local_certificate_tool_outputs() -> None:
+    from app.tools.generate_local_certificate import CA_CERTIFICATE_FILENAME
+    from app.tools.generate_local_certificate import LEAF_CERTIFICATE_FILENAME
+    from app.tools.generate_local_certificate import LEAF_PRIVATE_KEY_FILENAME
+
+    nginx = _load_compose()["services"]["nginx"]
+    certificate_directory = "/etc/nginx/certs"
+
+    assert nginx["environment"]["TLS_ENABLED"] == "true"
+    assert nginx["environment"]["TLS_CERT_PATH"] == (
+        f"{certificate_directory}/{LEAF_CERTIFICATE_FILENAME}"
+    )
+    assert nginx["environment"]["TLS_KEY_PATH"] == (
+        f"{certificate_directory}/{LEAF_PRIVATE_KEY_FILENAME}"
+    )
+    assert f"./config/certs:{certificate_directory}:ro" in nginx["volumes"]
+    assert CA_CERTIFICATE_FILENAME == "local-root-ca.crt"
+
+
 def test_system_env_template_contains_only_bootstrap_configuration() -> None:
     entries = _load_env_template()
 

@@ -42,12 +42,13 @@ Invoke-TestCase '恢复容器离线、无依赖启动且不传递秘密' {
 
 Invoke-TestCase '控制器严格按验证、确认、保护备份、停服、恢复排序' {
     $source = [IO.File]::ReadAllText($controllerPath, [Text.Encoding]::UTF8)
+    $restoreBranch = $source.IndexOf("    'restore' {", [StringComparison]::Ordinal)
     $positions = @(
-        $source.IndexOf('Invoke-KanyikanValidateBackup', [StringComparison]::Ordinal),
-        $source.IndexOf('恢复将覆盖当前数据库', [StringComparison]::Ordinal),
-        $source.IndexOf('RESTORE_PROTECTION_BACKUP', [StringComparison]::Ordinal),
-        $source.IndexOf('Stop-KanyikanServices', $source.IndexOf("'restore'"), [StringComparison]::Ordinal),
-        $source.IndexOf('Invoke-KanyikanRestore', [StringComparison]::Ordinal)
+        $source.IndexOf('Invoke-KanyikanValidateBackup', $restoreBranch, [StringComparison]::Ordinal),
+        $source.IndexOf('恢复将覆盖当前数据库', $restoreBranch, [StringComparison]::Ordinal),
+        $source.IndexOf('RESTORE_PROTECTION_BACKUP', $restoreBranch, [StringComparison]::Ordinal),
+        $source.IndexOf('Stop-KanyikanServices', $restoreBranch, [StringComparison]::Ordinal),
+        $source.IndexOf('Invoke-KanyikanRestore', $restoreBranch, [StringComparison]::Ordinal)
     )
     for ($index = 0; $index -lt $positions.Count; $index++) { Assert-True ($positions[$index] -ge 0) "缺少恢复步骤 $index。"; if ($index -gt 0) { Assert-True ($positions[$index] -gt $positions[$index - 1]) "恢复步骤 $index 顺序错误。" } }
 }

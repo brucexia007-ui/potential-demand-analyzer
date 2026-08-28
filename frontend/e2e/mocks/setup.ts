@@ -27,6 +27,17 @@ export async function mockAuthRoutes(page: Page, initiallyAuthenticated = true) 
   let authenticated = initiallyAuthenticated;
   const user = { id: 'e2e-user', username: 'admin', is_active: true };
 
+  if (initiallyAuthenticated) {
+    const baseURL = process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:3001';
+    await page.context().addCookies([{
+      name: 'kanyikan_access',
+      value: 'e2e-access-cookie',
+      url: new URL(baseURL).origin,
+      httpOnly: true,
+      sameSite: 'Lax',
+    }]);
+  }
+
   await page.route('**/api/auth/me', async (route) => {
     await route.fulfill(authenticated
       ? {

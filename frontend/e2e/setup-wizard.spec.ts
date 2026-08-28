@@ -168,6 +168,40 @@ test.describe('Setup Wizard', () => {
       await page.waitForTimeout(500);
     });
 
+    test('should keep READY completion disabled while providers are unverified', async ({ page }) => {
+      let completionRequests = 0;
+      await page.unroute('**/api/config/status');
+      await page.route('**/api/config/status', async (route) => {
+        await route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify({
+            setup_completed: true,
+            setup_mode: 'BROWSE_ONLY',
+            execution_ready: false,
+            llm: { configured: true, verification_status: 'UNTESTED', ready: false, last_tested_at: null, error_code: null, error_message: null, provider_count: 1, configured_provider_count: 1 },
+            search: { configured: true, verification_status: 'UNTESTED', ready: false, last_tested_at: null, error_code: null, error_message: null, provider_count: 1, configured_provider_count: 1 },
+            model_routes_ready: true,
+            blocking_items: [
+              { capability: 'llm', status: 'UNTESTED', action: '/settings/providers' },
+              { capability: 'search', status: 'UNTESTED', action: '/settings/search' },
+            ],
+            warnings: [],
+          }),
+        });
+      });
+      await page.route('**/api/config/setup-complete', async (route) => {
+        completionRequests += 1;
+        await route.fulfill({ status: 409, contentType: 'application/json', body: '{}' });
+      });
+
+      await page.goto('/setup');
+
+      await expect(page.getByRole('button', { name: '完成配置并开始使用' })).toBeDisabled();
+      await expect(page.getByRole('button', { name: '稍后配置，进入浏览模式' })).toBeEnabled();
+      expect(completionRequests).toBe(0);
+    });
+
     test('should refresh global config state before entering the new task page', async ({ page }) => {
       let setupCompleted = false;
       await page.unroute('**/api/config/status');
@@ -213,6 +247,11 @@ test.describe('Setup Wizard', () => {
       await expect(page).toHaveURL(/\/$/);
       await expect(page.getByRole('heading', { name: '创建分析任务' })).toBeVisible();
       await page.waitForTimeout(300);
+      expect(page.url()).not.toContain('/setup');
+
+      await page.reload();
+      await expect(page).toHaveURL(/\/$/);
+      await expect(page.getByRole('heading', { name: '创建分析任务' })).toBeVisible();
       expect(page.url()).not.toContain('/setup');
     });
   });

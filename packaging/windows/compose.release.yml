@@ -1,0 +1,382 @@
+name: kanyikan
+
+x-release-logging: &release-logging
+  driver: json-file
+  options:
+    max-size: "20m"
+    max-file: "5"
+
+x-backend-environment: &backend-environment
+  ENV: production
+  DEPLOYMENT_PROFILE: local_appliance
+  BACKEND_IMAGE: "${BACKEND_IMAGE}"
+  FRONTEND_IMAGE: "${FRONTEND_IMAGE}"
+  POSTGRES_IMAGE: "${POSTGRES_IMAGE}"
+  REDIS_IMAGE: "${REDIS_IMAGE}"
+  NGINX_IMAGE: "${NGINX_IMAGE}"
+  BROWSERLESS_IMAGE: "${BROWSERLESS_IMAGE}"
+  SECRET_KEY: "${SECRET_KEY}"
+  CONFIG_ENCRYPTION_KEY: "${CONFIG_ENCRYPTION_KEY}"
+  ADMIN_PASSWORD: "${ADMIN_PASSWORD}"
+  POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
+  REDIS_PASSWORD: "${REDIS_PASSWORD}"
+  DATABASE_URL: "${DATABASE_URL}"
+  REDIS_URL: "${REDIS_URL}"
+  AUTH_COOKIE_SECURE: "true"
+  SECURITY_OUTBOUND_CHECK_ENABLED: "true"
+  BROWSERLESS_URL: "http://browserless:3000"
+  BROWSERLESS_TOKEN: "${BROWSERLESS_TOKEN}"
+  TLS_ENABLED: "true"
+  TLS_CERT_PATH: "/etc/nginx/certs/localhost.crt"
+  TLS_KEY_PATH: "/etc/nginx/certs/localhost.key"
+  APP_BIND_HOST: "127.0.0.1"
+  APP_HTTPS_PORT: "10443"
+  CORS_ALLOW_ORIGINS: "https://127.0.0.1:10443"
+  LOG_LEVEL: "${LOG_LEVEL:-INFO}"
+  LOG_FORMAT: "json"
+  METRICS_ENABLED: "true"
+  SENTRY_DSN: "${SENTRY_DSN:-}"
+  SENTRY_TRACES_SAMPLE_RATE: "${SENTRY_TRACES_SAMPLE_RATE:-0.1}"
+  BACKUP_DIR: "/backups"
+  BACKUP_RETENTION_DAYS: "${BACKUP_RETENTION_DAYS:-14}"
+  SNAPSHOT_RETENTION_DAYS: "${SNAPSHOT_RETENTION_DAYS:-90}"
+  SKILL_WORKSPACE_ROOT: "/app/data/workspace_skills"
+
+services:
+  postgres:
+    image: "${POSTGRES_IMAGE}"
+    platform: linux/amd64
+    pull_policy: never
+    environment:
+      POSTGRES_DB: "${POSTGRES_DB:-demand_analyzer}"
+      POSTGRES_USER: "${POSTGRES_USER:-demand_user}"
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - kanyikan_internal
+    restart: unless-stopped
+    logging: *release-logging
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - 'pg_isready -U "$$POSTGRES_USER" -d "$$POSTGRES_DB"'
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 10s
+
+  redis:
+    image: "${REDIS_IMAGE}"
+    platform: linux/amd64
+    pull_policy: never
+    environment:
+      REDIS_PASSWORD: "${REDIS_PASSWORD}"
+    command:
+      - sh
+      - -c
+      - 'exec redis-server --appendonly yes --requirepass "$$REDIS_PASSWORD"'
+    volumes:
+      - redis_data:/data
+    networks:
+      - kanyikan_internal
+    restart: unless-stopped
+    logging: *release-logging
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - 'REDISCLI_AUTH="$$REDIS_PASSWORD" redis-cli ping | grep -q PONG'
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 5s
+
+  browserless:
+    image: "${BROWSERLESS_IMAGE}"
+    platform: linux/amd64
+    pull_policy: never
+    environment:
+      TOKEN: "${BROWSERLESS_TOKEN}"
+      MAX_CONCURRENT_SESSIONS: "5"
+      CONNECTION_TIMEOUT: "30000"
+      MAX_QUEUE_LENGTH: "20"
+      PREBOOT_CHROME: "true"
+      KEEP_ALIVE: "true"
+    networks:
+      - kanyikan_internal
+    restart: unless-stopped
+    logging: *release-logging
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - >-
+          node -e "const http=require('http');const url='http://127.0.0.1:3000/json/version?token='+encodeURIComponent(process.env.TOKEN);const req=http.get(url,r=>process.exit(r.statusCode===200?0:1));req.on('error',()=>process.exit(1));req.setTimeout(3000,()=>{req.destroy();process.exit(1)})"
+      interval: 15s
+      timeout: 5s
+      retries: 8
+      start_period: 20s
+
+  backend:
+    image: "${BACKEND_IMAGE}"
+    platform: linux/amd64
+    pull_policy: never
+    environment:
+      <<: *backend-environment
+      RUN_DB_BOOTSTRAP: "true"
+      DB_POOL_SIZE: "10"
+      DB_MAX_OVERFLOW: "10"
+      DB_POOL_TIMEOUT: "30"
+    volumes:
+      - snapshots_data:/app/data/snapshots
+      - skills_data:/app/data/workspace_skills
+    networks:
+      - kanyikan_internal
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    logging: *release-logging
+    healthcheck:
+      test:
+        - CMD
+        - curl
+        - --fail
+        - --silent
+        - http://127.0.0.1:8000/health
+      interval: 15s
+      timeout: 5s
+      retries: 8
+      start_period: 30s
+
+  frontend:
+    image: "${FRONTEND_IMAGE}"
+    platform: linux/amd64
+    pull_policy: never
+    environment:
+      ENV: production
+    networks:
+      - kanyikan_internal
+    depends_on:
+      backend:
+        condition: service_healthy
+    restart: unless-stopped
+    logging: *release-logging
+    healthcheck:
+      test:
+        - CMD
+        - wget
+        - --spider
+        - -q
+        - http://127.0.0.1:3000
+      interval: 15s
+      timeout: 5s
+      retries: 8
+      start_period: 20s
+
+  worker:
+    image: "${BACKEND_IMAGE}"
+    platform: linux/amd64
+    pull_policy: never
+    command:
+      - celery
+      - -A
+      - app.worker.celery_app.celery_app
+      - worker
+      - --loglevel=INFO
+      - --concurrency=2
+    environment:
+      <<: *backend-environment
+      RUN_DB_BOOTSTRAP: "false"
+      DB_POOL_SIZE: "3"
+      DB_MAX_OVERFLOW: "2"
+      DB_POOL_TIMEOUT: "30"
+    volumes:
+      - ./data/backups:/backups
+      - snapshots_data:/app/data/snapshots
+      - skills_data:/app/data/workspace_skills
+    networks:
+      - kanyikan_internal
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      backend:
+        condition: service_healthy
+    restart: unless-stopped
+    logging: *release-logging
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - "pgrep -f 'celery.*worker' > /dev/null || exit 1"
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 20s
+
+  crawler:
+    image: "${BACKEND_IMAGE}"
+    platform: linux/amd64
+    pull_policy: never
+    command:
+      - celery
+      - -A
+      - app.worker.celery_app.celery_app
+      - worker
+      - -Q
+      - crawler_queue
+      - --loglevel=INFO
+      - --concurrency=3
+    environment:
+      <<: *backend-environment
+      RUN_DB_BOOTSTRAP: "false"
+      DB_POOL_SIZE: "3"
+      DB_MAX_OVERFLOW: "2"
+      DB_POOL_TIMEOUT: "30"
+    volumes:
+      - snapshots_data:/app/data/snapshots
+      - skills_data:/app/data/workspace_skills
+    networks:
+      - kanyikan_internal
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      browserless:
+        condition: service_healthy
+      backend:
+        condition: service_healthy
+    restart: unless-stopped
+    logging: *release-logging
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - "pgrep -f 'crawler_queue' > /dev/null || exit 1"
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 20s
+
+  beat:
+    image: "${BACKEND_IMAGE}"
+    platform: linux/amd64
+    pull_policy: never
+    command:
+      - celery
+      - -A
+      - app.worker.celery_app.celery_app
+      - beat
+      - --loglevel=INFO
+      - --schedule=/app/data/snapshots/celerybeat-schedule
+    environment:
+      <<: *backend-environment
+      RUN_DB_BOOTSTRAP: "false"
+      DB_POOL_SIZE: "2"
+      DB_MAX_OVERFLOW: "0"
+      DB_POOL_TIMEOUT: "30"
+    volumes:
+      - snapshots_data:/app/data/snapshots
+      - skills_data:/app/data/workspace_skills
+    networks:
+      - kanyikan_internal
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      backend:
+        condition: service_healthy
+    restart: unless-stopped
+    logging: *release-logging
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - "pgrep -f 'celery.*beat' > /dev/null || exit 1"
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 20s
+
+  outbox-relay:
+    image: "${BACKEND_IMAGE}"
+    platform: linux/amd64
+    pull_policy: never
+    command:
+      - python
+      - -m
+      - app.worker.outbox_relay_runner
+    environment:
+      <<: *backend-environment
+      RUN_DB_BOOTSTRAP: "false"
+      DB_POOL_SIZE: "2"
+      DB_MAX_OVERFLOW: "0"
+      DB_POOL_TIMEOUT: "30"
+    networks:
+      - kanyikan_internal
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      backend:
+        condition: service_healthy
+    restart: unless-stopped
+    logging: *release-logging
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - python -m app.worker.outbox_relay_runner --healthcheck
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 20s
+
+  nginx:
+    image: "${NGINX_IMAGE}"
+    platform: linux/amd64
+    pull_policy: never
+    environment:
+      ENV: production
+      TLS_ENABLED: "true"
+      TLS_CERT_PATH: /etc/nginx/certs/localhost.crt
+      TLS_KEY_PATH: /etc/nginx/certs/localhost.key
+      HTTPS_REDIRECT_PORT_SUFFIX: ":10443"
+    volumes:
+      - ./config/certs:/etc/nginx/certs:ro
+    ports:
+      - "127.0.0.1:10443:443"
+    networks:
+      - kanyikan_internal
+    depends_on:
+      frontend:
+        condition: service_healthy
+      backend:
+        condition: service_healthy
+    restart: unless-stopped
+    logging: *release-logging
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - wget --no-check-certificate --spider -q https://127.0.0.1/health
+      interval: 15s
+      timeout: 5s
+      retries: 8
+      start_period: 15s
+
+volumes:
+  postgres_data:
+    name: kanyikan_postgres_data
+  redis_data:
+    name: kanyikan_redis_data
+  snapshots_data:
+    name: kanyikan_snapshots_data
+  skills_data:
+    name: kanyikan_skills_data
+
+networks:
+  kanyikan_internal:
+    name: kanyikan_internal
+    driver: bridge

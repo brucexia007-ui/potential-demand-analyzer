@@ -173,6 +173,176 @@ function Invoke-Status {
     catch { Write-KanyikanResult -Level '服务' -Message 'Docker 或 Compose 状态不可用。' }
 }
 
+function Remove-UpdateTransaction {
+    param([string]$Path)
+    if (-not [string]::IsNullOrWhiteSpace($Path) -and [System.IO.Directory]::Exists($Path)) {
+        Assert-KanyikanSafeRemovalTree -InstallRoot $script:InstallRoot -Path $Path
+        [System.IO.Directory]::Delete($Path, $true)
+    }
+}
+
+function New-UpdateFailureBundle {
+    try {
+        $bundle = Export-KanyikanSupportBundle -InstallRoot $script:InstallRoot
+        Write-KanyikanResult -Level '诊断包' -Message $bundle.path
+    }
+    catch { Write-KanyikanResult -Level '提示' -Message '更新失败诊断包生成失败，请运行 support-bundle。' }
+}
+
+function Invoke-Update {
+    if ([string]::IsNullOrWhiteSpace($Package)) { Stop-KanyikanCommand -ExitCode 10 -Reason 'update 必须指定 -Package。' -NextStep '请传入本机上的离线更新 ZIP。' }
+    if (-not [string]::Equals([System.IO.Path]::GetExtension($Package), '.zip', [StringComparison]::OrdinalIgnoreCase)) { Stop-KanyikanCommand -ExitCode 70 -Reason 'update 只接受本地 ZIP。' -NextStep '请使用官方离线更新 ZIP。' }
+
+    $script:Stage = 'UPDATE_VALIDATE'
+    try {
+        $script:State = Read-KanyikanInstallState -InstallRoot $script:InstallRoot
+        if ($script:State.currentState -cne 'INSTALLED') { throw '只有完整安装的设备才能更新。' }
+        $currentRelease = Test-KanyikanReleasePackage -PackageRoot $script:InstallRoot -TrustedPublicKeySha256 ([string]$script:State.releasePublicKeySha256)
+        if ([string]$currentRelease.version -cne [string]$script:State.productVersion -or [string]$currentRelease.manifestSha256 -cne [string]$script:State.manifestSha256) { throw '当前发行资产与安装状态不一致。' }
+        if (-not (Test-KanyikanSystemEnvironment -Path ([System.IO.Path]::Combine($script:InstallRoot, 'config', 'system.env')) -Manifest $currentRelease.manifest)) { throw '当前 system.env 内容或 ACL 复核失败。' }
+    }
+    catch { Stop-KanyikanCommand -ExitCode 70 -Reason $_.Exception.Message -NextStep '请先修复当前安装一致性，再重试更新。' }
+
+    $transactionRoot = [System.IO.Path]::Combine($script:InstallRoot, 'state', 'update-transactions', [Guid]::NewGuid().ToString('N'))
+    $stagingRoot = [System.IO.Path]::Combine($transactionRoot, 'staging')
+    $snapshotRoot = [System.IO.Path]::Combine($transactionRoot, 'assets')
+    try {
+        $packageRoot = Expand-KanyikanUpdatePackage -ZipPath $Package -DestinationRoot $stagingRoot
+        $newRelease = Test-KanyikanReleasePackage -PackageRoot $packageRoot -TrustedPublicKeySha256 ([string]$script:State.releasePublicKeySha256)
+        $upgradePath = Test-KanyikanUpgradePath -CurrentVersion ([string]$script:State.productVersion) -Manifest $newRelease.manifest
+    }
+    catch {
+        $reason = $_.Exception.Message
+        try { Remove-UpdateTransaction -Path $transactionRoot } catch { }
+        Stop-KanyikanCommand -ExitCode 70 -Reason $reason -NextStep '请换用同一发行信任链签名、版本严格递增且声明支持当前版本的更新包。'
+    }
+
+    $script:Stage = 'UPDATE_PREPARE'
+    try {
+        Start-KanyikanServices -InstallRoot $script:InstallRoot
+        $ready = Wait-KanyikanBootstrapReady -InstallRoot $script:InstallRoot
+        if (-not $ready.passed) { throw $ready.reason }
+    }
+    catch {
+        $reason = $_.Exception.Message
+        try { Remove-UpdateTransaction -Path $transactionRoot } catch { }
+        Stop-KanyikanCommand -ExitCode 51 -Reason $reason -NextStep '当前版本未健康，更新尚未停止入口或修改数据；请运行 doctor。'
+    }
+
+    $script:Stage = 'UPDATE_STOP_ENTRYPOINT'
+    try { Stop-KanyikanEntrypoint -InstallRoot $script:InstallRoot }
+    catch {
+        $reason = $_.Exception.Message
+        try { Remove-UpdateTransaction -Path $transactionRoot } catch { }
+        Stop-KanyikanCommand -ExitCode 50 -Reason $reason -NextStep '无法关闭用户入口，更新未继续。'
+    }
+
+    $script:Stage = 'UPDATE_BACKUP'
+    try { $protection = Invoke-KanyikanBackup -InstallRoot $script:InstallRoot -State $script:State }
+    catch {
+        $reason = $_.Exception.Message
+        try {
+            Start-KanyikanServices -InstallRoot $script:InstallRoot
+            $ready = Wait-KanyikanBootstrapReady -InstallRoot $script:InstallRoot
+            if (-not $ready.passed) { throw $ready.reason }
+            $script:State = Set-KanyikanInstallationActive -State $script:State -InstallRoot $script:InstallRoot -Active $true
+            try { Remove-UpdateTransaction -Path $transactionRoot } catch { }
+            New-UpdateFailureBundle
+            Stop-KanyikanCommand -ExitCode 60 -Reason $reason -NextStep '完整保护备份失败，未切换资产或迁移数据库；旧版本已恢复服务。'
+        }
+        catch {
+            try { Stop-KanyikanEntrypoint -InstallRoot $script:InstallRoot } catch { }
+            $script:State = Set-KanyikanInstallationActive -State $script:State -InstallRoot $script:InstallRoot -Active $false
+            New-UpdateFailureBundle
+            Stop-KanyikanCommand -ExitCode 72 -Reason "$reason；且重新开放旧版本失败：$($_.Exception.Message)" -NextStep '入口保持停止；请使用保护备份和支持包人工恢复。'
+        }
+    }
+
+    $assetsSwitchAttempted = $false
+    $environmentSwitchAttempted = $false
+    try {
+        $script:Stage = 'UPDATE_SNAPSHOT'
+        New-KanyikanReleaseAssetSnapshot -InstallRoot $script:InstallRoot -CurrentManifest $currentRelease.manifest -SnapshotRoot $snapshotRoot | Out-Null
+
+        $script:Stage = 'UPDATE_IMAGES'
+        $newImages = @(Import-KanyikanReleaseImages -Manifest $newRelease.manifest -PackageRoot $packageRoot)
+
+        $script:Stage = 'UPDATE_ASSETS'
+        $assetsSwitchAttempted = $true
+        Set-KanyikanReleaseAssets -InstallRoot $script:InstallRoot -PackageRoot $packageRoot -CurrentManifest $currentRelease.manifest -NewManifest $newRelease.manifest
+        $environmentPath = [System.IO.Path]::Combine($script:InstallRoot, 'config', 'system.env')
+        $environmentSwitchAttempted = $true
+        Update-KanyikanSystemImageReferences -Path $environmentPath -CurrentManifest $currentRelease.manifest -NewManifest $newRelease.manifest
+        [void](Test-KanyikanLocalCertificate -Manifest $newRelease.manifest -CertificateDirectory ([System.IO.Path]::Combine($script:InstallRoot, 'config', 'certs')))
+
+        $script:Stage = 'UPDATE_MIGRATION'
+        Invoke-KanyikanDatabaseMigration -InstallRoot $script:InstallRoot -Strategy $upgradePath.migrationStrategy
+
+        $script:Stage = 'UPDATE_START'
+        Start-KanyikanServices -InstallRoot $script:InstallRoot
+        $ready = Wait-KanyikanBootstrapReady -InstallRoot $script:InstallRoot
+        if (-not $ready.passed) { throw $ready.reason }
+
+        $script:Stage = 'UPDATE_SMOKE'
+        Test-KanyikanAuthenticatedSmoke -InstallRoot $script:InstallRoot
+
+        $script:Stage = 'UPDATE_RECORD'
+        $script:State.productVersion = $newRelease.version
+        $script:State.manifestSha256 = $newRelease.manifestSha256
+        $script:State.releasePublicKeySha256 = $newRelease.releasePublicKeySha256
+        $script:State.images = $newImages
+        $script:State.lastFailure = $null
+        $script:State = Set-KanyikanInstallationActive -State $script:State -InstallRoot $script:InstallRoot -Active $true
+    }
+    catch {
+        $updateFailure = $_.Exception.Message
+        $rollbackComplete = $true
+        $script:Stage = 'UPDATE_ROLLBACK'
+        try { Stop-KanyikanServices -InstallRoot $script:InstallRoot } catch { Write-KanyikanResult -Level '提示' -Message '首次停止失败版本容器未完成，将在恢复旧资产后重试。' }
+        if ($assetsSwitchAttempted) {
+            try { Restore-KanyikanReleaseAssets -InstallRoot $script:InstallRoot -SnapshotRoot $snapshotRoot -PreviousManifest $currentRelease.manifest -FailedManifest $newRelease.manifest }
+            catch { $rollbackComplete = $false; Write-KanyikanResult -Level '回滚失败' -Message $_.Exception.Message }
+        }
+        if ($environmentSwitchAttempted) {
+            try {
+                $environmentPath = [System.IO.Path]::Combine($script:InstallRoot, 'config', 'system.env')
+                if (Test-KanyikanSystemEnvironment -Path $environmentPath -Manifest $newRelease.manifest) {
+                    Update-KanyikanSystemImageReferences -Path $environmentPath -CurrentManifest $newRelease.manifest -NewManifest $currentRelease.manifest
+                }
+                elseif (-not (Test-KanyikanSystemEnvironment -Path $environmentPath -Manifest $currentRelease.manifest)) { throw 'system.env 既不匹配新版本也不匹配旧版本。' }
+            }
+            catch { $rollbackComplete = $false; Write-KanyikanResult -Level '回滚失败' -Message $_.Exception.Message }
+        }
+        try { Stop-KanyikanServices -InstallRoot $script:InstallRoot }
+        catch { $rollbackComplete = $false; Write-KanyikanResult -Level '回滚失败' -Message $_.Exception.Message }
+        try { [void](Invoke-KanyikanRestore -InstallRoot $script:InstallRoot -State $script:State -BackupName $protection.name) }
+        catch { $rollbackComplete = $false; Write-KanyikanResult -Level '回滚失败' -Message $_.Exception.Message }
+        try {
+            Start-KanyikanServices -InstallRoot $script:InstallRoot
+            $ready = Wait-KanyikanBootstrapReady -InstallRoot $script:InstallRoot
+            if (-not $ready.passed) { throw $ready.reason }
+        }
+        catch { $rollbackComplete = $false; Write-KanyikanResult -Level '回滚失败' -Message $_.Exception.Message }
+
+        if ($rollbackComplete) {
+            $script:State = Set-KanyikanInstallationActive -State $script:State -InstallRoot $script:InstallRoot -Active $true
+            try { Remove-UpdateTransaction -Path $transactionRoot } catch { Write-KanyikanResult -Level '提示' -Message '旧资产快照清理失败，可在确认旧版本健康后人工清理。' }
+            New-UpdateFailureBundle
+            Stop-KanyikanCommand -ExitCode 71 -Reason $updateFailure -NextStep '旧版本、数据库和入口均已恢复健康；请提交诊断包。'
+        }
+
+        try { Stop-KanyikanEntrypoint -InstallRoot $script:InstallRoot } catch { }
+        $script:State = Set-KanyikanInstallationActive -State $script:State -InstallRoot $script:InstallRoot -Active $false
+        New-UpdateFailureBundle
+        Stop-KanyikanCommand -ExitCode 72 -Reason $updateFailure -NextStep "入口保持停止；请使用保护备份 $($protection.path) 和保留的更新事务人工恢复。"
+    }
+
+    try { Remove-UpdateTransaction -Path $transactionRoot }
+    catch { Write-KanyikanResult -Level '提示' -Message '更新已成功，但旧资产快照清理失败，可稍后人工清理。' }
+    Write-KanyikanResult -Level '成功' -Message "已更新到 Kanyikan $($script:State.productVersion)。"
+    Write-KanyikanResult -Level '入口' -Message $script:Entrypoint
+}
+
 if ($PSVersionTable.PSVersion -lt [Version]'5.1' -or $PSEdition -cne 'Desktop') {
     Write-Host '[失败] 仅支持 Windows PowerShell 5.1 或更高版本。'
     exit 20
@@ -183,7 +353,7 @@ $modulePath = [System.IO.Path]::Combine($script:InstallRoot, 'lib', 'Kanyikan.In
 try { Import-Module $modulePath -Force }
 catch { Write-Host '[失败] 无法加载安装器模块。'; exit 90 }
 
-if (@('start', 'stop', 'restart', 'backup', 'restore', 'support-bundle', 'uninstall') -ccontains $Command.ToLowerInvariant()) {
+if (@('start', 'stop', 'restart', 'backup', 'restore', 'update', 'support-bundle', 'uninstall') -ccontains $Command.ToLowerInvariant()) {
     try { $script:LogPath = New-KanyikanLogFile -InstallRoot $script:InstallRoot }
     catch { Write-Host '[失败] 无法创建受限操作日志。'; exit 90 }
 }
@@ -191,6 +361,7 @@ if (@('start', 'stop', 'restart', 'backup', 'restore', 'support-bundle', 'uninst
 switch -CaseSensitive ($Command.ToLowerInvariant()) {
     'install' { Invoke-Install; exit 0 }
     'status' { Invoke-Status; exit 0 }
+    'update' { Invoke-Update; exit 0 }
     'start' {
         $script:State = Read-KanyikanInstallState -InstallRoot $script:InstallRoot
         if ((Get-StateIndex $script:State.currentState) -lt (Get-StateIndex 'CERT_READY')) { Stop-KanyikanCommand -ExitCode 10 -Reason '尚未完成配置和证书阶段。' -NextStep '请先运行 install。' }

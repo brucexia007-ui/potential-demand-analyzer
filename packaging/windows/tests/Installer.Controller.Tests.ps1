@@ -58,5 +58,44 @@ Invoke-TestCase '安装阶段顺序与冻结状态机一致' {
     }
 }
 
+Invoke-TestCase '更新严格按冻结事务顺序执行' {
+    $content = [IO.File]::ReadAllText($controllerPath, [Text.Encoding]::UTF8)
+    $start = $content.IndexOf('function Invoke-Update', [StringComparison]::Ordinal)
+    $end = $content.IndexOf("if (`$PSVersionTable", $start, [StringComparison]::Ordinal)
+    $update = $content.Substring($start, $end - $start)
+    $lastIndex = -1
+    foreach ($step in @(
+        'Test-KanyikanReleasePackage -PackageRoot $packageRoot',
+        'Test-KanyikanUpgradePath',
+        'Stop-KanyikanEntrypoint',
+        'Invoke-KanyikanBackup',
+        'New-KanyikanReleaseAssetSnapshot',
+        'Import-KanyikanReleaseImages',
+        'Invoke-KanyikanDatabaseMigration',
+        'Start-KanyikanServices',
+        'Wait-KanyikanBootstrapReady',
+        'Test-KanyikanAuthenticatedSmoke',
+        '$script:State.productVersion = $newRelease.version'
+    )) {
+        $index = $update.IndexOf($step, $lastIndex + 1, [StringComparison]::Ordinal)
+        Assert-True ($index -gt $lastIndex) "更新事务缺少或乱序执行：$step"
+        $lastIndex = $index
+    }
+}
+
+Invoke-TestCase '更新回滚恢复完整备份旧资产旧镜像并区分退出码' {
+    $content = [IO.File]::ReadAllText($controllerPath, [Text.Encoding]::UTF8)
+    foreach ($required in @(
+        'Restore-KanyikanReleaseAssets',
+        'Update-KanyikanSystemImageReferences -Path $environmentPath -CurrentManifest $newRelease.manifest -NewManifest $currentRelease.manifest',
+        'Invoke-KanyikanRestore',
+        'New-UpdateFailureBundle',
+        '-ExitCode 70',
+        '-ExitCode 71',
+        '-ExitCode 72'
+    )) { Assert-True ($content.Contains($required)) "更新控制器缺少：$required" }
+    Assert-True ($content.Contains("'update', 'support-bundle'")) 'update 未纳入结构化操作日志。'
+}
+
 Write-Host "RESULT passed=$script:Passed failed=$script:Failed"
 if ($script:Failed -gt 0) { exit 1 }

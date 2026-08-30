@@ -399,7 +399,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: 下载六镜像供应链证据
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           pattern: supply-*
           path: supply
@@ -658,7 +658,7 @@ jobs:
           [IO.File]::WriteAllText((Join-Path 'evidence' 'runner-rotation.json'), $json + "`n", $utf8)
 
       - name: 下载离线候选包
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: release-candidate
           path: release-assets
@@ -718,13 +718,13 @@ jobs:
       contents: write
     steps:
       - name: 下载已通过 Windows 验收的发行资产
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: release-candidate
           path: release-assets
 
       - name: 下载三轮快照复原证据
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           pattern: windows-e2e-round-*
           path: windows-evidence
